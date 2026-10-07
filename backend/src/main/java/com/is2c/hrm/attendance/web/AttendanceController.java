@@ -26,7 +26,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.is2c.hrm.attendance.api.EventDirection;
 import com.is2c.hrm.attendance.domain.AttendanceAdjustment;
 import com.is2c.hrm.attendance.domain.AttendanceDaily;
+import com.is2c.hrm.attendance.service.AdjustmentService;
 import com.is2c.hrm.attendance.service.AttendanceCalculator.DayStatus;
+import com.is2c.hrm.attendance.service.OtApprovalService;
 import com.is2c.hrm.attendance.service.AttendanceProcessor;
 import com.is2c.hrm.attendance.service.AttendanceQueryService;
 import com.is2c.hrm.common.error.NotFoundException;
@@ -47,9 +49,13 @@ public class AttendanceController {
     private final EmployeeService employees;
     private final DataScopeService scope;
     private final OrgDirectory org;
+    private final AdjustmentService adjustments;
+    private final OtApprovalService otApprovals;
 
     public AttendanceController(AttendanceProcessor processor, AttendanceQueryService query, EmployeeService employees,
-            DataScopeService scope, OrgDirectory org) {
+            DataScopeService scope, OrgDirectory org, AdjustmentService adjustments, OtApprovalService otApprovals) {
+        this.adjustments = adjustments;
+        this.otApprovals = otApprovals;
         this.processor = processor;
         this.query = query;
         this.employees = employees;
@@ -125,6 +131,48 @@ public class AttendanceController {
     @PreAuthorize("hasAuthority('ATTENDANCE:VIEW')")
     public DayDetailDto day(@PathVariable UUID employeeId, @PathVariable LocalDate date) {
         return toDetail(query.day(employeeId, date));
+    }
+
+    /** FR-054 days with any (or the given) exception. */
+    @GetMapping("/attendance/exceptions")
+    @PreAuthorize("hasAuthority('ATTENDANCE:VIEW')")
+    public PageResponse<DailyDto> exceptions(@RequestParam UUID companyId, @RequestParam LocalDate from,
+            @RequestParam LocalDate to, @RequestParam(required = false) String type,
+            @RequestParam(required = false) UUID departmentId, Pageable pageable) {
+        return daily(companyId, from, to, departmentId, null, null, type == null || type.isBlank() ? "ANY" : type,
+                pageable);
+    }
+
+    @PostMapping("/attendance/adjustments")
+    @PreAuthorize("hasAnyAuthority('ATTENDANCE:ADD', 'ATTENDANCE:EDIT')")
+    public AdjustmentDto adjust(@RequestBody AdjustmentService.AdjustmentRequest body) {
+        return AdjustmentDto.of(adjustments.request(body));
+    }
+
+    @GetMapping("/attendance/adjustments")
+    @PreAuthorize("hasAuthority('ATTENDANCE:VIEW')")
+    public List<AdjustmentDto> adjustments(@RequestParam UUID companyId, @RequestParam LocalDate from,
+            @RequestParam LocalDate to) {
+        scope.assertCompanyReadable(companyId);
+        return adjustments.list(companyId, from, to).stream().map(AdjustmentDto::of).toList();
+    }
+
+    public record OtDecision(List<UUID> dailyIds, String comment) {
+    }
+
+    public record DecisionResult(int updated) {
+    }
+
+    @PostMapping("/attendance/ot/approve")
+    @PreAuthorize("hasAuthority('ATTENDANCE:APPROVE')")
+    public DecisionResult approveOt(@RequestBody OtDecision body) {
+        return new DecisionResult(otApprovals.decide(body.dailyIds(), true, body.comment()));
+    }
+
+    @PostMapping("/attendance/ot/reject")
+    @PreAuthorize("hasAuthority('ATTENDANCE:APPROVE')")
+    public DecisionResult rejectOt(@RequestBody OtDecision body) {
+        return new DecisionResult(otApprovals.decide(body.dailyIds(), false, body.comment()));
     }
 
     @GetMapping("/me/attendance")

@@ -84,7 +84,9 @@ public class AttendanceQueryService {
             if (f.status() != null) {
                 p.add(cb.equal(root.get("status"), f.status()));
             }
-            if (f.exception() != null && !f.exception().isBlank()) {
+            if ("ANY".equals(f.exception())) {
+                p.add(cb.notEqual(root.get("exceptions"), ""));
+            } else if (f.exception() != null && !f.exception().isBlank()) {
                 p.add(cb.like(root.get("exceptions"), "%" + f.exception().replaceAll("[^A-Z_]", "") + "%"));
             }
             Subquery<UUID> visible = query.subquery(UUID.class);

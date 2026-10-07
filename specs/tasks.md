@@ -96,7 +96,7 @@ Commands: backend `cd backend && ./mvnw -q verify`; frontend `cd frontend && npm
   - Requirements: FR-074
   - Done when: tests prove dispatch after commit, failure isolation.
 
-- [ ] T-022: Attendance adjustments, lock, exceptions, OT approval.
+- [x] T-022: Attendance adjustments, lock, exceptions, OT approval.
   - Requirements: FR-050, FR-051, FR-052, FR-053, FR-054, FR-056
   - Done when: API tests pass (lock tested once payroll periods exist via repository fixture).
 

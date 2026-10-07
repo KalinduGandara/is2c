@@ -80,6 +80,13 @@ public class AttendanceProcessor {
 
     @Transactional
     public ProcessResult process(UUID companyId, Collection<UUID> employeeIds, LocalDate from, LocalDate to) {
+        return process(companyId, employeeIds, from, to, false);
+    }
+
+    /** {@code ignoreLock} is used only for audited lock overrides (FR-053). */
+    @Transactional
+    public ProcessResult process(UUID companyId, Collection<UUID> employeeIds, LocalDate from, LocalDate to,
+            boolean ignoreLock) {
         CompanySettingsView settings = org.settings(companyId);
         ZoneId zone = settings.timeZone();
         LocalDate today = LocalDate.now(clock.withZone(zone));
@@ -114,7 +121,8 @@ public class AttendanceProcessor {
         dailies.findByEmployeeIdInAndWorkDateBetween(ids, from, end)
                 .forEach(d -> existing.put(d.getEmployeeId() + "|" + d.getWorkDate(), d));
 
-        AttendanceLockPolicy lock = locks.getIfAvailable();
+        AttendanceLockPolicy lock = ignoreLock ? null : locks.getIfAvailable();
+        AttendanceLockPolicy staleNotifier = locks.getIfAvailable();
         Map<LocalDate, Boolean> lockedCache = new HashMap<>();
         Instant now = clock.instant();
         int processed = 0;
@@ -152,8 +160,8 @@ public class AttendanceProcessor {
             }
         }
         dailies.saveAll(toSave);
-        if (lock != null && !changedDates.isEmpty()) {
-            lock.attendanceChanged(companyId, changedDates.stream().sorted(Comparator.naturalOrder()).toList());
+        if (staleNotifier != null && !changedDates.isEmpty()) {
+            staleNotifier.attendanceChanged(companyId, changedDates.stream().sorted(Comparator.naturalOrder()).toList());
         }
         return new ProcessResult(processed, skipped, changedDates.size());
     }
