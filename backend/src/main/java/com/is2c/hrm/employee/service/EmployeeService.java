@@ -131,6 +131,20 @@ public class EmployeeService {
         return employees.findAll(spec, Sort.by("employeeNumber"));
     }
 
+    /**
+     * Lower-cased badge IDs and employee numbers of a company mapped to employee ids, for matching device punches
+     * (FR-045). Badges take precedence over numbers when they collide.
+     */
+    @Transactional(readOnly = true)
+    public java.util.Map<String, UUID> identifierMap(UUID companyId) {
+        java.util.Map<String, UUID> map = new java.util.HashMap<>();
+        List<Employee> all = employees.findByCompanyId(companyId);
+        all.forEach(e -> map.put(e.getEmployeeNumber().toLowerCase(java.util.Locale.ROOT), e.getId()));
+        all.stream().filter(e -> e.getBadgeId() != null)
+                .forEach(e -> map.put(e.getBadgeId().toLowerCase(java.util.Locale.ROOT), e.getId()));
+        return map;
+    }
+
     @Transactional(readOnly = true)
     public List<EmploymentHistory> history(UUID employeeId) {
         get(employeeId);

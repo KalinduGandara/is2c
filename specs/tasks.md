@@ -76,7 +76,7 @@ Commands: backend `cd backend && ./mvnw -q verify`; frontend `cd frontend && npm
 
 ## Attendance & Approvals
 
-- [ ] T-017: Attendance ingestion — sources & API keys, adapter SPI (generic JSON, CSV), ingestion endpoint, CSV import, idempotency, unmatched + rematch.
+- [x] T-017: Attendance ingestion — sources & API keys, adapter SPI (generic JSON, CSV), ingestion endpoint, CSV import, idempotency, unmatched + rematch.
   - Requirements: FR-045, FR-046, FR-047
   - Done when: API tests pass.
 
