@@ -155,7 +155,9 @@ public class AttendanceDaily {
         leavePaid = r.leavePaid();
         leaveRequestId = r.leaveRequestId();
         manual = r.manual();
-        exceptions = String.join(",", r.exceptions());
+        // an OT decision that still stands (same OT amount) is not pending any more
+        exceptions = String.join(",", r.exceptions().stream()
+                .filter(e -> !("OT_PENDING".equals(e) && (otApproved || otRejected))).toList());
         processedAt = now;
         return changed;
     }

@@ -41,6 +41,7 @@ class SelfServiceApiTest extends FinalizedPayrollTestBase {
                 .andExpect(jsonPath("$.departmentName").value("OPS dept"))
                 .andExpect(jsonPath("$.companyName").isNotEmpty());
         getAs(data.bearerFor("nobody", "EMPLOYEE"), "/api/v1/me/profile").andExpect(status().isNotFound());
+        getAs(data.bearerFor("nobody2", "EMPLOYEE"), "/api/v1/me/leave/requests").andExpect(status().isNotFound());
     }
 
     @Test

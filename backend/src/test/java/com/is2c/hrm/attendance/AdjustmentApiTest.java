@@ -242,6 +242,11 @@ class AdjustmentApiTest extends ApiTestBase {
                 .andExpect(jsonPath("$.daily.otApproved").value(true))
                 .andExpect(jsonPath("$.daily.exceptions", org.hamcrest.Matchers.not(hasItem("OT_PENDING"))));
         getAs(hr, "/api/v1/attendance/daily/{e}/2026-03-17", worker).andExpect(jsonPath("$.daily.otRejected").value(true));
+        // decided OT stays decided after reprocessing (no OT_PENDING again)
+        postAs(hr, "/api/v1/attendance/process", Map.of("companyId", acme.companyId(), "from", "2026-03-16", "to", "2026-03-17"))
+                .andExpect(status().isOk());
+        getAs(hr, "/api/v1/attendance/exceptions?companyId={c}&from=2026-03-16&to=2026-03-17&type=OT_PENDING", acme.companyId())
+                .andExpect(jsonPath("$.content", hasSize(0)));
         postAs(data.bearerFor("sup", "SUPERVISOR"), "/api/v1/attendance/ot/approve", Map.of("dailyIds", List.of(d16)))
                 .andExpect(status().isForbidden());
         // Days without approval-requiring OT cannot be "approved".

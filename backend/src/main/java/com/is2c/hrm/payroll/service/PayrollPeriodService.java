@@ -104,7 +104,7 @@ public class PayrollPeriodService implements AttendanceLockPolicy {
 
     @Transactional
     public PayrollPeriod open(UUID companyId, int year, int month) {
-        scope.assertCompanyReadable(companyId);
+        scope.assertCompanyWide(companyId);
         List<FieldError> errors = new ArrayList<>();
         if (month < 1 || month > 12 || year < 2000 || year > 2100) {
             errors.add(new FieldError("month", "a valid year and month are required"));
@@ -130,6 +130,7 @@ public class PayrollPeriodService implements AttendanceLockPolicy {
     @Transactional
     public PayrollProcessor.Summary process(UUID id) {
         PayrollPeriod p = get(id);
+        scope.assertCompanyWide(p.getCompanyId());
         if (p.getStatus() != Status.OPEN && p.getStatus() != Status.DRAFT) {
             throw new InvalidStateException("Only OPEN or DRAFT periods can be processed (current: " + p.getStatus() + ")");
         }
@@ -222,24 +223,29 @@ public class PayrollPeriodService implements AttendanceLockPolicy {
     @Transactional(readOnly = true)
     public List<PayrollResult> results(UUID periodId) {
         PayrollPeriod p = get(periodId);
-        Set<UUID> visible = visibleEmployees(p);
-        return results.findByPeriodIdOrderByEmployeeNumber(periodId).stream()
-                .filter(r -> visible.contains(r.getEmployeeId())).toList();
+        return results.findByPeriodIdOrderByEmployeeNumber(periodId).stream().filter(r -> visible(p, r)).toList();
     }
 
     @Transactional(readOnly = true)
     public ResultView result(UUID periodId, UUID employeeId) {
-        get(periodId);
-        employees.get(employeeId);
-        PayrollResult r = results.findByPeriodIdAndEmployeeId(periodId, employeeId)
+        PayrollPeriod p = get(periodId);
+        PayrollResult r = results.findByPeriodIdAndEmployeeId(periodId, employeeId).filter(x -> visible(p, x))
                 .orElseThrow(() -> new NotFoundException("No result for this employee in the period"));
         return new ResultView(r, lines.findByResultIdOrderBySortOrder(r.getId()));
     }
 
     @Transactional(readOnly = true)
     public List<PayrollException> exceptions(UUID periodId) {
-        get(periodId);
-        return exceptions.findByPeriodId(periodId);
+        PayrollPeriod p = get(periodId);
+        Set<UUID> visible = new java.util.HashSet<>(visibleEmployees(p));
+        results(periodId).forEach(r -> visible.add(r.getEmployeeId()));
+        return exceptions.findByPeriodId(periodId).stream()
+                .filter(x -> x.getEmployeeId() == null || visible.contains(x.getEmployeeId())).toList();
+    }
+
+    /** Visibility from the result's own snapshot (period company, branch, department), never the live employee. */
+    private boolean visible(PayrollPeriod p, PayrollResult r) {
+        return scope.current().covers(r.getEmployeeId(), p.getCompanyId(), r.getBranchId(), r.getDepartmentId());
     }
 
     @Transactional(readOnly = true)

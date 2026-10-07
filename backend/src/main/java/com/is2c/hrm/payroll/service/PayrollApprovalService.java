@@ -19,6 +19,7 @@ import com.is2c.hrm.audit.service.AuditService;
 import com.is2c.hrm.common.error.InvalidStateException;
 import com.is2c.hrm.common.error.NotFoundException;
 import com.is2c.hrm.common.error.ValidationException;
+import com.is2c.hrm.org.service.DataScopeService;
 import com.is2c.hrm.payroll.domain.PayrollException;
 import com.is2c.hrm.payroll.domain.PayrollExceptionRepository;
 import com.is2c.hrm.payroll.domain.PayrollPeriod;
@@ -49,10 +50,13 @@ public class PayrollApprovalService implements ApprovalHandler {
     private final DatabasePlatform platform;
     private final AuditService audit;
     private final Clock clock;
+    private final DataScopeService scope;
 
     public PayrollApprovalService(PayrollPeriodService periodService, PayrollPeriodRepository periods,
             PayrollExceptionRepository exceptions, PayrollResultRepository results, PayrollResultLineRepository lines,
-            @Lazy ApprovalService approvals, DatabasePlatform platform, AuditService audit, Clock clock) {
+            @Lazy ApprovalService approvals, DatabasePlatform platform, AuditService audit, Clock clock,
+            DataScopeService scope) {
+        this.scope = scope;
         this.periodService = periodService;
         this.periods = periods;
         this.exceptions = exceptions;
@@ -67,6 +71,7 @@ public class PayrollApprovalService implements ApprovalHandler {
     @Transactional
     public PayrollPeriod submit(UUID id) {
         PayrollPeriod p = periodService.get(id);
+        scope.assertCompanyWide(p.getCompanyId());
         if (p.getStatus() != Status.DRAFT) {
             throw new InvalidStateException("Only DRAFT periods can be submitted (current: " + p.getStatus() + ")");
         }
@@ -90,6 +95,7 @@ public class PayrollApprovalService implements ApprovalHandler {
             throw new ValidationException("comment", "a comment is required when sending back");
         }
         PayrollPeriod p = periodService.get(id);
+        scope.assertCompanyWide(p.getCompanyId());
         if (p.getStatus() != Status.IN_REVIEW) {
             throw new InvalidStateException("Only periods in review can be sent back (current: " + p.getStatus() + ")");
         }
@@ -101,6 +107,7 @@ public class PayrollApprovalService implements ApprovalHandler {
     @Transactional
     public PayrollPeriod finalizePeriod(UUID id) {
         PayrollPeriod p = periodService.get(id);
+        scope.assertCompanyWide(p.getCompanyId());
         if (p.getStatus() != Status.APPROVED) {
             throw new InvalidStateException("Only APPROVED periods can be finalized (current: " + p.getStatus() + ")");
         }

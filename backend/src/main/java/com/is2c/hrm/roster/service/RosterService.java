@@ -114,7 +114,10 @@ public class RosterService implements PublishedRosterEntries {
     @Transactional(readOnly = true)
     public RosterView view(UUID id) {
         Roster r = get(id);
-        return new RosterView(r, entries.findByRosterId(id), eligibleEmployees(r));
+        List<Employee> visible = eligibleEmployees(r);
+        Set<UUID> ids = visible.stream().map(Employee::getId).collect(java.util.stream.Collectors.toSet());
+        return new RosterView(r, entries.findByRosterId(id).stream().filter(e -> ids.contains(e.getEmployeeId())).toList(),
+                visible);
     }
 
     @Transactional(readOnly = true)
@@ -143,6 +146,7 @@ public class RosterService implements PublishedRosterEntries {
             throw new ValidationException("companyId", "is required");
         }
         scope.assertCompanyReadable(d.companyId());
+        scope.assertDepartmentManageable(d.companyId(), d.departmentId());
         if (d.name() == null || d.name().isBlank()) {
             errors.add(new FieldError("name", "is required"));
         }
@@ -251,6 +255,7 @@ public class RosterService implements PublishedRosterEntries {
     @Transactional
     public Roster publish(UUID id) {
         Roster r = get(id);
+        scope.assertDepartmentManageable(r.getCompanyId(), r.getDepartmentId());
         if (r.getStatus() != Status.DRAFT) {
             throw new InvalidStateException("Only DRAFT rosters can be published");
         }
@@ -265,6 +270,7 @@ public class RosterService implements PublishedRosterEntries {
     @Transactional
     public Roster lock(UUID id) {
         Roster r = get(id);
+        scope.assertDepartmentManageable(r.getCompanyId(), r.getDepartmentId());
         if (r.getStatus() != Status.PUBLISHED) {
             throw new InvalidStateException("Only PUBLISHED rosters can be locked");
         }
@@ -276,6 +282,7 @@ public class RosterService implements PublishedRosterEntries {
     @Transactional
     public Roster unlock(UUID id, String reason) {
         Roster r = get(id);
+        scope.assertDepartmentManageable(r.getCompanyId(), r.getDepartmentId());
         if (r.getStatus() != Status.LOCKED) {
             throw new InvalidStateException("Only LOCKED rosters can be unlocked");
         }

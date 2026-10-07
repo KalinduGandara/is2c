@@ -197,7 +197,7 @@ All tables: `id UUID PK` (app-generated time-ordered UUID), and for mutable mast
 - `salary_structure_line` (structure_id, component_id, amount, rate_override, multiplier_override, excluded)
 - `payroll_period` (company_id, year, month, start_date, end_date, status, stale, approval_id, processed_at, finalized_at, finalized_by) UNIQUE(company_id, year, month)
 - `payroll_one_time_item` (period_id, employee_id, component_id, amount, note)
-- `payroll_result` (period_id, employee_id, employee_number, employee_name, department_name, designation_name, gross, deductions, net, employer_contributions, worked_days, no_pay_days, ot_hours, payslip_no, exceptions, locked) UNIQUE(period_id, employee_id)
+- `payroll_result` (period_id, employee_id, employee_number, employee_name, department_name, designation_name, branch_id, department_id (snapshot, V17), gross, deductions, net, employer_contributions, worked_days, no_pay_days, ot_hours, payslip_no, exceptions, locked) UNIQUE(period_id, employee_id)
 - `payroll_result_line` (result_id, component_code, component_name, kind, units, rate, amount, show_on_payslip, sort_order, locked)
 - `payroll_exception` (period_id, employee_id, code, message, blocking)
 - Postgres trigger: reject UPDATE/DELETE on `payroll_result`, `payroll_result_line` rows where `locked = true` (vendor migration).
@@ -233,6 +233,13 @@ All tables: `id UUID PK` (app-generated time-ordered UUID), and for mutable mast
 ### 6.3 Data scope (FR-006)
 Implemented by `org.service.DataScopeService` (scope is an org-structure concern); the employee module supplies employee placements through `org.api.EmployeePlacementLookup`, and modules that reference org records implement `org.api.OrgReferenceChecker` (deletion guards) — avoiding module cycles. Company-level **reads** require `coversCompany` (ALL, company in scope, or the company of a scoped branch/department/own employee); company-level **writes** require `coversWholeCompany` (ALL or company explicitly in a COMPANY scope).
 `DataScopeService.current()` returns an `EmployeeScope` (ALL | sets of company ids, branch ids, department ids expanded with descendants | own employee id). Repository queries take it as a JPA `Specification<Employee>` (or the equivalent JPQL predicate on `employee.companyId/branchId/departmentId/id`). `assertInScope(employee)` throws `NotFoundException` (404). Company-level resources (settings, shifts, leave types…) check `scope.coversCompany(companyId)` — branch/department-scoped users "cover" their branch's company for read-only lookups.
+
+Rules added after the Phase 7 review:
+- **Company-wide operations** (payroll period open/process/submit/send-back/finalize; company-wide rosters' create/publish/lock/unlock) require `coversWholeCompany` → 403 otherwise; department rosters also accept a user scoped to that department (`assertCompanyWide`, `assertDepartmentManageable`).
+- **Payroll results** are visible by their own snapshot (period company, result `branch_id`/`department_id`), never by the live employee, so finalized registers/totals/payslips cannot change when an employee moves or becomes inactive. Payroll exceptions and roster entries are filtered to employees in scope.
+- **CSV import / rematch** by a user without whole-company scope only touch employees in their scope; rows they cannot attribute are rejected (not stored as unmatched).
+- **User administration**: an administrator may only edit, reset or (de)activate users whose permissions they hold; SUPER_ADMIN holders only by super admins. **Roles** are global, so only ALL-scope administrators may create/edit/delete them. **Delegations** for other users require `APPROVAL:CONFIGURE` *and* scope coverage of delegator and delegate; the admin list is scope-filtered.
+- **Approval callbacks re-check the attendance lock** (leave, attendance correction without override): approving on a date locked after submission fails with 422 `ATTENDANCE_LOCKED` and the transaction stays PENDING.
 
 ### 6.4 Other
 - Security headers & CSP via Spring Security; CORS origins from `HRM_CORS_ORIGINS`.

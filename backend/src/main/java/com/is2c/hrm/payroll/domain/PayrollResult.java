@@ -39,6 +39,9 @@ public class PayrollResult {
     @Column(name = "department_id", updatable = false)
     private UUID departmentId;
 
+    @Column(name = "branch_id", updatable = false)
+    private UUID branchId;
+
     @Column(nullable = false, updatable = false)
     private BigDecimal gross;
 
@@ -70,7 +73,7 @@ public class PayrollResult {
     }
 
     public PayrollResult(UUID periodId, UUID employeeId, String employeeNumber, String employeeName,
-            String departmentName, String designationName, UUID departmentId, BigDecimal gross, BigDecimal deductions,
+            String departmentName, String designationName, UUID branchId, UUID departmentId, BigDecimal gross, BigDecimal deductions,
             BigDecimal net, BigDecimal employerContributions, BigDecimal workedDays, BigDecimal noPayDays,
             BigDecimal otHours) {
         this.periodId = periodId;
@@ -79,6 +82,7 @@ public class PayrollResult {
         this.employeeName = employeeName;
         this.departmentName = departmentName;
         this.designationName = designationName;
+        this.branchId = branchId;
         this.departmentId = departmentId;
         this.gross = gross;
         this.deductions = deductions;
@@ -120,6 +124,10 @@ public class PayrollResult {
 
     public String getDesignationName() {
         return designationName;
+    }
+
+    public UUID getBranchId() {
+        return branchId;
     }
 
     public UUID getDepartmentId() {

@@ -31,7 +31,6 @@ import com.is2c.hrm.attendance.service.AttendanceProcessor;
 import com.is2c.hrm.audit.service.AuditEntry;
 import com.is2c.hrm.audit.service.AuditService;
 import com.is2c.hrm.common.error.FieldError;
-import com.is2c.hrm.common.error.ForbiddenException;
 import com.is2c.hrm.common.error.InvalidStateException;
 import com.is2c.hrm.common.error.NotFoundException;
 import com.is2c.hrm.common.error.ValidationException;
@@ -404,7 +403,7 @@ public class LeaveRequestService implements ApprovalHandler, ApprovedLeaveLookup
     private static UUID ownEmployeeId() {
         UUID own = CurrentUser.get().employeeId();
         if (own == null) {
-            throw new ForbiddenException("No employee is linked to this user");
+            throw new NotFoundException("No employee is linked to this user");
         }
         return own;
     }

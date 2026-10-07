@@ -83,6 +83,22 @@ public class DataScopeService {
         }
     }
 
+    /** 403 unless the user covers the whole company (company-wide operations such as payroll runs, FR-006). */
+    public void assertCompanyWide(UUID companyId) {
+        if (!current().coversWholeCompany(companyId)) {
+            throw new com.is2c.hrm.common.error.ForbiddenException("This action needs access to the whole company");
+        }
+    }
+
+    /** 403 unless the user covers the whole company or, for a department-level item, that department. */
+    public void assertDepartmentManageable(UUID companyId, UUID departmentId) {
+        EmployeeScope s = current();
+        if (!s.coversWholeCompany(companyId) && (departmentId == null || !s.departmentIds().contains(departmentId))) {
+            throw new com.is2c.hrm.common.error.ForbiddenException(departmentId == null
+                    ? "This action needs access to the whole company" : "This department is outside your scope");
+        }
+    }
+
     public void assertCovers(EmployeePlacement placement) {
         if (!current().covers(placement)) {
             throw new NotFoundException("Employee", placement.employeeId());

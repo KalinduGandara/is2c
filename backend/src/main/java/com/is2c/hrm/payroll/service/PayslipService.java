@@ -113,9 +113,7 @@ public class PayslipService {
         PayrollPeriod p = finalized(periodId);
         List<PayrollResult> selected = periods.results(periodId);
         if (departmentId != null) {
-            Map<UUID, Employee> byId = employees.byIds(selected.stream().map(PayrollResult::getEmployeeId).toList());
-            selected = selected.stream().filter(r -> byId.containsKey(r.getEmployeeId())
-                    && departmentId.equals(byId.get(r.getEmployeeId()).getDepartmentId())).toList();
+            selected = selected.stream().filter(r -> departmentId.equals(r.getDepartmentId())).toList();
         }
         return new Export("payslips-" + key(p) + ".pdf", "application/pdf", render(p, withLines(selected)));
     }

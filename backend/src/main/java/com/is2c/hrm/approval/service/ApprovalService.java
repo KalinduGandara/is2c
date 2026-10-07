@@ -98,6 +98,8 @@ public class ApprovalService {
         if (levels.isEmpty()) {
             txn.complete(Status.APPROVED, now);
             actions.save(new ApprovalAction(txn.getId(), 1, Action.AUTO, null, null, "no workflow applies", now));
+            audit.record(AuditEntry.of("AUTO_APPROVE", "APPROVAL", txn.getId()).company(s.companyId())
+                    .reason("no workflow applies"));
             handlers.get(s.type()).onApproved(s.referenceId());
             return new ApprovalOutcome(txn.getId(), true);
         }

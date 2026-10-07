@@ -178,4 +178,27 @@ class PayslipExportApiTest extends FinalizedPayrollTestBase {
         getAs(data.bearerFor("ca", "COMPANY_ADMIN"), "/api/v1/reports/payroll-register?periodId={p}", march)
                 .andExpect(status().isForbidden());
     }
+
+    @Test
+    @DisplayName("FR-087/FR-089 finalized registers and totals come from the snapshot, unaffected by later employee changes")
+    void snapshotAfterEmployeeChanges() throws Exception {
+        postAs(hr, "/api/v1/employees/{id}/status", Map.of("status", "INACTIVE", "effectiveDate", "2026-04-05",
+                "reason", "long leave"), e2).andExpect(status().isOk());
+        String csv = new String(bytes(po, "/api/v1/payroll/periods/{p}/register?format=csv", march), StandardCharsets.UTF_8);
+        assertThat(csv).contains("Two Person");
+        getAs(po, "/api/v1/payroll/periods/{p}/totals", march).andExpect(jsonPath("$.employees").value(2))
+                .andExpect(jsonPath("$.net").value(165600.0));
+        getAs(hr, "/api/v1/payroll/periods/{p}/payslips/{e}.pdf", march, e2).andExpect(status().isOk());
+    }
+
+    @Test
+    @DisplayName("FR-007/FR-089 payroll exports need PAYROLL:VIEW as well as PAYROLL:EXPORT")
+    void exportNeedsView() throws Exception {
+        postAs(admin, "/api/v1/admin/roles", Map.of("code", "EXPORTER", "name", "Exporter",
+                "permissions", List.of("PAYROLL:EXPORT"))).andExpect(status().isCreated());
+        String exporter = data.bearerFor("exp", "EXPORTER");
+        getAs(exporter, "/api/v1/payroll/periods/{p}/register?format=csv", march).andExpect(status().isForbidden());
+        getAs(exporter, "/api/v1/payroll/periods/{p}/department-summary?format=pdf", march).andExpect(status().isForbidden());
+        postAs(exporter, "/api/v1/payroll/periods/{p}/payslips/email", Map.of(), march).andExpect(status().isForbidden());
+    }
 }

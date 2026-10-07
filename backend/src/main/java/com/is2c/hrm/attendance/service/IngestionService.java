@@ -78,7 +78,7 @@ public class IngestionService {
         if (payload.events() != null && payload.events().size() > MAX_BATCH) {
             throw new ValidationException("events", "a batch may contain at most " + MAX_BATCH + " events");
         }
-        return ingest(source, adapters.get(AdapterType.GENERIC_JSON).parse(payload));
+        return ingest(source, adapters.get(AdapterType.GENERIC_JSON).parse(payload), null);
     }
 
     @Transactional
@@ -97,7 +97,7 @@ public class IngestionService {
         if (parsed.size() > MAX_BATCH * 10) {
             throw new ValidationException("file", "the file has too many rows");
         }
-        IngestResult result = ingest(sources.csvChannel(companyId), parsed);
+        IngestResult result = ingest(sources.csvChannel(companyId), parsed, employeesInScope(companyId));
         audit.record(AuditEntry.of("IMPORT_CSV", "ATTENDANCE_EVENT", companyId).company(companyId)
                 .after(java.util.Map.of("file", String.valueOf(file.getOriginalFilename()), "accepted", result.accepted(),
                         "duplicates", result.duplicates(), "unmatched", result.unmatched(), "rejected", result.rejected())));
@@ -109,12 +109,13 @@ public class IngestionService {
     public int rematch(UUID companyId) {
         scope.assertCompanyReadable(companyId);
         Map<String, UUID> ids = employees.identifierMap(companyId);
+        Set<UUID> allowed = employeesInScope(companyId);
         ZoneId zone = org.settings(companyId).timeZone();
         Map<UUID, Set<LocalDate>> touched = new HashMap<>();
         int matched = 0;
         for (AttendanceEvent e : events.findByCompanyIdAndStatus(companyId, AttendanceEvent.Status.UNMATCHED)) {
             UUID employeeId = ids.get(e.getEmployeeIdentifier().toLowerCase(Locale.ROOT));
-            if (employeeId != null) {
+            if (employeeId != null && (allowed == null || allowed.contains(employeeId))) {
                 e.match(employeeId);
                 touched.computeIfAbsent(employeeId, k -> new HashSet<>()).add(e.getEventTime().atZone(zone).toLocalDate());
                 matched++;
@@ -123,18 +124,35 @@ public class IngestionService {
         if (!touched.isEmpty()) {
             publisher.publishEvent(new AttendanceEventsIngested(companyId, touched));
         }
+        audit.record(AuditEntry.of("REMATCH", "ATTENDANCE_EVENT", companyId).company(companyId)
+                .after(java.util.Map.of("matched", matched, "employees", touched.size())));
         return matched;
     }
 
-    private IngestResult ingest(AttendanceSource source, List<ParsedEvent> parsed) {
+    /** Employees the current user may touch, or null when they cover the whole company (FR-006). */
+    private Set<UUID> employeesInScope(UUID companyId) {
+        if (scope.current().coversWholeCompany(companyId)) {
+            return null;
+        }
+        Set<UUID> ids = new HashSet<>();
+        employees.employedInScope(companyId, null, null, LocalDate.of(1900, 1, 1), LocalDate.of(9999, 12, 31))
+                .forEach(e -> ids.add(e.getId()));
+        return ids;
+    }
+
+    /** {@code allowed}: employees the caller may record punches for (null = any matched employee). */
+    private IngestResult ingest(AttendanceSource source, List<ParsedEvent> parsed, Set<UUID> allowed) {
         UUID companyId = source.getCompanyId();
         ZoneId zone = org.settings(companyId).timeZone();
         Map<String, UUID> ids = employees.identifierMap(companyId);
         List<RowError> errors = new ArrayList<>();
         List<ParsedEvent> valid = new ArrayList<>();
         for (ParsedEvent p : parsed) {
+            UUID matchedId = p.isRejected() ? null : ids.get(p.employeeIdentifier().toLowerCase(Locale.ROOT));
             if (p.isRejected()) {
                 errors.add(new RowError(p.row(), p.error()));
+            } else if (allowed != null && (matchedId == null || !allowed.contains(matchedId))) {
+                errors.add(new RowError(p.row(), "employee is not known or outside your scope"));
             } else {
                 valid.add(p);
             }

@@ -145,7 +145,7 @@ public class PayrollProcessor {
                     .add(m.getOrDefault(UnitMetric.OT_HOLIDAY_HOURS, BigDecimal.ZERO));
             PayrollResult result = results.save(new PayrollResult(period.getId(), e.getId(), e.getEmployeeNumber(),
                     e.fullName(), deptNames.get(e.getDepartmentId()), desigNames.get(e.getDesignationId()),
-                    e.getDepartmentId(), r.gross(), r.deductions(), r.net(), r.employerContributions(),
+                    e.getBranchId(), e.getDepartmentId(), r.gross(), r.deductions(), r.net(), r.employerContributions(),
                     m.getOrDefault(UnitMetric.WORKED_DAYS, BigDecimal.ZERO),
                     m.getOrDefault(UnitMetric.NO_PAY_DAYS, BigDecimal.ZERO), otHours));
             List<PayrollResultLine> resultLines = new ArrayList<>();

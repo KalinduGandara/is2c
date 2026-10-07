@@ -94,11 +94,14 @@ class ApprovalApiTest extends ApiTestBase {
     }
 
     @Test
-    @DisplayName("FR-071 without an enabled workflow the item is auto-approved and the handler called")
-    void autoApprove() {
+    @DisplayName("FR-071/FR-008 without an enabled workflow the item is auto-approved (audited) and the handler called")
+    void autoApprove() throws Exception {
         ApprovalOutcome outcome = submit(staffUser, staffEmp);
         assertThat(outcome.autoApproved()).isTrue();
         assertThat(handler.calls).hasSize(1).allMatch(c -> c.startsWith("approved:"));
+        getAs(admin, "/api/v1/audit?entityType=APPROVAL&action=AUTO_APPROVE")
+                .andExpect(org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath("$.content[0].entityId")
+                        .value(outcome.transactionId().toString()));
     }
 
     @Test

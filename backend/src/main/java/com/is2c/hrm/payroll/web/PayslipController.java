@@ -46,19 +46,19 @@ public class PayslipController {
     }
 
     @PostMapping("/payslips/email")
-    @PreAuthorize("hasAuthority('PAYROLL:EXPORT')")
+    @PreAuthorize("hasAuthority('PAYROLL:VIEW') and hasAuthority('PAYROLL:EXPORT')")
     public PayslipService.EmailReport email(@PathVariable UUID id, @RequestBody(required = false) EmailRequest body) {
         return payslips.email(id, body == null ? null : body.employeeIds());
     }
 
     @GetMapping("/register")
-    @PreAuthorize("hasAuthority('PAYROLL:EXPORT')")
+    @PreAuthorize("hasAuthority('PAYROLL:VIEW') and hasAuthority('PAYROLL:EXPORT')")
     public ResponseEntity<byte[]> register(@PathVariable UUID id, @RequestParam String format) {
         return file(payslips.register(id, ExportFormat.parse(format)));
     }
 
     @GetMapping("/department-summary")
-    @PreAuthorize("hasAuthority('PAYROLL:EXPORT')")
+    @PreAuthorize("hasAuthority('PAYROLL:VIEW') and hasAuthority('PAYROLL:EXPORT')")
     public ResponseEntity<byte[]> departmentSummary(@PathVariable UUID id, @RequestParam String format) {
         return file(payslips.departmentSummary(id, ExportFormat.parse(format)));
     }

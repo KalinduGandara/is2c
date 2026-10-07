@@ -52,6 +52,7 @@ public class LoginRateLimitFilter extends OncePerRequestFilter {
                 window.addLast(now);
             }
         }
+        pruneIfLarge(now);
         if (!allowed) {
             response.setHeader("Retry-After", "60");
             writer.write(response, HttpStatus.TOO_MANY_REQUESTS, "RATE_LIMITED",
@@ -59,5 +60,25 @@ public class LoginRateLimitFilter extends OncePerRequestFilter {
             return;
         }
         chain.doFilter(request, response);
+    }
+
+    private static final int PRUNE_ABOVE = 1_000;
+
+    /** Drops clients without hits in the current window once many are tracked, so memory stays bounded. */
+    private void pruneIfLarge(long now) {
+        if (hits.size() <= PRUNE_ABOVE) {
+            return;
+        }
+        hits.entrySet().removeIf(e -> {
+            Deque<Long> w = e.getValue();
+            synchronized (w) {
+                return w.isEmpty() || w.peekLast() <= now - WINDOW_MILLIS;
+            }
+        });
+    }
+
+    /** Number of clients currently tracked (for tests). */
+    public int trackedClients() {
+        return hits.size();
     }
 }
