@@ -44,7 +44,7 @@ Commands: backend `cd backend && ./mvnw -q verify`; frontend `cd frontend && npm
   - Requirements: FR-001, FR-002, FR-003 (UI), NFR-010, NFR-012
   - Done when: Vitest tests for client refresh/error parsing, login form and nav filtering pass; lint & typecheck pass.
 
-- [ ] T-010: Frontend org setup & administration — companies/settings, branches, departments tree, lookups; users, roles matrix.
+- [x] T-010: Frontend org setup & administration — companies/settings, branches, departments tree, lookups; users, roles matrix.
   - Requirements: FR-004, FR-005, FR-010…013, FR-016 (UI)
   - Done when: component tests for key forms pass; screens work against backend (manual run).
 
