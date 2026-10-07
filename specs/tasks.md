@@ -28,7 +28,7 @@ Commands: backend `cd backend && ./mvnw -q verify`; frontend `cd frontend && npm
   - Requirements: FR-010, FR-011, FR-012, FR-013, FR-016
   - Done when: API tests for each criterion pass.
 
-- [ ] T-006: User admin, roles CRUD, data scope — user CRUD/deactivate/reset, last-super-admin guard, custom roles & matrix, `DataScopeService` (descendant departments) + `/admin/permissions`.
+- [x] T-006: User admin, roles CRUD, data scope — user CRUD/deactivate/reset, last-super-admin guard, custom roles & matrix, `DataScopeService` (descendant departments) + `/admin/permissions`.
   - Requirements: FR-004, FR-005, FR-006
   - Done when: API tests incl. scope filtering & 404-outside-scope pass.
 

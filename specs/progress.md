@@ -2,8 +2,8 @@
 
 ## Status
 - Phase: 6 — Implement
-- Current task: T-006
-- Next: T-007
+- Current task: T-007
+- Next: T-008
 
 ## Log
 - 2026-10-07: Phases 1–5 complete (clarifications closed, requirements/design/tasks written). User waived approval gates ("start implementing").
@@ -12,3 +12,4 @@
 - 2026-10-07: T-003 done — JWT (HS256, clock-aware validation) login/refresh rotation+reuse detection/logout/me/change-password, lockout, password policy, must-change gate, bootstrap admin, 9 seeded roles, security headers/CSP, login rate limit. 37 tests green.
 - 2026-10-07: T-004 done — append-only audit_log (PG trigger), AuditService (in-transaction), security events audited (incl. @PreAuthorize denials via AuthorizationDeniedEvent), search API. Audit export deferred to T-034 as planned. 44 tests green.
 - 2026-10-07: T-005 done — companies (+defaults, CompanyCreatedEvent), settings, branches, department tree (cycle checks), lookups, DataScopeService in org, EmployeeNumberFormat. Delete-with-employees guard via OrgReferenceChecker SPI (exercised in T-007). 58 tests green.
+- 2026-10-07: T-006 done — `admin` module: user CRUD/activate/deactivate/reset, last-super-admin guard, custom roles & matrix, escalation guards; scope-filtered user admin. 69 tests green.

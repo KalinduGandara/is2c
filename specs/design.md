@@ -79,6 +79,7 @@ Request flow: Caddy → Spring Security filter chain (correlation id → rate li
 │       ├── common/        # errors (problem+json), paging, money, time, base entities, i18n, web config
 │       ├── platform/      # DatabasePlatform SPI + postgres impl, FileStorage SPI + local impl
 │       ├── security/      # JWT, users, roles, permissions, data scope, login, refresh tokens
+│       ├── admin/         # user & role administration (depends on security + org)
 │       ├── audit/
 │       ├── org/           # company, branch, department, lookups, settings, holidays
 │       ├── employee/      # employee, history, documents, custom fields, numbering
@@ -116,6 +117,7 @@ Each module package has: `domain/` (entities, repositories), `service/` (busines
 | common | Problem-details error handling, validation, paging DTO, `Money` helpers, `Clock` bean, base entity (UUID id, version, created/updated by/at, deleted_at), correlation id filter, i18n messages | NFR-008, 009, 010, 013, 014, 015, 016, 017 |
 | platform | `DatabasePlatform` (vendor name, migration location, `lockForUpdate` sequence counter), `PostgresDatabasePlatform`; `FileStorage`, `LocalFileStorage` | NFR-005, FR-014, FR-020 |
 | security | Users, roles, permissions, login/refresh/logout, lockout, password policy, bootstrap admin, JWT config, `CurrentUser`, `DataScopeService`, rate limit, security headers | FR-001…007, NFR-002, 003, 019 |
+| admin | User CRUD, activation, password reset, scope assignment; custom roles & matrix; escalation guards (cannot grant ALL scope without having it, SUPER_ADMIN only by SUPER_ADMIN, no role/permission the actor lacks, non-global admins manage only users confined to companies they fully cover) | FR-003 (reset), FR-004, FR-005, FR-006 |
 | audit | `AuditService.record(...)`, audit search/export, append-only enforcement | FR-008 |
 | org | Companies, settings, branches, departments (tree), designations, grades, categories, holidays, `DataScopeService`, `OrgDirectory` read API; publishes `CompanyCreatedEvent` that other modules handle to seed per-company defaults | FR-010…013, FR-016, FR-025 |
 | employee | Employees, numbering, history, emergency contacts, custom fields, documents, search | FR-014, 015, 017…020 |
