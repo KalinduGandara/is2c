@@ -127,7 +127,7 @@ Each module package has: `domain/` (entities, repositories), `service/` (busines
 | approval | Workflow definitions, resolution, transactions, inbox, delegation, `ApprovalHandler` SPI | FR-070…073 |
 | notification | `NotificationService`, `NotificationChannel` SPI, email & log channels, after-commit dispatch | FR-074 |
 | payroll | Components, slab tables, `StatutoryPack` SPI + `SriLankaStatutoryPack`, salary structures, periods, one-time items, `PayrollEngine` (pure), `PayrollProcessor`, approval handler, finalization, payslip PDF, register exports | FR-080…089 |
-| report | Report providers producing `platform.export.TableData`, dashboard KPIs | FR-095, 096 |
+| report | `ReportProvider`s contribute `ReportDefinition`s (key, typed params for the UI, extra permission, builder → `platform.export.TableData`); `ReportService` catalog/run; builders call the owning modules' services so data scope applies. `DashboardService`: "today" in the company time zone; present = punched in today, late = present with late minutes, absent = scheduled WORKDAY without punch and without full-day leave, on leave = approved leave today; payroll KPIs only with `PAYROLL:VIEW` | FR-095, 096 |
 | selfservice | `/api/v1/me/**` delegating to module services with the linked employee | FR-100 |
 
 ---
@@ -250,7 +250,7 @@ Batch API `resolve(employeeIds, from, to) → Map<(emp,date), DaySchedule>` load
 Input: `DaySchedule` for D-1, D, D+1, events in [D-1 00:00, D+2 12:00], approved leave fraction/part/paid for D, applied adjustment for D (if any), OT policy, OT eligibility, half-day threshold, company punch window defaults.
 1. **Window**: if shift on D: `[firstSessionStart − before, lastSessionEnd + after]`; else `[D 00:00, D+1 00:00)`. An event lying in two candidate windows (D's and a neighbour's) is assigned to the date whose shift boundary (start for IN-side, end for OUT-side; nearest of start/end for UNKNOWN) is nearest; windows of days with a shift take precedence over days without a shift. (Documented limitation: an off-day punch inside the after-window of a previous night shift is attributed to the night shift; correct via manual edit.)
 2. **Override**: if an applied adjustment exists, punches = single pair (new_in, new_out).
-3. **Pairing**: sort; if any direction known → IN opens a pair, OUT closes the open pair (OUT without open pair ignored as duplicate; consecutive INs keep the first); else alternate. Unclosed pair → `INCOMPLETE`.
+3. **Pairing**: sort; if any direction known → IN opens a pair, OUT closes the open pair (OUT without open pair ignored as duplicate; consecutive INs keep the first); else alternate. Unclosed pair → `INCOMPLETE`; its IN still sets first IN and counts for lateness, but never for worked time or early departure.
 4. **Worked** = Σ pair durations; break: FIXED → subtract `breakMinutes` if gross ≥ threshold; PUNCHED → no subtraction.
 5. **Sessions** (non-flex): for each session, segment = punches whose pair overlaps the session ± window (split at midpoint between sessions); late/early per FR-048 rules; session with no punches contributes its full length to short.
    Half-day leave: MORNING → ignore late and first half; AFTERNOON → ignore early departure; scheduled minutes halved.

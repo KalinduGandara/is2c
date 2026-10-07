@@ -301,6 +301,14 @@ public class PayslipService {
     @Transactional(readOnly = true)
     public Export register(UUID periodId, ExportFormat format) {
         PayrollPeriod p = periods.get(periodId);
+        return new Export("payroll-register-" + key(p) + "." + format.extension(), format.contentType(),
+                exporter.export(registerTable(periodId), format));
+    }
+
+    /** FR-089 register: one row per employee in scope, one column per component, totals footer. */
+    @Transactional(readOnly = true)
+    public TableData registerTable(UUID periodId) {
+        PayrollPeriod p = periods.get(periodId);
         List<PayrollPeriodService.ResultView> views = withLines(periods.results(periodId));
         // component columns in calculation order, first-seen name per code
         Map<String, String> names = new LinkedHashMap<>();
@@ -338,14 +346,20 @@ public class PayslipService {
         }
         List<Object> footer = new ArrayList<>(List.of("Total", views.size() + " employees", "", ""));
         footer.addAll(List.of(totals));
-        TableData table = new TableData("Payroll register", header(p), columns, rows, footer, true,
+        return new TableData("Payroll register", header(p), columns, rows, footer, true,
                 CurrentUser.get().username(), clock.instant());
-        return new Export("payroll-register-" + key(p) + "." + format.extension(), format.contentType(),
-                exporter.export(table, format));
     }
 
     @Transactional(readOnly = true)
     public Export departmentSummary(UUID periodId, ExportFormat format) {
+        PayrollPeriod p = periods.get(periodId);
+        return new Export("department-summary-" + key(p) + "." + format.extension(), format.contentType(),
+                exporter.export(departmentSummaryTable(periodId), format));
+    }
+
+    /** FR-089 department summary: employees and totals per department snapshot name. */
+    @Transactional(readOnly = true)
+    public TableData departmentSummaryTable(UUID periodId) {
         PayrollPeriod p = periods.get(periodId);
         Map<String, BigDecimal[]> byDept = new TreeMap<>();
         for (PayrollResult r : periods.results(periodId)) {
@@ -365,13 +379,11 @@ public class PayslipService {
                 total[i] = total[i].add(t[i]);
             }
         });
-        TableData table = new TableData("Department summary", header(p),
+        return new TableData("Department summary", header(p),
                 List.of(Column.text("Department"), Column.number("Employees"), Column.amount("Gross"),
                         Column.amount("Deductions"), Column.amount("Net"), Column.amount("Employer contributions")),
                 rows, List.of("Total", total[0].intValue(), total[1], total[2], total[3], total[4]), false,
                 CurrentUser.get().username(), clock.instant());
-        return new Export("department-summary-" + key(p) + "." + format.extension(), format.contentType(),
-                exporter.export(table, format));
     }
 
     private List<String> header(PayrollPeriod p) {

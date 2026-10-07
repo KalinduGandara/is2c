@@ -160,4 +160,22 @@ class PayslipExportApiTest extends FinalizedPayrollTestBase {
                 .andExpect(status().isUnprocessableContent())
                 .andExpect(jsonPath("$.detail", org.hamcrest.Matchers.containsString("mail")));
     }
+
+    @Test
+    @DisplayName("FR-095 payroll register and department summary are available as reports (PAYROLL:VIEW)")
+    void asReports() throws Exception {
+        JsonNode reg = body(getAs(hr, "/api/v1/reports/payroll-register?periodId={p}", march).andExpect(status().isOk()));
+        assertThat(reg.get("title").asString()).isEqualTo("Payroll register");
+        assertThat(reg.get("rows")).hasSize(2);
+        int net = -1;
+        for (int i = 0; i < reg.get("columns").size(); i++) {
+            if (reg.get("columns").get(i).get("header").asString().equals("Net")) {
+                net = i;
+            }
+        }
+        assertThat(reg.get("footer").get(net).asDouble()).isEqualTo(165600.0);
+        getAs(hr, "/api/v1/reports/payroll-department-summary/export?format=pdf&periodId={p}", march).andExpect(status().isOk());
+        getAs(data.bearerFor("ca", "COMPANY_ADMIN"), "/api/v1/reports/payroll-register?periodId={p}", march)
+                .andExpect(status().isForbidden());
+    }
 }

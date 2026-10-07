@@ -151,6 +151,18 @@ class AttendanceCalculatorTest {
         }
 
         @Test
+        @DisplayName("FR-048 an unmatched IN still records the first IN and lateness (no OUT, no early)")
+        void incompleteKeepsFirstIn() {
+            Result r = new In().punches(in(8, 45)).calc();
+            assertThat(r.status()).isEqualTo(DayStatus.INCOMPLETE);
+            assertThat(r.firstIn()).isEqualTo(LocalDateTime.of(D, java.time.LocalTime.of(8, 45)));
+            assertThat(r.lastOut()).isNull();
+            assertThat(r.lateMinutes()).isEqualTo(15);
+            assertThat(r.earlyMinutes()).isZero();
+            assertThat(r.exceptions()).contains("INCOMPLETE", "LATE");
+        }
+
+        @Test
         @DisplayName("worked below the half-day threshold → HALF_DAY, absent 0.5")
         void halfDay() {
             ShiftDefinition withHalf = shift(ShiftType.FIXED, List.of(s(8, 30, 17, 30)), BreakMode.FIXED, 60, 300, 10, 10, 240, OT);

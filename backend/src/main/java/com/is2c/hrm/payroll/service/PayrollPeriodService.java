@@ -259,6 +259,35 @@ public class PayrollPeriodService implements AttendanceLockPolicy {
                 visible.size(), byComponent, byDept);
     }
 
+    // ---------------------------------------------------------------- dashboard (FR-096)
+
+    /** Most recent period of the company (by year/month), if any. */
+    @Transactional(readOnly = true)
+    public java.util.Optional<PayrollPeriod> latest(UUID companyId) {
+        return list(companyId).stream().findFirst();
+    }
+
+    /** Most recent period that has been processed at least once. */
+    @Transactional(readOnly = true)
+    public java.util.Optional<PayrollPeriod> latestProcessed(UUID companyId) {
+        return list(companyId).stream().filter(p -> p.getProcessedAt() != null).findFirst();
+    }
+
+    /** Sum of overtime component lines (components paid per OT hour) of the visible results of a period. */
+    @Transactional(readOnly = true)
+    public BigDecimal otCost(UUID periodId) {
+        PayrollPeriod p = get(periodId);
+        Set<String> otCodes = components.findByCompanyIdOrderBySequenceAscCodeAsc(p.getCompanyId()).stream()
+                .filter(c -> c.getUnitMetric() != null && c.getUnitMetric().name().startsWith("OT_"))
+                .map(PayrollComponent::getCode).collect(Collectors.toSet());
+        List<UUID> ids = results(periodId).stream().map(PayrollResult::getId).toList();
+        if (ids.isEmpty() || otCodes.isEmpty()) {
+            return BigDecimal.ZERO.setScale(2);
+        }
+        return lines.findByResultIdIn(ids).stream().filter(l -> otCodes.contains(l.getComponentCode()))
+                .map(PayrollResultLine::getAmount).reduce(BigDecimal.ZERO.setScale(2), BigDecimal::add);
+    }
+
     private Set<UUID> visibleEmployees(PayrollPeriod p) {
         return employees.employedInScope(p.getCompanyId(), null, null, p.getStartDate(), p.getEndDate()).stream()
                 .map(Employee::getId).collect(Collectors.toSet());

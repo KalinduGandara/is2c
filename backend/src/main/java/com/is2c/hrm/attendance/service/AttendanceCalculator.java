@@ -74,6 +74,7 @@ public final class AttendanceCalculator {
         // 1-3: punches of this date → pairs (or the manual override pair)
         List<Pair> pairs = new ArrayList<>();
         boolean incomplete;
+        LocalDateTime openIn = null;
         if (in.override()) {
             incomplete = in.overrideIn() == null || in.overrideOut() == null || !in.overrideOut().isAfter(in.overrideIn());
             if (!incomplete) {
@@ -82,10 +83,17 @@ public final class AttendanceCalculator {
         } else {
             List<Punch> mine = in.punches().stream().filter(p -> owner(p.time(), in).equals(in.date()))
                     .sorted(Comparator.comparing(Punch::time)).toList();
-            incomplete = pair(mine, pairs);
+            openIn = pair(mine, pairs);
+            incomplete = openIn != null;
         }
         boolean hasPunches = !pairs.isEmpty() || incomplete;
-        LocalDateTime firstIn = pairs.isEmpty() ? null : pairs.get(0).start();
+        // an unclosed IN still counts as the day's first IN (and for lateness), never for worked time or early
+        LocalDateTime firstIn = pairs.isEmpty() ? openIn
+                : openIn != null && openIn.isBefore(pairs.get(0).start()) ? openIn : pairs.get(0).start();
+        List<Pair> arrivals = new ArrayList<>(pairs);
+        if (openIn != null) {
+            arrivals.add(new Pair(openIn, openIn));
+        }
         LocalDateTime lastOut = pairs.stream().map(Pair::end).max(Comparator.naturalOrder()).orElse(null);
 
         // 4: worked minutes with break deduction
@@ -108,24 +116,27 @@ public final class AttendanceCalculator {
             if (leave.half()) {
                 scheduled = scheduled / 2;
             }
-            if (!shift.isFlexible() && !pairs.isEmpty()) {
+            if (!shift.isFlexible() && !arrivals.isEmpty()) {
                 List<TimedSession> sessions = shift.sessionsOn(in.date());
                 for (int i = 0; i < sessions.size(); i++) {
                     TimedSession s = sessions.get(i);
                     LocalDateTime segStart = i == 0 ? LocalDateTime.MIN : midpoint(sessions.get(i - 1).end(), s.start());
                     LocalDateTime segEnd = i == sessions.size() - 1 ? LocalDateTime.MAX
                             : midpoint(s.end(), sessions.get(i + 1).start());
-                    List<Pair> seg = pairs.stream().filter(p -> !p.start().isBefore(segStart) && p.start().isBefore(segEnd))
-                            .toList();
-                    if (seg.isEmpty()) {
+                    List<Pair> segArrivals = arrivals.stream()
+                            .filter(p -> !p.start().isBefore(segStart) && p.start().isBefore(segEnd))
+                            .sorted(Comparator.comparing(Pair::start)).toList();
+                    if (segArrivals.isEmpty()) {
                         continue;
                     }
-                    LocalDateTime segIn = seg.get(0).start();
-                    LocalDateTime segOut = seg.stream().map(Pair::end).max(Comparator.naturalOrder()).orElseThrow();
+                    LocalDateTime segIn = segArrivals.get(0).start();
                     if (!ignoreLate && segIn.isAfter(s.start().plusMinutes(shift.lateGraceMinutes()))) {
                         late += (int) Duration.between(s.start(), segIn).toMinutes();
                     }
-                    if (!ignoreEarly && segOut.isBefore(s.end().minusMinutes(shift.earlyGraceMinutes()))) {
+                    LocalDateTime segOut = pairs.stream()
+                            .filter(p -> !p.start().isBefore(segStart) && p.start().isBefore(segEnd))
+                            .map(Pair::end).max(Comparator.naturalOrder()).orElse(null);
+                    if (segOut != null && !ignoreEarly && segOut.isBefore(s.end().minusMinutes(shift.earlyGraceMinutes()))) {
                         early += (int) Duration.between(segOut, s.end()).toMinutes();
                     }
                 }
@@ -230,8 +241,8 @@ public final class AttendanceCalculator {
         return in.fallbackOtPolicy();
     }
 
-    /** Pairs punches; returns true when a pair is left open (incomplete). */
-    static boolean pair(List<Punch> punches, List<Pair> out) {
+    /** Pairs punches; returns the start of a pair left open (incomplete), or null. */
+    static LocalDateTime pair(List<Punch> punches, List<Pair> out) {
         boolean anyDirection = punches.stream().anyMatch(p -> p.direction() != EventDirection.UNKNOWN);
         LocalDateTime open = null;
         for (Punch p : punches) {
@@ -251,7 +262,7 @@ public final class AttendanceCalculator {
             }
             // OUT without an open pair: stray, ignored
         }
-        return open != null;
+        return open;
     }
 
     /**

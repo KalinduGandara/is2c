@@ -2,8 +2,8 @@
 
 ## Status
 - Phase: 6 — Implement
-- Current task: T-034
-- Next: T-035
+- Current task: T-035
+- Next: T-036
 
 ## Log
 - 2026-10-07: Phases 1–5 complete (clarifications closed, requirements/design/tasks written). User waived approval gates ("start implementing").
@@ -40,3 +40,4 @@
 - 2026-10-07: T-031 done — PayrollApprovalService: submit (DRAFT only, rejects stale/blocking with 422) → PAYROLL_APPROVAL transaction + IN_REVIEW (attendance locked), send back with mandatory comment (cancels transaction, DRAFT), handler callbacks (approve → APPROVED, reject/cancel → DRAFT), finalize (PAYROLL:APPROVE, APPROVED only) locks results/lines and assigns per-company payslip numbers PS-YYYYMM-nnnnnn; post-finalize changes 409; DB trigger verified for UPDATE/DELETE; every transition audited. 250 tests green.
 - 2026-10-07: T-032 done — platform.export (TableData, TableExporter: CSV UTF-8 BOM + RFC 4180 + formula-injection guard, SXSSF XLSX with numeric amount cells, OpenPDF A4 with header/filters/generated-by and stamped "Page n of N"); PayslipService: single & bulk payslip PDFs (FINALIZED only, snapshot-only, department filter), email payslips as PDF attachments to employee personal email with per-recipient SENT/FAILED/NO_EMAIL (422 when mail disabled), payroll register (component columns + totals) and department summary in pdf/xlsx/csv. Design: exporters moved from report to platform.export to avoid a report↔payroll cycle. Deps: OpenPDF 3.0.5, POI 5.5.1. 261 tests green.
 - 2026-10-07: T-033 done — Payroll UI: periods list/open, period page (process/reprocess, submit blocked while stale, send back with mandatory comment, finalize confirm, totals, results with line drawer + payslip download, exceptions, one-time items, exports & bulk/email payslips with per-recipient results), components (type-dependent fields), slab tables editor, statutory view, employee Salary tab (effective-dated structures with component lines). Fixed alongside (separate commit): mail health indicator made /actuator/health DOWN without SMTP; dev launcher now stops a stale embedded postgres. 42 frontend unit + 2 E2E, 262 backend tests green.
+- 2026-10-07: T-034 done — report module: catalog filtered by permission (REPORT:VIEW + PAYROLL:VIEW / AUDIT:VIEW where noted) with typed params; 10 reports (employee list, daily attendance, attendance summary, attendance edits, leave balances, leave usage, roster grid, payroll register, department summary, audit log) as JSON and pdf/xlsx/csv (REPORT:EXPORT), params validated 422; GET /audit/export (AUDIT:EXPORT, ≤10k newest rows); dashboard KPIs (company-time-zone today, scope-filtered, payroll only with PAYROLL:VIEW). Calculator fix found by the dashboard test: an unclosed IN now records first IN and lateness (design §7.2 updated). 275 tests green.

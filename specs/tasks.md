@@ -150,7 +150,7 @@ Commands: backend `cd backend && ./mvnw -q verify`; frontend `cd frontend && npm
 
 ## Reports, Dashboard, Self-service
 
-- [ ] T-034: Reports & dashboard backend — report catalog & 9 reports with exports, audit export, dashboard KPIs.
+- [x] T-034: Reports & dashboard backend — report catalog & 9 reports with exports, audit export, dashboard KPIs.
   - Requirements: FR-095, FR-096, FR-008 (export)
   - Done when: API tests pass.
 
