@@ -158,7 +158,7 @@ Commands: backend `cd backend && ./mvnw -q verify`; frontend `cd frontend && npm
   - Requirements: FR-095, FR-096, FR-008 (UI)
   - Done when: component tests pass.
 
-- [ ] T-036: Self-service portal — remaining `/me` endpoints (profile, documents, schedule, payslips) + portal UI.
+- [x] T-036: Self-service portal — remaining `/me` endpoints (profile, documents, schedule, payslips) + portal UI.
   - Requirements: FR-100, FR-040
   - Done when: API + component tests pass.
 

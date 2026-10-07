@@ -184,6 +184,15 @@ public class AttendanceController {
         return query.own(employeeId, from, to).stream().map(d -> DailyDto.of(d, null)).toList();
     }
 
+    @GetMapping("/me/attendance/{date}")
+    public DayDetailDto myDay(@PathVariable LocalDate date) {
+        UUID employeeId = CurrentUser.get().employeeId();
+        if (employeeId == null) {
+            throw new NotFoundException("No employee is linked to this user");
+        }
+        return toDetail(query.ownDay(employeeId, date));
+    }
+
     DayDetailDto toDetail(AttendanceQueryService.DayDetail d) {
         ZoneId zone = org.settings(d.employee().getCompanyId()).timeZone();
         return new DayDetailDto(d.daily() == null ? null : DailyDto.of(d.daily(), d.employee()),

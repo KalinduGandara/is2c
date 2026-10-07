@@ -2,8 +2,8 @@
 
 ## Status
 - Phase: 6 — Implement
-- Current task: T-036
-- Next: T-037
+- Current task: T-037
+- Next: T-038
 
 ## Log
 - 2026-10-07: Phases 1–5 complete (clarifications closed, requirements/design/tasks written). User waived approval gates ("start implementing").
@@ -42,3 +42,4 @@
 - 2026-10-07: T-033 done — Payroll UI: periods list/open, period page (process/reprocess, submit blocked while stale, send back with mandatory comment, finalize confirm, totals, results with line drawer + payslip download, exceptions, one-time items, exports & bulk/email payslips with per-recipient results), components (type-dependent fields), slab tables editor, statutory view, employee Salary tab (effective-dated structures with component lines). Fixed alongside (separate commit): mail health indicator made /actuator/health DOWN without SMTP; dev launcher now stops a stale embedded postgres. 42 frontend unit + 2 E2E, 262 backend tests green.
 - 2026-10-07: T-034 done — report module: catalog filtered by permission (REPORT:VIEW + PAYROLL:VIEW / AUDIT:VIEW where noted) with typed params; 10 reports (employee list, daily attendance, attendance summary, attendance edits, leave balances, leave usage, roster grid, payroll register, department summary, audit log) as JSON and pdf/xlsx/csv (REPORT:EXPORT), params validated 422; GET /audit/export (AUDIT:EXPORT, ≤10k newest rows); dashboard KPIs (company-time-zone today, scope-filtered, payroll only with PAYROLL:VIEW). Calculator fix found by the dashboard test: an unclosed IN now records first IN and lateness (design §7.2 updated). 275 tests green.
 - 2026-10-07: T-035 done — Reports page (catalog list, typed parameter inputs incl. org lookups/leave types/rosters/payroll periods, on-screen table with header lines and totals, PDF/Excel/CSV export with REPORT:EXPORT, Audit log tab for AUDIT:VIEW), KPI dashboard (today counts, approvals link, headcount bars, payroll period & OT cost for payroll users, 60 s refresh), audit log date filters + export (AUDIT:EXPORT). Fixed flaky roster E2E locator (exact badge text). 47 unit + 2 E2E green.
+- 2026-10-07: T-036 done — self-service endpoints GET /me/profile (with org names), /me/documents (+content), /me/schedule (≤62 days), /me/attendance/{date} (raw events), /me/payslips (+{periodId}.pdf, own finalized only; others 404); portal UI at /me (profile & documents, change-password link, month attendance with punch drawer, 14-day schedule, leave balances/requests/apply/cancel, payslips download). Test infra: DbCleaner retries TRUNCATE on deadlock with leftover after-commit async work. 280 backend, 50 frontend unit, 2 E2E green.

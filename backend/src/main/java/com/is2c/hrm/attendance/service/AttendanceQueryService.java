@@ -111,6 +111,16 @@ public class AttendanceQueryService {
         return detail(e, date);
     }
 
+    /** Self-service: own day with raw events, without scope checks (FR-055, FR-100). */
+    @Transactional(readOnly = true)
+    public DayDetail ownDay(UUID employeeId, LocalDate date) {
+        Employee e = employees.byIds(List.of(employeeId)).get(employeeId);
+        if (e == null) {
+            throw new com.is2c.hrm.common.error.NotFoundException("Employee", employeeId);
+        }
+        return detail(e, date);
+    }
+
     /** Self-service: own attendance without scope checks (FR-055, FR-100). */
     @Transactional(readOnly = true)
     public List<AttendanceDaily> own(UUID employeeId, LocalDate from, LocalDate to) {

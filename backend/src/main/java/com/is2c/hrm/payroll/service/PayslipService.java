@@ -32,6 +32,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.is2c.hrm.audit.service.AuditEntry;
 import com.is2c.hrm.audit.service.AuditService;
 import com.is2c.hrm.common.error.InvalidStateException;
+import com.is2c.hrm.common.error.NotFoundException;
 import com.is2c.hrm.common.error.ValidationException;
 import com.is2c.hrm.employee.domain.Employee;
 import com.is2c.hrm.employee.service.EmployeeService;
@@ -43,7 +44,9 @@ import com.is2c.hrm.payroll.api.ComponentKind;
 import com.is2c.hrm.payroll.domain.PayrollPeriod;
 import com.is2c.hrm.payroll.domain.PayrollResult;
 import com.is2c.hrm.payroll.domain.PayrollResultLine;
+import com.is2c.hrm.payroll.domain.PayrollPeriodRepository;
 import com.is2c.hrm.payroll.domain.PayrollResultLineRepository;
+import com.is2c.hrm.payroll.domain.PayrollResultRepository;
 import com.is2c.hrm.platform.export.ExportFormat;
 import com.is2c.hrm.platform.export.TableData;
 import com.is2c.hrm.platform.export.TableData.Column;
@@ -58,6 +61,8 @@ import com.is2c.hrm.security.api.CurrentUser;
 public class PayslipService {
 
     private final PayrollPeriodService periods;
+    private final PayrollPeriodRepository periodRepository;
+    private final PayrollResultRepository results;
     private final PayrollResultLineRepository lines;
     private final EmployeeService employees;
     private final OrgDirectory org;
@@ -66,10 +71,13 @@ public class PayslipService {
     private final AuditService audit;
     private final Clock clock;
 
-    public PayslipService(PayrollPeriodService periods, PayrollResultLineRepository lines, EmployeeService employees,
+    public PayslipService(PayrollPeriodService periods, PayrollPeriodRepository periodRepository,
+            PayrollResultRepository results, PayrollResultLineRepository lines, EmployeeService employees,
             OrgDirectory org, NotificationService notifications, TableExporter exporter, AuditService audit,
             Clock clock) {
         this.periods = periods;
+        this.periodRepository = periodRepository;
+        this.results = results;
         this.lines = lines;
         this.employees = employees;
         this.org = org;
@@ -294,6 +302,34 @@ public class PayslipService {
             c.setGrayFill(0.92f);
         }
         return c;
+    }
+
+    // ---------------------------------------------------------------- self-service (FR-088, FR-100)
+
+    public record OwnPayslip(UUID periodId, int year, int month, String payslipNo, BigDecimal gross, BigDecimal net) {
+    }
+
+    /** Own finalized payslips, newest first (no scope check: the caller passes the linked employee). */
+    @Transactional(readOnly = true)
+    public List<OwnPayslip> own(UUID employeeId) {
+        List<PayrollResult> locked = results.findByEmployeeIdAndLockedTrue(employeeId);
+        Map<UUID, PayrollPeriod> byId = periodRepository.findAllById(locked.stream().map(PayrollResult::getPeriodId).toList())
+                .stream().collect(Collectors.toMap(PayrollPeriod::getId, x -> x));
+        return locked.stream().filter(r -> byId.containsKey(r.getPeriodId())).map(r -> {
+            PayrollPeriod p = byId.get(r.getPeriodId());
+            return new OwnPayslip(p.getId(), p.getYear(), p.getMonth(), r.getPayslipNo(), r.getGross(), r.getNet());
+        }).sorted(Comparator.comparing((OwnPayslip o) -> o.year() * 100 + o.month()).reversed()).toList();
+    }
+
+    @Transactional(readOnly = true)
+    public Export ownPayslip(UUID employeeId, UUID periodId) {
+        PayrollPeriod p = periodRepository.findById(periodId)
+                .filter(x -> x.getStatus() == PayrollPeriod.Status.FINALIZED)
+                .orElseThrow(() -> new NotFoundException("No finalized payslip for this period"));
+        PayrollResult r = results.findByPeriodIdAndEmployeeId(periodId, employeeId).filter(PayrollResult::isLocked)
+                .orElseThrow(() -> new NotFoundException("No finalized payslip for this period"));
+        return new Export("payslip-" + r.getEmployeeNumber() + "-" + key(p) + ".pdf", "application/pdf",
+                render(p, withLines(List.of(r))));
     }
 
     // ---------------------------------------------------------------- exports (FR-089)
