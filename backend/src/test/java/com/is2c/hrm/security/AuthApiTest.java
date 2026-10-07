@@ -29,8 +29,8 @@ import com.is2c.hrm.security.config.JwtConfigAccess;
 import com.is2c.hrm.security.domain.AppUser;
 import com.is2c.hrm.security.domain.AppUserRepository;
 import com.is2c.hrm.security.service.AdminBootstrap;
-import com.is2c.hrm.support.ApiTestBase;
-import com.is2c.hrm.support.TestData;
+import com.is2c.testsupport.ApiTestBase;
+import com.is2c.testsupport.TestData;
 
 import tools.jackson.databind.JsonNode;
 

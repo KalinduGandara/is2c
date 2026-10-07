@@ -24,7 +24,7 @@ import com.is2c.hrm.org.api.CompanyCreatedEvent;
 import com.is2c.hrm.security.api.ScopeType;
 import com.is2c.hrm.security.domain.ScopeItem;
 import com.is2c.hrm.security.domain.ScopeItem.ScopeItemType;
-import com.is2c.hrm.support.ApiTestBase;
+import com.is2c.testsupport.ApiTestBase;
 
 import tools.jackson.databind.JsonNode;
 

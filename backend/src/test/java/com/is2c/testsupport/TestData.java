@@ -1,4 +1,4 @@
-package com.is2c.hrm.support;
+package com.is2c.testsupport;
 
 import java.util.Arrays;
 import java.util.Set;

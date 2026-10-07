@@ -19,8 +19,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 
 import com.is2c.hrm.audit.service.AuditEntry;
 import com.is2c.hrm.audit.service.AuditService;
-import com.is2c.hrm.support.ApiTestBase;
-import com.is2c.hrm.support.TestData;
+import com.is2c.testsupport.ApiTestBase;
+import com.is2c.testsupport.TestData;
 
 class AuditApiTest extends ApiTestBase {
 

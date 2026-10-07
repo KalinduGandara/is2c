@@ -1,4 +1,4 @@
-package com.is2c.hrm.support;
+package com.is2c.testsupport;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;

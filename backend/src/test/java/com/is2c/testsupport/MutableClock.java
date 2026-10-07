@@ -1,4 +1,4 @@
-package com.is2c.hrm.support;
+package com.is2c.testsupport;
 
 import java.time.Clock;
 import java.time.Duration;

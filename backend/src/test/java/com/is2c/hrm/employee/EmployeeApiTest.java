@@ -26,8 +26,8 @@ import org.junit.jupiter.api.Test;
 import com.is2c.hrm.security.api.ScopeType;
 import com.is2c.hrm.security.domain.ScopeItem;
 import com.is2c.hrm.security.domain.ScopeItem.ScopeItemType;
-import com.is2c.hrm.support.ApiTestBase;
-import com.is2c.hrm.support.OrgFixtures.Structure;
+import com.is2c.testsupport.ApiTestBase;
+import com.is2c.testsupport.OrgFixtures.Structure;
 
 import tools.jackson.databind.JsonNode;
 

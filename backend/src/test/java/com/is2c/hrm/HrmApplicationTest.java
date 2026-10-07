@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 
-import com.is2c.hrm.support.IntegrationTest;
+import com.is2c.testsupport.IntegrationTest;
 
 @IntegrationTest
 class HrmApplicationTest {

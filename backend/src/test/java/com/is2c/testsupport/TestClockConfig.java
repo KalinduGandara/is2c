@@ -1,4 +1,4 @@
-package com.is2c.hrm.support;
+package com.is2c.testsupport;
 
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;

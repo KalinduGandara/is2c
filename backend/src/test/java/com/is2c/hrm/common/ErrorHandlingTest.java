@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.is2c.hrm.common.error.NotFoundException;
 import com.is2c.hrm.common.web.CorrelationId;
-import com.is2c.hrm.support.IntegrationTest;
+import com.is2c.testsupport.IntegrationTest;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;

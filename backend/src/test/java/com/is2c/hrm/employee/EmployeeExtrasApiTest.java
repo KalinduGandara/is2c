@@ -24,8 +24,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.ResultActions;
 
-import com.is2c.hrm.support.ApiTestBase;
-import com.is2c.hrm.support.OrgFixtures.Structure;
+import com.is2c.testsupport.ApiTestBase;
+import com.is2c.testsupport.OrgFixtures.Structure;
 
 import tools.jackson.databind.JsonNode;
 

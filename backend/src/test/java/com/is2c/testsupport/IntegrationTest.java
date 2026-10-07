@@ -1,4 +1,4 @@
-package com.is2c.hrm.support;
+package com.is2c.testsupport;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

@@ -12,7 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.is2c.hrm.security.api.Permissions;
 import com.is2c.hrm.security.domain.Role;
 import com.is2c.hrm.security.domain.RoleRepository;
-import com.is2c.hrm.support.ApiTestBase;
+import com.is2c.testsupport.ApiTestBase;
 
 class PermissionApiTest extends ApiTestBase {
 

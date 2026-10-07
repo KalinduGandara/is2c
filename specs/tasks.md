@@ -48,7 +48,7 @@ Commands: backend `cd backend && ./mvnw -q verify`; frontend `cd frontend && npm
   - Requirements: FR-004, FR-005, FR-010…013, FR-016 (UI)
   - Done when: component tests for key forms pass; screens work against backend (manual run).
 
-- [ ] T-011: Frontend employee hub — list/search, create/edit tabs (personal, employment, contacts, custom fields), status change, history, documents.
+- [x] T-011: Frontend employee hub — list/search, create/edit tabs (personal, employment, contacts, custom fields), status change, history, documents.
   - Requirements: FR-014, FR-015, FR-017…020 (UI)
   - Done when: component tests pass; manual run against backend.
 
