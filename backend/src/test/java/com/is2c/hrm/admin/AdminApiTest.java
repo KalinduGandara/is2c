@@ -234,4 +234,40 @@ class AdminApiTest extends ApiTestBase {
                 .andExpect(jsonPath("$.actions", hasSize(7)));
         getAs(data.bearerFor("e", "EMPLOYEE"), "/api/v1/admin/permissions").andExpect(status().isForbidden());
     }
+
+    @Test
+    @DisplayName("FR-005/FR-007 admins cannot reset, edit or deactivate users holding permissions they lack")
+    void noTakeoverOfStrongerUsers() throws Exception {
+        String caA = companyAdminOf(companyA);
+        var payroll = data.user("payA", ScopeType.COMPANY, Set.of(new ScopeItem(ScopeItemType.COMPANY, companyA)), "PAYROLL_OFFICER");
+        var scopedSa = data.user("saA", ScopeType.COMPANY, Set.of(new ScopeItem(ScopeItemType.COMPANY, companyA)), "SUPER_ADMIN");
+        var supervisor = data.user("supA", ScopeType.COMPANY, Set.of(new ScopeItem(ScopeItemType.COMPANY, companyA)), "SUPERVISOR");
+        for (var target : List.of(payroll, scopedSa)) {
+            postAs(caA, "/api/v1/admin/users/{id}/reset-password", Map.of("temporaryPassword", "Temp#Passw0rd1"), target.getId())
+                    .andExpect(status().isForbidden());
+            postAs(caA, "/api/v1/admin/users/{id}/deactivate", Map.of(), target.getId()).andExpect(status().isForbidden());
+        }
+        Map<String, Object> edit = user("payA", ScopeType.COMPANY, List.of("SUPERVISOR"));
+        edit.put("scopeCompanyIds", List.of(companyA));
+        edit.put("version", 0);
+        putAs(caA, "/api/v1/admin/users/{id}", edit, payroll.getId()).andExpect(status().isForbidden());
+        postAs(caA, "/api/v1/admin/users/{id}/reset-password", Map.of("temporaryPassword", "Temp#Passw0rd1"), supervisor.getId())
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
+    @DisplayName("FR-005 roles are global: only administrators with ALL scope can create, edit or delete them")
+    void rolesNeedGlobalScope() throws Exception {
+        String caA = companyAdminOf(companyA);
+        postAs(caA, "/api/v1/admin/roles", Map.of("code", "LOCAL", "name", "Local",
+                "permissions", List.of("EMPLOYEE:VIEW"))).andExpect(status().isForbidden());
+        String hrId = null;
+        for (JsonNode r : body(getAs(root, "/api/v1/admin/roles"))) {
+            if (r.get("code").asString().equals("HR_MANAGER")) {
+                hrId = r.get("id").asString();
+            }
+        }
+        putAs(caA, "/api/v1/admin/roles/{id}", Map.of("name", "x", "permissions", List.of("EMPLOYEE:VIEW")), hrId)
+                .andExpect(status().isForbidden());
+    }
 }

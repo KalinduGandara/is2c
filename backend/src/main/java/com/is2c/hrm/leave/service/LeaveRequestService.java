@@ -271,6 +271,8 @@ public class LeaveRequestService implements ApprovalHandler, ApprovedLeaveLookup
     @Override
     public void onApproved(UUID referenceId) {
         LeaveRequest r = find(referenceId);
+        // the period may have been locked after submission (FR-053): refuse rather than silently not reprocessing
+        locks.assertUnlocked(r.getCompanyId(), r.getLeaveDays().stream().map(LeaveRequest.Day::date).toList());
         LeaveType type = types.findById(r.getLeaveTypeId()).orElseThrow();
         if (!type.isUnlimited()) {
             LeaveBalance b = balance(r, type);

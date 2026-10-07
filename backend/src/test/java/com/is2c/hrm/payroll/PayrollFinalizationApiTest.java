@@ -218,4 +218,31 @@ class PayrollFinalizationApiTest extends ApiTestBase {
         postAs(hr, "/api/v1/attendance/adjustments", adj).andExpect(status().isOk());
         assertThat(body(getAs(po, "/api/v1/payroll/periods/{id}", march)).get("stale").asBoolean()).isTrue();
     }
+
+    @Test
+    @DisplayName("FR-053/FR-064 approving leave on dates locked after submission is rejected and stays pending")
+    void leaveApprovalOnLockedDate() throws Exception {
+        String march = processedMarch();
+        String annual = null;
+        for (JsonNode t : body(getAs(hr, "/api/v1/companies/{c}/leave-types", acme.companyId()))) {
+            if (t.get("code").asString().equals("ANNUAL")) {
+                annual = t.get("id").asString();
+            }
+        }
+        String leave = body(postAs(hr, "/api/v1/leave/requests", Map.of("employeeId", e1, "leaveTypeId", annual,
+                "fromDate", "2026-03-10", "toDate", "2026-03-10")).andExpect(status().isCreated())
+                .andExpect(jsonPath("$.status").value("PENDING"))).get("id").asString();
+        postAs(po, "/api/v1/payroll/periods/{id}/submit", Map.of(), march).andExpect(status().isOk());
+        String hr2 = data.bearerFor("hr2", "HR_MANAGER");
+        String txn = null;
+        for (JsonNode t : body(getAs(hr2, "/api/v1/approval/inbox"))) {
+            if (t.get("type").asString().equals("LEAVE_REQUEST")) {
+                txn = t.get("id").asString();
+            }
+        }
+        postAs(hr2, "/api/v1/approval/transactions/{id}/approve", Map.of("comment", "ok"), txn)
+                .andExpect(status().isUnprocessableContent()).andExpect(jsonPath("$.code").value("ATTENDANCE_LOCKED"));
+        getAs(hr, "/api/v1/leave/requests/{id}", leave).andExpect(jsonPath("$.status").value("PENDING"));
+        getAs(hr2, "/api/v1/approval/transactions/{id}", txn).andExpect(jsonPath("$.transaction.status").value("PENDING"));
+    }
 }

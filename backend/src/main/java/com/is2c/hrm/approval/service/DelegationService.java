@@ -9,6 +9,7 @@ import java.util.UUID;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.is2c.hrm.admin.service.UserAdminService;
 import com.is2c.hrm.approval.domain.ApprovalDelegation;
 import com.is2c.hrm.approval.domain.ApprovalDelegationRepository;
 import com.is2c.hrm.audit.service.AuditEntry;
@@ -35,13 +36,15 @@ public class DelegationService {
     private final AppUserRepository users;
     private final AuditService audit;
     private final Clock clock;
+    private final UserAdminService userAdmin;
 
     public DelegationService(ApprovalDelegationRepository delegations, AppUserRepository users, AuditService audit,
-            Clock clock) {
+            Clock clock, UserAdminService userAdmin) {
         this.delegations = delegations;
         this.users = users;
         this.audit = audit;
         this.clock = clock;
+        this.userAdmin = userAdmin;
     }
 
     public record DelegationData(UUID delegatorUserId, UUID delegateUserId, LocalDate fromDate, LocalDate toDate) {
@@ -51,7 +54,7 @@ public class DelegationService {
     public List<ApprovalDelegation> list(boolean all) {
         AuthenticatedUser me = CurrentUser.get();
         if (all && me.hasPermission(CONFIGURE)) {
-            return delegations.findByActiveTrue();
+            return delegations.findByActiveTrue().stream().filter(d -> userAdmin.manages(d.getDelegatorUserId())).toList();
         }
         List<ApprovalDelegation> mine = new ArrayList<>(delegations.findByDelegatorUserIdAndActiveTrue(me.id()));
         mine.addAll(delegations.findByDelegateUserIdAndActiveTrue(me.id()));
@@ -62,8 +65,9 @@ public class DelegationService {
     public ApprovalDelegation create(DelegationData d) {
         AuthenticatedUser me = CurrentUser.get();
         UUID delegator = d.delegatorUserId() == null ? me.id() : d.delegatorUserId();
-        if (!delegator.equals(me.id()) && !me.hasPermission(CONFIGURE)) {
-            throw new ForbiddenException("Only administrators can create delegations for other users");
+        if (!delegator.equals(me.id()) && (!me.hasPermission(CONFIGURE) || !userAdmin.manages(delegator)
+                || (d.delegateUserId() != null && !userAdmin.manages(d.delegateUserId())))) {
+            throw new ForbiddenException("You can only create delegations for users within your scope");
         }
         List<FieldError> errors = new ArrayList<>();
         if (d.delegateUserId() == null || users.findById(d.delegateUserId()).filter(AppUser::isActive).isEmpty()) {
@@ -90,7 +94,8 @@ public class DelegationService {
     public void revoke(UUID id) {
         AuthenticatedUser me = CurrentUser.get();
         ApprovalDelegation d = delegations.findById(id).orElseThrow(() -> new NotFoundException("Delegation", id));
-        if (!d.getDelegatorUserId().equals(me.id()) && !me.hasPermission(CONFIGURE)) {
+        if (!d.getDelegatorUserId().equals(me.id())
+                && (!me.hasPermission(CONFIGURE) || !userAdmin.manages(d.getDelegatorUserId()))) {
             throw new NotFoundException("Delegation", id);
         }
         d.deactivate();

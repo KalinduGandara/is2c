@@ -111,6 +111,13 @@ public class UserAdminService {
         return new PageImpl<>(filtered.subList(from, to), pageable, filtered.size());
     }
 
+    /** Whether the current user's data scope covers this user (used by other modules, e.g. delegations). */
+    @Transactional(readOnly = true)
+    public boolean manages(UUID userId) {
+        EmployeeScope actor = scope.forUser(CurrentUser.get());
+        return users.findById(userId).map(u -> canManage(actor, u)).orElse(false);
+    }
+
     @Transactional(readOnly = true)
     public AppUser get(UUID id) {
         return manageable(id);
@@ -131,6 +138,7 @@ public class UserAdminService {
     @Transactional
     public AppUser update(UUID id, UserData d) {
         AppUser u = manageable(id);
+        requireNotStronger(u);
         Versions.check(u, d.version());
         validateBasics(d, u);
         UserSnapshot before = UserSnapshot.of(u);
@@ -152,6 +160,7 @@ public class UserAdminService {
     @Transactional
     public AppUser setActive(UUID id, boolean active) {
         AppUser u = manageable(id);
+        requireNotStronger(u);
         if (!active && u.isActive() && roleCodes(u).contains(Role.SUPER_ADMIN)) {
             guardLastSuperAdmin(u.getId());
         }
@@ -167,6 +176,7 @@ public class UserAdminService {
     @Transactional
     public void resetPassword(UUID id, String temporaryPassword) {
         AppUser u = manageable(id);
+        requireNotStronger(u);
         PasswordPolicy.check("temporaryPassword", temporaryPassword);
         u.setPasswordHash(encoder.encode(temporaryPassword));
         u.setMustChangePassword(true);
@@ -184,6 +194,20 @@ public class UserAdminService {
             throw new NotFoundException("User", id);
         }
         return u;
+    }
+
+    /**
+     * FR-005/FR-007: an administrator may only change, reset or (de)activate users whose permissions they hold
+     * themselves; super administrators can only be managed by super administrators.
+     */
+    private void requireNotStronger(AppUser target) {
+        AuthenticatedUser actor = CurrentUser.get();
+        boolean targetIsSuperAdmin = roleCodes(target).contains(Role.SUPER_ADMIN);
+        Set<String> targetPermissions = new HashSet<>();
+        target.getRoles().forEach(r -> targetPermissions.addAll(r.getPermissions()));
+        if ((targetIsSuperAdmin && !actor.hasRole(Role.SUPER_ADMIN)) || !actor.permissions().containsAll(targetPermissions)) {
+            throw new ForbiddenException("You cannot manage a user with permissions you do not hold");
+        }
     }
 
     /** Global admins manage everyone; others only users confined to companies they fully cover. */

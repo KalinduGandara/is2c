@@ -58,6 +58,7 @@ public class RoleAdminService {
 
     @Transactional
     public Role create(RoleData d) {
+        requireGlobalAdmin();
         validate(d);
         if (d.code() == null || !d.code().matches("[A-Z][A-Z0-9_]{1,49}")) {
             throw new ValidationException("code", "must be 2-50 upper-case letters, digits or '_'");
@@ -74,6 +75,7 @@ public class RoleAdminService {
 
     @Transactional
     public Role update(UUID id, RoleData d) {
+        requireGlobalAdmin();
         Role r = get(id);
         Versions.check(r, d.version());
         if (Role.SUPER_ADMIN.equals(r.getCode())) {
@@ -93,6 +95,7 @@ public class RoleAdminService {
 
     @Transactional
     public void delete(UUID id) {
+        requireGlobalAdmin();
         Role r = get(id);
         if (r.isSystem()) {
             throw new ValidationException("System roles cannot be deleted");
@@ -120,6 +123,13 @@ public class RoleAdminService {
         }
         if (!CurrentUser.get().permissions().containsAll(d.permissions())) {
             throw new ForbiddenException("You cannot grant permissions you do not hold");
+        }
+    }
+
+    /** Roles are shared by every company, so only administrators with ALL scope may change them (FR-005, FR-006). */
+    private static void requireGlobalAdmin() {
+        if (CurrentUser.get().scopeType() != com.is2c.hrm.security.api.ScopeType.ALL) {
+            throw new ForbiddenException("Only administrators with access to all companies can change roles");
         }
     }
 }

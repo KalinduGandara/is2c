@@ -169,6 +169,10 @@ public class AdjustmentService implements ApprovalHandler {
     @Override
     public void onApproved(UUID referenceId) {
         AttendanceAdjustment adj = find(referenceId);
+        if (!adj.isOverrideLock()) {
+            // the period may have been locked after submission (FR-053)
+            locks.assertUnlocked(adj.getCompanyId(), List.of(adj.getWorkDate()));
+        }
         adj.decide(Status.APPLIED, clock.instant());
         adjustments.flush();
         processor.process(adj.getCompanyId(), List.of(adj.getEmployeeId()), adj.getWorkDate(), adj.getWorkDate(),
