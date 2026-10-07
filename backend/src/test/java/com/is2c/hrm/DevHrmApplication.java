@@ -23,7 +23,8 @@ public final class DevHrmApplication {
         Path dataDir = Path.of(System.getProperty("dev.datadir", "target/devdb")).toAbsolutePath();
         boolean clean = Boolean.getBoolean("dev.clean");
         if (clean && Files.exists(dataDir)) {
-            // A previous run may have been killed without shutting the database down; start from scratch.
+            // A previous run may have been killed without shutting the database down; stop it and start from scratch.
+            stopStalePostmaster(dataDir);
             try (var paths = Files.walk(dataDir)) {
                 paths.sorted(java.util.Comparator.reverseOrder()).forEach(p -> p.toFile().delete());
             }
@@ -54,5 +55,22 @@ public final class DevHrmApplication {
                 "hrm.storage.path", "target/dev-files",
                 "hrm.api-docs", "true").forEach(System::setProperty);
         SpringApplication.run(HrmApplication.class, args);
+    }
+
+    /** Terminates a postgres left running on {@code dataDir} (its pid is the first line of postmaster.pid). */
+    private static void stopStalePostmaster(Path dataDir) throws IOException {
+        Path pidFile = dataDir.resolve("postmaster.pid");
+        if (!Files.exists(pidFile)) {
+            return;
+        }
+        long pid = Long.parseLong(Files.readAllLines(pidFile).get(0).trim());
+        ProcessHandle.of(pid).ifPresent(p -> {
+            p.destroy();
+            try {
+                p.onExit().get(10, java.util.concurrent.TimeUnit.SECONDS);
+            } catch (Exception e) {
+                p.destroyForcibly();
+            }
+        });
     }
 }

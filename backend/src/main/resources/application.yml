@@ -53,6 +53,10 @@ management:
     web:
       exposure:
         include: health,info
+  health:
+    mail:
+      # only probe SMTP when mail delivery is switched on; otherwise health would be DOWN without a mail server
+      enabled: ${hrm.mail.enabled:false}
 
 hrm:
   edition: ${HRM_EDITION:ONPREM}
