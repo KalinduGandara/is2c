@@ -32,7 +32,7 @@ Commands: backend `cd backend && ./mvnw -q verify`; frontend `cd frontend && npm
   - Requirements: FR-004, FR-005, FR-006
   - Done when: API tests incl. scope filtering & 404-outside-scope pass.
 
-- [ ] T-007: Employee core — create/edit (optimistic lock), numbering formats, emergency contacts, reporting-manager validation, status lifecycle, employment history, search/filter/paging in scope, soft delete rule, salary-free DTOs.
+- [x] T-007: Employee core — create/edit (optimistic lock), numbering formats, emergency contacts, reporting-manager validation, status lifecycle, employment history, search/filter/paging in scope, soft delete rule, salary-free DTOs.
   - Requirements: FR-014, FR-015, FR-017, FR-018, FR-007 (no salary in profile)
   - Done when: API tests for each criterion incl. concurrent numbering pass.
 

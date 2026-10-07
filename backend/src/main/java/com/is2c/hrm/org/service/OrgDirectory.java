@@ -89,6 +89,26 @@ public class OrgDirectory {
         return id == null ? Optional.empty() : categories.findById(id);
     }
 
+    /** Display names by id for batches of org records (used by list views and reports). */
+    public java.util.Map<UUID, String> branchNames(java.util.Collection<UUID> ids) {
+        return branches.findAllById(ids).stream().collect(java.util.stream.Collectors.toMap(Branch::getId, Branch::getName));
+    }
+
+    public java.util.Map<UUID, String> departmentNames(java.util.Collection<UUID> ids) {
+        return departments.findAllById(ids).stream()
+                .collect(java.util.stream.Collectors.toMap(Department::getId, Department::getName));
+    }
+
+    public java.util.Map<UUID, String> designationNames(java.util.Collection<UUID> ids) {
+        return designations.findAllById(ids).stream()
+                .collect(java.util.stream.Collectors.toMap(Designation::getId, Designation::getName));
+    }
+
+    public java.util.Map<UUID, Boolean> categoryOtEligibility(java.util.Collection<UUID> ids) {
+        return categories.findAllById(ids).stream()
+                .collect(java.util.stream.Collectors.toMap(EmploymentCategory::getId, EmploymentCategory::isOtEligible));
+    }
+
     /** The department and all its descendants. */
     public Set<UUID> departmentWithDescendants(UUID departmentId) {
         Department d = department(departmentId).orElseThrow(() -> new NotFoundException("Department", departmentId));

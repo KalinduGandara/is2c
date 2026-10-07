@@ -46,6 +46,37 @@ public class OrgFixtures {
         return id(post(bearer, "/api/v1/companies/" + companyId + "/" + kind, Map.of("code", code, "name", code)));
     }
 
+    /** A company with one branch, one department, a designation and an employment category. */
+    public record Structure(UUID companyId, UUID branchId, UUID departmentId, UUID designationId, UUID categoryId) {
+    }
+
+    public Structure structure(String bearer, String companyCode) throws Exception {
+        UUID company = company(bearer, companyCode);
+        return new Structure(company, branch(bearer, company, "CMB"), department(bearer, company, "OPS", null),
+                lookup(bearer, company, "designations", "SE"), lookup(bearer, company, "employment-categories", "PERM"));
+    }
+
+    public Map<String, Object> employeeBody(Structure s, String firstName, String lastName) {
+        Map<String, Object> body = new HashMap<>();
+        body.put("companyId", s.companyId());
+        body.put("branchId", s.branchId());
+        body.put("departmentId", s.departmentId());
+        body.put("designationId", s.designationId());
+        body.put("categoryId", s.categoryId());
+        body.put("firstName", firstName);
+        body.put("lastName", lastName);
+        body.put("joinDate", "2025-01-15");
+        return body;
+    }
+
+    public UUID employee(String bearer, Structure s, String firstName, String lastName) throws Exception {
+        return id(post(bearer, "/api/v1/employees", employeeBody(s, firstName, lastName)));
+    }
+
+    public UUID employee(String bearer, Map<String, Object> body) throws Exception {
+        return id(post(bearer, "/api/v1/employees", body));
+    }
+
     public JsonNode post(String bearer, String url, Object body) throws Exception {
         String content = mvc.perform(MockMvcRequestBuilders.post(url).header("Authorization", bearer)
                         .contentType(MediaType.APPLICATION_JSON).content(json.writeValueAsString(body)))
