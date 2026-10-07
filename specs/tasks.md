@@ -106,7 +106,7 @@ Commands: backend `cd backend && ./mvnw -q verify`; frontend `cd frontend && npm
 
 ## Leave
 
-- [ ] T-024: Leave types (seed), balances, opening/adjust, accrual / year-end / expiry jobs.
+- [x] T-024: Leave types (seed), balances, opening/adjust, accrual / year-end / expiry jobs.
   - Requirements: FR-060, FR-061, FR-062
   - Done when: unit + API tests pass.
 
