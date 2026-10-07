@@ -124,7 +124,7 @@ Commands: backend `cd backend && ./mvnw -q verify`; frontend `cd frontend && npm
   - Requirements: FR-080, FR-081, FR-010 (seeding)
   - Done when: API tests pass incl. seeded LK values.
 
-- [ ] T-028: Salary structures — effective dating, supersede, lines/exclusions.
+- [x] T-028: Salary structures — effective dating, supersede, lines/exclusions.
   - Requirements: FR-082, FR-007
   - Done when: API tests pass.
 
