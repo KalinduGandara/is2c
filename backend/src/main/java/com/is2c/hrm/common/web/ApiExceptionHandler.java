@@ -34,7 +34,6 @@ import jakarta.validation.ConstraintViolationException;
 public class ApiExceptionHandler {
 
     private static final Logger log = LoggerFactory.getLogger(ApiExceptionHandler.class);
-    private static final Logger securityLog = LoggerFactory.getLogger("SECURITY");
 
     @ExceptionHandler(HrmException.class)
     ResponseEntity<ProblemDetail> handle(HrmException ex) {
@@ -92,7 +91,6 @@ public class ApiExceptionHandler {
 
     @ExceptionHandler(AccessDeniedException.class)
     ResponseEntity<ProblemDetail> handle(AccessDeniedException ex) {
-        securityLog.warn("Permission denied: {}", ex.getMessage());
         return problem(HttpStatus.FORBIDDEN, "FORBIDDEN", "You do not have permission to perform this action",
                 List.of());
     }

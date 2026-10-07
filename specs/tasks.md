@@ -18,7 +18,7 @@ Commands: backend `cd backend && ./mvnw -q verify`; frontend `cd frontend && npm
   - Requirements: FR-001, FR-002, FR-003, FR-005 (seed), NFR-002, NFR-003, NFR-019
   - Done when: API tests for every FR-001..003 criterion pass.
 
-- [ ] T-004: Audit module — append-only `audit_log` (+ PG trigger), `AuditService`, search endpoint, security events recorded.
+- [x] T-004: Audit module — append-only `audit_log` (+ PG trigger), `AuditService`, search endpoint, security events recorded.
   - Requirements: FR-008 (record/search/immutability)
   - Done when: tests prove UPDATE/DELETE rejected by DB, search filters & permission work.
 

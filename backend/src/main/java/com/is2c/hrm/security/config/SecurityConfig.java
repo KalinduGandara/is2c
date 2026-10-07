@@ -21,8 +21,6 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import com.is2c.hrm.common.config.HrmProperties;
-import com.is2c.hrm.security.service.SecurityEvent;
-import com.is2c.hrm.security.service.SecurityEvents;
 
 @Configuration
 @EnableWebSecurity
@@ -40,7 +38,7 @@ public class SecurityConfig {
 
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http, JwtPrincipalConverter converter,
-            ProblemResponseWriter problems, SecurityEvents events, Clock clock,
+            ProblemResponseWriter problems, Clock clock,
             @Value("${hrm.security.login-rate-limit-per-minute:20}") int loginRateLimit) throws Exception {
         http
                 .csrf(c -> c.disable()) // stateless bearer-token API; no cookies are used for auth
@@ -64,12 +62,8 @@ public class SecurityConfig {
                 .exceptionHandling(e -> e
                         .authenticationEntryPoint((req, res, ex) -> problems.write(res, HttpStatus.UNAUTHORIZED,
                                 "UNAUTHENTICATED", "Authentication required"))
-                        .accessDeniedHandler((req, res, ex) -> {
-                            events.publish(SecurityEvent.Type.PERMISSION_DENIED, null, req.getRemoteUser(),
-                                    req.getMethod() + " " + req.getRequestURI());
-                            problems.write(res, HttpStatus.FORBIDDEN, "FORBIDDEN",
-                                    "You do not have permission to perform this action");
-                        }))
+                        .accessDeniedHandler((req, res, ex) -> problems.write(res, HttpStatus.FORBIDDEN, "FORBIDDEN",
+                                "You do not have permission to perform this action")))
                 .addFilterBefore(new LoginRateLimitFilter(loginRateLimit, clock, problems),
                         BearerTokenAuthenticationFilter.class)
                 .addFilterAfter(new PasswordChangeGateFilter(problems), BearerTokenAuthenticationFilter.class);
