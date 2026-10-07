@@ -132,7 +132,7 @@ Commands: backend `cd backend && ./mvnw -q verify`; frontend `cd frontend && npm
   - Requirements: FR-085, FR-081 (no hard-coded rates), NFR-013
   - Done when: unit tests incl. LK worked examples pass.
 
-- [ ] T-030: Payroll periods & processing — period dates, one-time items, processor (attendance reprocess, inputs, results, exceptions), stale detection, review endpoints.
+- [x] T-030: Payroll periods & processing — period dates, one-time items, processor (attendance reprocess, inputs, results, exceptions), stale detection, review endpoints.
   - Requirements: FR-083, FR-084, FR-085, FR-086, FR-066
   - Done when: API tests pass.
 

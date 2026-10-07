@@ -120,6 +120,12 @@ public class AttendanceQueryService {
         return dailies.findByEmployeeIdAndWorkDateBetweenOrderByWorkDate(employeeId, from, to);
     }
 
+    /** All processed days of a company in a range (payroll input; no scope filter). */
+    @Transactional(readOnly = true)
+    public List<AttendanceDaily> forPayroll(UUID companyId, LocalDate from, LocalDate to) {
+        return dailies.findByCompanyIdAndWorkDateBetween(companyId, from, to);
+    }
+
     DayDetail detail(Employee e, LocalDate date) {
         ZoneId zone = org.settings(e.getCompanyId()).timeZone();
         Instant from = date.minusDays(1).atStartOfDay(zone).toInstant();

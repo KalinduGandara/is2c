@@ -2,8 +2,8 @@
 
 ## Status
 - Phase: 6 — Implement
-- Current task: T-030
-- Next: T-031
+- Current task: T-031
+- Next: T-032
 
 ## Log
 - 2026-10-07: Phases 1–5 complete (clarifications closed, requirements/design/tasks written). User waived approval gates ("start implementing").
@@ -36,3 +36,4 @@
 - 2026-10-07: T-027 done — payroll components (FIXED/PERCENT_OF/PER_UNIT/SLAB, named bases, sequence graph validation incl. forward refs & self-base), slab tables (contiguous from 0), StatutoryPack SPI + LK pack (EPF 8/12, ETF 3, APIT 2025 table, OT 1.5/1.5/2.0 @ Basic/240, NO_PAY @ company divisor, bonus/incentive/commission/allowance/loan/advance), BASIC system component, statutory view, pack catalog validates company pack. Spec: FR-081 NO_PAY divisor reconciled with FR-016 setting. 220 tests green.
 - 2026-10-07: T-028 done — V16 payroll core schema (structures, periods, items, results/lines w/ DB lock trigger, exceptions); salary structures (effective-dated supersede, line validation per component type, finalized-period guard, stale marking), payroll usage checker. 224 tests green.
 - 2026-10-07: T-029 done — pure PayrollEngine (sequence order, applicability AUTOMATIC/PER_EMPLOYEE/ONE_TIME/exclusions, FIXED w/ proration, PERCENT_OF, PER_UNIT fixed/basis w/ default divisor & overrides, progressive SLAB, named bases ± by kind, GROSS, HALF_UP lines, zero lines omitted). 11 engine tests with LK worked examples written first (incl. APIT 22,250.04 on 315,625). 235 tests green.
+- 2026-10-07: T-030 done — payroll periods (start-day ranges, overlap/duplicate checks), one-time items (ONE_TIME fixed components, stale on change), PayrollProcessor (attendance reprocess, metrics incl. payable OT & unpaid leave & absent-as-no-pay, proration, structure on period end/exit, engine, name snapshots, NO_SALARY_STRUCTURE / NEGATIVE_NET (blocking) / ATTENDANCE_EXCEPTIONS), scoped results/detail/exceptions/totals, AttendanceLockPolicy impl (IN_REVIEW+ locks; DRAFT stale). Spec FR-083 clarified to ONE_TIME fixed components. 243 tests green.

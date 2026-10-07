@@ -352,7 +352,7 @@ As a user, I want to sign in with username and password so that I can use the sy
 - Payroll SHALL use the structure effective on the period end date (or on the exit date for leavers).
 
 ### FR-083 One-time items — §4.6
-- An authorized user (`PAYROLL:EDIT`) SHALL be able to add, edit and remove one-time items (employee, ONE_TIME or FIXED component, amount > 0, note) for a payroll period in OPEN or DRAFT status; changes in DRAFT mark the period stale.
+- An authorized user (`PAYROLL:EDIT`) SHALL be able to add, edit and remove one-time items (employee, a FIXED component with ONE_TIME frequency, amount > 0, note) for a payroll period in OPEN or DRAFT status; changes in DRAFT mark the period stale.
 
 ### FR-084 Payroll periods — §4.6, §5.1
 - An authorized user (`PAYROLL:ADD`) SHALL be able to open a monthly payroll period for a company (year, month); start/end derive from the company's period start day (e.g. start day 21 → 21st of previous month to 20th of the month). Overlapping periods for a company SHALL be rejected (422).
