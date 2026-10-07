@@ -26,6 +26,14 @@ spring:
     deserialization:
       # Omitted primitive fields (e.g. boolean flags) default to false/0 instead of a 400.
       fail-on-null-for-primitives: false
+  mail:
+    host: ${HRM_SMTP_HOST:localhost}
+    port: ${HRM_SMTP_PORT:25}
+    username: ${HRM_SMTP_USERNAME:}
+    password: ${HRM_SMTP_PASSWORD:}
+    properties:
+      mail.smtp.auth: ${HRM_SMTP_AUTH:false}
+      mail.smtp.starttls.enable: ${HRM_SMTP_STARTTLS:false}
   messages:
     basename: messages
     encoding: UTF-8

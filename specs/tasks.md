@@ -92,7 +92,7 @@ Commands: backend `cd backend && ./mvnw -q verify`; frontend `cd frontend && npm
   - Requirements: FR-070, FR-071, FR-072, FR-073
   - Done when: API tests for each criterion pass (using a test handler).
 
-- [ ] T-021: Notifications — channel SPI, log & email channels, after-commit async dispatch, approval events.
+- [x] T-021: Notifications — channel SPI, log & email channels, after-commit async dispatch, approval events.
   - Requirements: FR-074
   - Done when: tests prove dispatch after commit, failure isolation.
 

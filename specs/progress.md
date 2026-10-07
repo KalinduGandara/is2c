@@ -2,8 +2,8 @@
 
 ## Status
 - Phase: 6 — Implement
-- Current task: T-021
-- Next: T-022
+- Current task: T-022
+- Next: T-023
 
 ## Log
 - 2026-10-07: Phases 1–5 complete (clarifications closed, requirements/design/tasks written). User waived approval gates ("start implementing").
@@ -27,3 +27,4 @@
 - 2026-10-07: T-018 done — pure AttendanceCalculator (punch ownership across D-1/D/D+1 windows, pairing w/ directions, fixed/punched breaks, per-session late/early incl. split, flexible required minutes, short, OT/extra by day type with fallback policy for off days, approval flag, half/full leave, manual override, status & exception flags). 27 calculator tests written first; 164 tests green. Design notes: short=0 on ABSENT/HALF_DAY to avoid double deduction; MORNING half-leave ignores late, AFTERNOON ignores early.
 - 2026-10-07: T-019 done — AttendanceProcessor (batch inputs, never future dates, lock skip, stale notification SPI), triggers on ingestion and ScheduleChangedEvent, nightly job (hrm.jobs.enabled), daily list (scope via employee subquery, exception filter), day detail with events/adjustments, /me/attendance. SPIs ApprovedLeaveLookup & AttendanceLockPolicy for leave/payroll. Self-service endpoints live in owning modules (no separate facade module). 172 tests green.
 - 2026-10-07: T-020 done — approval engine: workflows (most-specific dept>branch>company, 1-5 levels, unique scope), handler SPI with open string types, level snapshot, eligibility (manager/role-in-scope/user, requester & subject excluded, HR_MANAGER fallback recorded), approve/reject(comment)/cancel, auto-approve, inbox/my-requests/detail, delegation (on-behalf-of, non-transitive, overlap checks), seeded defaults, ApprovalEvent for notifications. 182 tests green.
+- 2026-10-07: T-021 done — NotificationChannel SPI (EMAIL via SMTP when hrm.mail.enabled, LOG otherwise), after-commit async dispatch of approval requested/completed, synchronous deliver() returning success for payslip emailing; failures logged only. 185 tests green.
