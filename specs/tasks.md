@@ -144,7 +144,7 @@ Commands: backend `cd backend && ./mvnw -q verify`; frontend `cd frontend && npm
   - Requirements: FR-088, FR-089
   - Done when: tests parse generated PDF/XLSX/CSV and check figures.
 
-- [ ] T-033: Frontend payroll — components, statutory settings, slab tables, salary structures, periods workflow, results review, one-time items, payslips & exports.
+- [x] T-033: Frontend payroll — components, statutory settings, slab tables, salary structures, periods workflow, results review, one-time items, payslips & exports.
   - Requirements: FR-080…089 (UI)
   - Done when: component tests pass.
 

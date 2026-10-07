@@ -9,6 +9,7 @@ import { useAuth } from '../../auth/AuthContext';
 import { DataTable } from '../../components/DataTable';
 import { showError, showSuccess } from '../../components/notify';
 import { PageHeader } from '../../components/PageHeader';
+import { SalaryStructurePanel } from '../payroll/SalaryStructurePanel';
 import { DocumentsPanel } from './DocumentsPanel';
 import { EmployeeForm } from './EmployeeForm';
 import { STATUS_COLORS, type Employee, type HistoryEntry } from './types';
@@ -99,6 +100,7 @@ export function EmployeeDetailPage() {
           <Tabs.Tab value="profile">Profile</Tabs.Tab>
           <Tabs.Tab value="history">History</Tabs.Tab>
           <Tabs.Tab value="documents">Documents</Tabs.Tab>
+          {can('PAYROLL:VIEW') && <Tabs.Tab value="salary">Salary</Tabs.Tab>}
         </Tabs.List>
         <Tabs.Panel value="profile">
           <Paper withBorder p="md">
@@ -130,6 +132,11 @@ export function EmployeeDetailPage() {
         <Tabs.Panel value="documents">
           <DocumentsPanel employeeId={employee.id} />
         </Tabs.Panel>
+        {can('PAYROLL:VIEW') && (
+          <Tabs.Panel value="salary">
+            <SalaryStructurePanel employeeId={employee.id} companyId={employee.companyId} />
+          </Tabs.Panel>
+        )}
       </Tabs>
       {statusOpen && (
         <StatusModal employee={employee} onClose={() => setStatusOpen(false)} onDone={() => {

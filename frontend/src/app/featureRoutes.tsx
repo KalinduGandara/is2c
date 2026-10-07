@@ -7,6 +7,8 @@ import { EmployeeDetailPage } from '../features/employees/EmployeeDetailPage';
 import { EmployeesPage } from '../features/employees/EmployeesPage';
 import { LeavePage } from '../features/leave/LeavePage';
 import { OrganizationPage } from '../features/org/OrganizationPage';
+import { PayrollPage } from '../features/payroll/PayrollPage';
+import { PeriodPage } from '../features/payroll/PeriodPage';
 import { ShiftsPage } from '../features/shifts/ShiftsPage';
 
 /** Feature modules register their pages here. */
@@ -17,6 +19,8 @@ export const featureRoutes: RouteObject[] = [
   { path: 'shifts', element: <RequirePermission anyOf={['SHIFT:VIEW', 'ROSTER:VIEW']}><ShiftsPage /></RequirePermission> },
   { path: 'attendance', element: <RequirePermission anyOf={['ATTENDANCE:VIEW']}><AttendancePage /></RequirePermission> },
   { path: 'leave', element: <RequirePermission anyOf={['LEAVE:VIEW']}><LeavePage /></RequirePermission> },
+  { path: 'payroll', element: <RequirePermission anyOf={['PAYROLL:VIEW']}><PayrollPage /></RequirePermission> },
+  { path: 'payroll/periods/:id', element: <RequirePermission anyOf={['PAYROLL:VIEW']}><PeriodPage /></RequirePermission> },
   { path: 'approvals', element: <ApprovalsPage /> },
   { path: 'admin', element: <RequirePermission anyOf={['ADMIN:VIEW', 'AUDIT:VIEW']}><AdminPage /></RequirePermission> },
 ];
