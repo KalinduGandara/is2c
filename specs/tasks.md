@@ -128,7 +128,7 @@ Commands: backend `cd backend && ./mvnw -q verify`; frontend `cd frontend && npm
   - Requirements: FR-082, FR-007
   - Done when: API tests pass.
 
-- [ ] T-029: `PayrollEngine` (pure) — FIXED/PERCENT_OF/PER_UNIT/SLAB, bases, proration, rounding.
+- [x] T-029: `PayrollEngine` (pure) — FIXED/PERCENT_OF/PER_UNIT/SLAB, bases, proration, rounding.
   - Requirements: FR-085, FR-081 (no hard-coded rates), NFR-013
   - Done when: unit tests incl. LK worked examples pass.
 
