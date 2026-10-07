@@ -80,7 +80,7 @@ Commands: backend `cd backend && ./mvnw -q verify`; frontend `cd frontend && npm
   - Requirements: FR-045, FR-046, FR-047
   - Done when: API tests pass.
 
-- [ ] T-018: `AttendanceCalculator` (pure) — window assignment, pairing, breaks, late/early/short, OT/extra, statuses, half-day leave, night & split shifts.
+- [x] T-018: `AttendanceCalculator` (pure) — window assignment, pairing, breaks, late/early/short, OT/extra, statuses, half-day leave, night & split shifts.
   - Requirements: FR-048
   - Done when: unit-test table covering each rule passes.
 

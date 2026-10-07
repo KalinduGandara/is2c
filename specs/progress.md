@@ -2,8 +2,8 @@
 
 ## Status
 - Phase: 6 — Implement
-- Current task: T-018
-- Next: T-019
+- Current task: T-019
+- Next: T-020
 
 ## Log
 - 2026-10-07: Phases 1–5 complete (clarifications closed, requirements/design/tasks written). User waived approval gates ("start implementing").
@@ -24,3 +24,4 @@
 - 2026-10-07: T-015 done — rosters (weekly/monthly periods, department subtree, cell & bulk edits, copy by offset, conflict detection: cross-roster duplicates / next-day overlap / inactive shift, publish/lock/unlock, revision history, ScheduleChangedEvent, PublishedRosterEntries for schedules). Jackson 3 FAIL_ON_NULL_FOR_PRIMITIVES disabled globally (omitted booleans default false). Test fixture field renamed `orgs` (avoids shadowing `org.*` packages). 128 tests green.
 - 2026-10-07: T-016 done — Shift & Roster UI (shifts w/ type-dependent fields, OT policies, rotation editor + assignment, roster list/grid with pending edits, bulk assign, copy, validate, publish/lock/unlock, revisions, weekly schedule view), default-shift picker on employee form. 31 unit + 2 E2E specs green; fixed React key-in-spread warning found by E2E.
 - 2026-10-07: T-017 done — attendance sources (hashed API keys, shown once), adapter SPI (generic JSON + CSV), idempotent ingestion (source+externalId), badge/number matching, unmatched + rematch, CSV import channel, AttendanceEventsIngested event, usage checker blocks employee delete. 137 tests green.
+- 2026-10-07: T-018 done — pure AttendanceCalculator (punch ownership across D-1/D/D+1 windows, pairing w/ directions, fixed/punched breaks, per-session late/early incl. split, flexible required minutes, short, OT/extra by day type with fallback policy for off days, approval flag, half/full leave, manual override, status & exception flags). 27 calculator tests written first; 164 tests green. Design notes: short=0 on ABSENT/HALF_DAY to avoid double deduction; MORNING half-leave ignores late, AFTERNOON ignores early.

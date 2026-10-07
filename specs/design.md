@@ -259,6 +259,7 @@ Input: `DaySchedule` for D-1, D, D+1, events in [D-1 00:00, D+2 12:00], approved
 7. **Raw OT**: WORKDAY: post = max(0, lastOut − lastSessionEnd) (+ pre = max(0, firstSessionStart − firstIn) if allowed); flex: max(0, worked − required). WEEKLY_OFF/HOLIDAY: worked. Then if not OT-eligible → extra = raw, OT = 0; else OT = raw < min ? 0 : floor(raw/unit)·unit, capped by max. Bucket by day type.
 8. **Status**: full-day leave → ON_LEAVE (absent 0); HOLIDAY/WEEKLY_OFF without punches → HOLIDAY/WEEKLY_OFF; WORKDAY without punches → ABSENT (absent 1, or 0.5 when half-day leave); incomplete → INCOMPLETE (absent 0); worked < half-day threshold → HALF_DAY (absent 0.5); half-day leave with work → HALF_DAY_LEAVE; else PRESENT. No shift on WORKDAY → UNSCHEDULED (absent 0).
 9. **Exceptions** flags: INCOMPLETE, ABSENT, LATE, EARLY, UNSCHEDULED, OT_PENDING.
+10. **Clarified rules (implemented in T-018)**: punch ownership distance is 0 inside a shift span, else minutes to the nearest span boundary (ties → earlier date); short minutes are 0 on ABSENT/HALF_DAY days (the absent fraction already penalises them); days without a shift (weekly-off/holiday by default schedule) use the employee's default-shift OT policy as fallback; UNSCHEDULED workdays earn no OT.
 
 `AttendanceProcessor` loads inputs in batch per company/date range, calls the calculator, upserts `attendance_daily`, checks locks (FR-053) and marks DRAFT payroll periods stale.
 
