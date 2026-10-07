@@ -9,6 +9,7 @@ import { WEEKDAYS } from '../../components/EntityForm';
 import { applyServerErrors, showError } from '../../components/notify';
 import type { CustomField } from '../org/CustomFieldsPanel';
 import { toOptions, useBranches, useDepartments, useLookups } from '../org/useOrgData';
+import { useShifts } from '../shifts/useShifts';
 import type { Contact, Employee, EmployeeListItem } from './types';
 
 export type EmployeeFormValues = Omit<Employee, 'id' | 'status' | 'exitDate' | 'exitReason' | 'version'> & {
@@ -41,6 +42,7 @@ export function EmployeeForm({ companyId, initial, onSubmit }: Props) {
   const { data: designations } = useLookups(companyId, 'designations');
   const { data: grades } = useLookups(companyId, 'grades');
   const { data: categories } = useLookups(companyId, 'employment-categories');
+  const { data: shifts = [] } = useShifts(companyId);
   const { data: customFields = [] } = useQuery({
     queryKey: ['custom-fields', companyId],
     queryFn: () => api<CustomField[]>(`/companies/${companyId}/custom-fields`),
@@ -148,6 +150,11 @@ export function EmployeeForm({ companyId, initial, onSubmit }: Props) {
           <Grid.Col span={{ base: 12, sm: 3 }}><DateInput label="Contract end" valueFormat="YYYY-MM-DD" clearable {...form.getInputProps('contractEndDate')} /></Grid.Col>
           <Grid.Col span={{ base: 12, sm: 6 }}><Select label="Reporting manager" clearable searchable data={managerOptions} {...form.getInputProps('reportingManagerId')} /></Grid.Col>
           <Grid.Col span={{ base: 12, sm: 6 }}><TextInput label="Attendance badge / device ID" {...form.getInputProps('badgeId')} /></Grid.Col>
+          <Grid.Col span={{ base: 12, sm: 6 }}>
+            <Select label="Default shift" clearable searchable
+              data={shifts.filter((s) => s.active || s.id === initial?.defaultShiftId).map((s) => ({ value: s.id, label: `${s.code} — ${s.name}` }))}
+              {...form.getInputProps('defaultShiftId')} />
+          </Grid.Col>
           <Grid.Col span={{ base: 12, sm: 6 }}>
             <MultiSelect label="Weekly-off days" description="Leave empty to use the company default" data={WEEKDAYS}
               value={form.getValues().weeklyOffDays ?? []}

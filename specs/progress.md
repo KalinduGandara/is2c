@@ -2,8 +2,8 @@
 
 ## Status
 - Phase: 6 — Implement
-- Current task: T-016
-- Next: T-017
+- Current task: T-017
+- Next: T-018
 
 ## Log
 - 2026-10-07: Phases 1–5 complete (clarifications closed, requirements/design/tasks written). User waived approval gates ("start implementing").
@@ -22,3 +22,4 @@
 - 2026-10-07: T-013 done — shifts (6 types, midnight/split/flex rules, deactivate-only), OT policies (min/round/cap/approval), rotation patterns + assignments (overlap checks), employee default-shift validation via EmployeeExtension; pure ShiftDefinition/OtPolicyDefinition in shift.api. 112 tests green.
 - 2026-10-07: T-014 done — pure ScheduleRules (roster > rotation > default/weekly-off; holidays → HOLIDAY keeping shift) + batch ScheduleResolver + GET /schedules. Fixed two latent bugs found by the API test: weekday-set converter turned NULL into empty set (overrode company weekly-off), and Hibernate dropped null OFF days in rotation patterns (V9 adds explicit off_day flag). 119 tests green.
 - 2026-10-07: T-015 done — rosters (weekly/monthly periods, department subtree, cell & bulk edits, copy by offset, conflict detection: cross-roster duplicates / next-day overlap / inactive shift, publish/lock/unlock, revision history, ScheduleChangedEvent, PublishedRosterEntries for schedules). Jackson 3 FAIL_ON_NULL_FOR_PRIMITIVES disabled globally (omitted booleans default false). Test fixture field renamed `orgs` (avoids shadowing `org.*` packages). 128 tests green.
+- 2026-10-07: T-016 done — Shift & Roster UI (shifts w/ type-dependent fields, OT policies, rotation editor + assignment, roster list/grid with pending edits, bulk assign, copy, validate, publish/lock/unlock, revisions, weekly schedule view), default-shift picker on employee form. 31 unit + 2 E2E specs green; fixed React key-in-spread warning found by E2E.

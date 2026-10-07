@@ -70,7 +70,7 @@ Commands: backend `cd backend && ./mvnw -q verify`; frontend `cd frontend && npm
   - Requirements: FR-035, FR-036, FR-037, FR-038, FR-039, FR-040
   - Done when: API tests for each criterion pass.
 
-- [ ] T-016: Frontend shift & roster — shifts, OT policies, rotations; roster grid (employees × dates), bulk assign, copy, publish/lock, revisions; my schedule.
+- [x] T-016: Frontend shift & roster — shifts, OT policies, rotations; roster grid (employees × dates), bulk assign, copy, publish/lock, revisions; my schedule.
   - Requirements: FR-030…040 (UI)
   - Done when: component tests pass; manual run.
 

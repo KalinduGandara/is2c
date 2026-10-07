@@ -89,8 +89,8 @@ export function EntityForm({ fields, initialValues, onSubmit, onCancel, submitLa
         {fields
           .filter((f) => !f.visible || f.visible(form.getValues()))
           .map((f) => {
+            const key = form.key(f.name);
             const common = {
-              key: form.key(f.name),
               label: f.label,
               description: f.description,
               placeholder: f.placeholder,
@@ -98,24 +98,24 @@ export function EntityForm({ fields, initialValues, onSubmit, onCancel, submitLa
             };
             switch (f.type) {
               case 'textarea':
-                return <Textarea {...common} autosize minRows={2} {...form.getInputProps(f.name)} />;
+                return <Textarea key={key} {...common} autosize minRows={2} {...form.getInputProps(f.name)} />;
               case 'number':
-                return <NumberInput {...common} min={f.min} max={f.max} {...form.getInputProps(f.name)} />;
+                return <NumberInput key={key} {...common} min={f.min} max={f.max} {...form.getInputProps(f.name)} />;
               case 'checkbox':
                 return (
-                  <Checkbox key={common.key} label={f.label} description={f.description}
+                  <Checkbox key={key} label={f.label} description={f.description}
                     {...form.getInputProps(f.name, { type: 'checkbox' })} />
                 );
               case 'select':
-                return <Select {...common} data={f.options ?? []} clearable={!f.required} searchable {...form.getInputProps(f.name)} />;
+                return <Select key={key} {...common} data={f.options ?? []} clearable={!f.required} searchable {...form.getInputProps(f.name)} />;
               case 'multiselect':
-                return <MultiSelect {...common} data={f.options ?? []} searchable {...form.getInputProps(f.name)} />;
+                return <MultiSelect key={key} {...common} data={f.options ?? []} searchable {...form.getInputProps(f.name)} />;
               case 'date':
-                return <DateInput {...common} valueFormat="YYYY-MM-DD" clearable {...form.getInputProps(f.name)} />;
+                return <DateInput key={key} {...common} valueFormat="YYYY-MM-DD" clearable {...form.getInputProps(f.name)} />;
               case 'time':
-                return <TimeInput {...common} {...form.getInputProps(f.name)} />;
+                return <TimeInput key={key} {...common} {...form.getInputProps(f.name)} />;
               default:
-                return <TextInput {...common} {...form.getInputProps(f.name)} />;
+                return <TextInput key={key} {...common} {...form.getInputProps(f.name)} />;
             }
           })}
         <Group justify="flex-end" mt="sm">
