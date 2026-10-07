@@ -277,4 +277,14 @@ class AuthApiTest extends ApiTestBase {
         clock.advance(Duration.ofSeconds(61));
         login("nobody", "x").andExpect(status().isUnauthorized());
     }
+
+    @Test
+    @DisplayName("NFR-003 passwords are stored as BCrypt hashes with cost 12")
+    void bcryptCost() throws Exception {
+        postAs(data.bearerFor("root", "SUPER_ADMIN"), "/api/v1/admin/users", java.util.Map.of("username", "hashme",
+                "displayName", "Hash Me", "password", "Initial#Pass123", "roles", java.util.List.of("EMPLOYEE"),
+                "scopeType", "ALL")).andExpect(org.springframework.test.web.servlet.result.MockMvcResultMatchers.status().isCreated());
+        String hash = jdbc.queryForObject("SELECT password_hash FROM app_user WHERE username = 'hashme'", String.class);
+        org.assertj.core.api.Assertions.assertThat(hash).matches("^\\$2[aby]\\$12\\$.{53}$");
+    }
 }

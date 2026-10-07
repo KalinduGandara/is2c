@@ -2,7 +2,7 @@ import en from './en.json';
 import raw from './en.json?raw';
 
 /** NFR-010: the English bundle must be well-formed — duplicate keys silently shadow each other in JSON. */
-describe('i18n bundle', () => {
+describe('NFR-010 i18n bundle', () => {
   it('has no duplicate keys within an object', () => {
     const duplicates: string[] = [];
     const stack: Set<string>[] = [new Set()];

@@ -111,7 +111,7 @@ class ApprovalApiTest extends ApiTestBase {
     }
 
     @Test
-    @DisplayName("FR-071 two-level workflow: manager then HR; final approval calls the handler")
+    @DisplayName("FR-071/072 two-level workflow: manager then HR (each sees it in their inbox); final approval calls the handler")
     void multiLevel() throws Exception {
         workflow(Map.of(), List.of(level("REPORTING_MANAGER", null, null), level("ROLE", "HR_MANAGER", null)));
         ApprovalOutcome outcome = submit(staffUser, staffEmp);

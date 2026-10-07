@@ -229,7 +229,7 @@ class EmployeeApiTest extends ApiTestBase {
     }
 
     @Test
-    @DisplayName("FR-017 unused employees are soft-deleted and disappear")
+    @DisplayName("FR-017 NFR-014 unused employees are soft-deleted and disappear")
     void softDelete() throws Exception {
         UUID id = orgs.employee(hr, acme, "A", "B");
         deleteAs(hr, "/api/v1/employees/{id}", id).andExpect(status().isNoContent());
@@ -238,7 +238,7 @@ class EmployeeApiTest extends ApiTestBase {
     }
 
     @Test
-    @DisplayName("FR-018 search by text and filters with paging and sorting")
+    @DisplayName("FR-018 NFR-016 search by text and filters with paging (max 200) and sorting")
     void search() throws Exception {
         Map<String, Object> a = orgs.employeeBody(acme, "Saman", "Silva");
         a.put("nic", "851234567V");

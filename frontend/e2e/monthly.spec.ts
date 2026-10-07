@@ -10,7 +10,7 @@ async function as(browser: Browser, username: string, initial: string, changed: 
   return page;
 }
 
-test('monthly flow: setup → leave → attendance → payroll approval & finalization → own payslip', async ({ page, browser }) => {
+test('NFR-020 FR-087 FR-088 FR-100 monthly flow: setup → leave → attendance → payroll approval & finalization → own payslip', async ({ page, browser }) => {
   test.setTimeout(240_000);
   // The payroll month is the previous calendar month (attendance is never processed for future dates).
   const now = new Date();

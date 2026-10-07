@@ -4,7 +4,7 @@ import { apiAs, createUser, loginAs, loginAsAdmin, setupCompany } from './helper
 // NFR-012: usable from 360 px. Runs in both projects (desktop and Pixel 7); the viewport is pinned to 360 px here.
 test.use({ viewport: { width: 360, height: 780 } });
 
-test('employee portal and dashboard at 360 px without horizontal scrolling', async ({ page, browser }) => {
+test('NFR-012 employee portal and dashboard at 360 px without horizontal scrolling', async ({ page, browser }) => {
   const code = `M${Date.now().toString().slice(-6)}`;
   await loginAsAdmin(page);
   const org = await setupCompany(page, code);

@@ -195,7 +195,7 @@ class PayrollEngineTest {
     }
 
     @Test
-    @DisplayName("FR-085 amounts round HALF_UP to 2 decimals and the calculation is deterministic")
+    @DisplayName("FR-085 NFR-013 amounts round HALF_UP to 2 decimals and the calculation is deterministic")
     void rounding() {
         // 1,000.50 × 1% = 10.005 → 10.01 with HALF_UP (banker's rounding would give 10.00)
         List<ComponentDef> defs = List.of(basic(), percent("ODD", ComponentKind.DEDUCTION, 100, "COMPONENT:BASIC", "1"));

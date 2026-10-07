@@ -46,3 +46,97 @@
 - 2026-10-07: T-037 done — springdoc 3.1.1: OpenAPI 3 at /api/docs, UI at /api/docs/ui, bearer JWT scheme, only when hrm.api-docs=true (dev launcher on); perf test (-Pperf) seeds 1,000 employees + 49k punches and times payroll processing incl. attendance reprocessing: 48 s → 4.2 s after removing per-employee structure queries (each auto-flushed ~31k managed attendance rows); i18n test checks every literal t() key exists. Known gap vs NFR-010: feature screens (T-016 onwards) use literal English labels, not i18n keys. 283 backend, 51 frontend green.
 - 2026-10-07: T-038 done — deploy/Dockerfile (node build → maven package with SPA embedded → non-root JRE image with healthcheck), compose.onprem.yml (internal-CA HTTPS) / compose.cloud.yml (Let's Encrypt + HSTS) with db, app, caddy and a daily backup service (pg_dump + documents archive, retention), backup.sh/restore.sh, .env.example, SPA history fallback (deep links), forward-headers behind Caddy in prod, docs (install-onprem, deploy-cloud, backup-recovery, release-update). Verified with Docker 27: stack healthy, SPA + deep link + login over HTTPS, HTTP→HTTPS redirect, CSP/HSTS headers, browser login without console errors, backup → change → restore drill brought back exactly the pre-backup DB rows and files. 285 backend tests green.
 - 2026-10-07: T-039 done — Playwright monthly flow (desktop): API setup of org/users/punch feed, salary structure in UI, employee applies leave in portal, HR approves in inbox, payroll open → process (incl. attendance reprocessing, net 92,000.00) → submit, HR approves & finalizes, employee downloads own payslip PDF; responsive spec at 360 px in desktop + Pixel 7 projects (dashboard and every portal tab without horizontal scroll). Flakiness root-caused to the shared E2E database (company selector defaulting to another spec's company) and fixed with explicit company selection. 5 E2E specs green 3× in a row.
+
+## Traceability matrix
+
+Each requirement is mapped to the tests whose names cite it (JUnit `@DisplayName`, Vitest/Playwright titles); manual verification is marked.
+
+| Requirement | Verified by |
+|---|---|
+| FR-001 | `AuthApiTest.loginSuccess`; `AuthApiTest.invalidCredentials`; `AuthApiTest.lockout`; `AuthApiTest.successResetsCounter`; `AuthApiTest.inactiveUser`; … +4 more |
+| FR-002 | `AuthApiTest.refreshRotation`; `AuthApiTest.refreshExpired`; `AuthApiTest.logoutAndHashing`; `client.test.ts` “FR-002 refreshes once on 401 and retries with the ”; `client.test.ts` “FR-002 clears the session and notifies when refres” |
+| FR-003 | `AdminApiTest.resetPassword`; `AuthApiTest.changePassword`; `AuthApiTest.mustChangeGate`; `LoginPage.test.tsx` “FR-001/FR-003 signs in and redirects to change pas”; `LoginPage.test.tsx` “FR-003 change-password form checks confirmation be” |
+| FR-004 | `AdminApiTest.createUser`; `AdminApiTest.createValidation`; `AdminApiTest.deactivate`; `AdminApiTest.lastSuperAdmin`; `AuthApiTest.bootstrapAdmin`; … +1 more |
+| FR-005 | `AdminApiTest.escalation`; `AdminApiTest.customRoles`; `AdminApiTest.systemRoles`; `AdminApiTest.roleEscalation`; `AdminApiTest.catalog`; … +12 more |
+| FR-006 | `AdminApiTest.scopedAdministration`; `AdminApiTest.escalation`; `AttendanceProcessingApiTest.scope`; `EmployeeApiTest.departmentScope`; `EmployeeApiTest.ownScope`; … +2 more |
+| FR-007 | `EmployeeApiTest.noSalary`; `PayrollConfigApiTest.permissions`; `PayrollProcessingApiTest.permissions`; `SalaryStructureApiTest.sensitivity` |
+| FR-008 | `AuditApiTest.immutable`; `AuditApiTest.recordContents`; `AuditApiTest.searchFilters`; `AuditApiTest.permission`; `AuditApiTest.noMutationApi`; … +5 more |
+| FR-010 | `OrgApiTest.createCompany`; `OrgApiTest.companyValidation`; `OrgApiTest.createCompanyRestrictions`; `PayrollConfigApiTest.unknownPack`; `OrganizationPage.test.tsx` “FR-010 lists companies and FR-011 shows branches o” |
+| FR-011 | `EmployeeApiTest.orgDeleteGuards`; `OrgApiTest.branches`; `OrganizationPage.test.tsx` “FR-010 lists companies and FR-011 shows branches o” |
+| FR-012 | `OrgApiTest.departments`; `OrgApiTest.departmentScopeDescendants`; `useOrgData.test.ts` “FR-012 orders departments depth-first with depth f” |
+| FR-013 | `EmployeeApiTest.orgDeleteGuards`; `OrgApiTest.lookups` |
+| FR-014 | `EmployeeApiTest.concurrentNumbering`; `EmployeeApiTest.branchSequences`; `EmployeeApiTest.explicitNumber`; `EmployeeNumberFormatTest.defaultFormat`; `EmployeeNumberFormatTest.branchYear`; … +2 more |
+| FR-015 | `EmployeeApiTest.createFull`; `EmployeeApiTest.mandatoryFields`; `EmployeeApiTest.referenceAndDateRules`; `EmployeeApiTest.uniqueness`; `EmployeeApiTest.reportingManager`; … +2 more |
+| FR-016 | `OrgApiTest.settings` |
+| FR-017 | `IngestionApiTest.usageBlocksDelete`; `EmployeeApiTest.history`; `EmployeeApiTest.statusRules`; `EmployeeApiTest.softDelete`; `employees.test.tsx` “FR-017 requires a status choice before changing st” |
+| FR-018 | `EmployeeApiTest.search`; `employees.test.tsx` “FR-018 lists employees and passes search filters t” |
+| FR-019 | `EmployeeExtrasApiTest.definitions`; `EmployeeExtrasApiTest.valueValidation`; `EmployeeExtrasApiTest.deactivate`; `employees.test.tsx` “FR-019 shows server errors for custom fields” |
+| FR-020 | `EmployeeExtrasApiTest.documents`; `EmployeeExtrasApiTest.documentValidation`; `EmployeeExtrasApiTest.docx`; `EmployeeExtrasApiTest.documentAccess` |
+| FR-025 | `HolidayApiTest.crud`; `HolidayApiTest.duplicates`; `HolidayApiTest.copyYear`; `HolidayApiTest.visibility`; `HolidaysPanel.test.tsx` “FR-025 lists holidays for the year and copies to a” |
+| FR-030 | `ShiftApiTest.fixedShift`; `ShiftApiTest.midnightRules`; `ShiftApiTest.splitRules`; `ShiftApiTest.flexibleRules`; `ShiftApiTest.deactivate`; … +2 more |
+| FR-031 | `ShiftApiTest.patterns`; `ShiftApiTest.assignments`; `ShiftRulesTest.rotationModulo` |
+| FR-032 | `ShiftApiTest.otPolicies`; `ShiftRulesTest.otPolicy` |
+| FR-033 | `RosterApiTest.scheduleIntegration`; `ScheduleApiTest.schedules`; `ScheduleRulesTest.defaults`; `ScheduleRulesTest.employeeWeeklyOff`; `ScheduleRulesTest.rotation`; … +3 more |
+| FR-035 | `RosterApiTest.periods`; `RosterApiTest.departmentRosterAndCellRules` |
+| FR-036 | `RosterApiTest.departmentRosterAndCellRules`; `RosterApiTest.bulkAssign`; `shifts.test.tsx` “FR-036 sends only changed cells (OFF and cleared) ” |
+| FR-037 | `RosterApiTest.copy` |
+| FR-038 | `RosterApiTest.overlapConflict`; `RosterApiTest.crossRosterAndInactive` |
+| FR-039 | `AttendanceProcessingApiTest.rosterChangeReprocesses`; `RosterApiTest.lifecycle`; `shifts.test.tsx` “FR-039 asks for a reason before saving changes to ”; `shifts.test.tsx` “FR-039 shows a locked roster read-only” |
+| FR-040 | `SelfServiceApiTest.schedule`; `ScheduleApiTest.schedules` |
+| FR-045 | `IngestionApiTest.apiKeys`; `IngestionApiTest.ingest`; `IngestionApiTest.batchLimit`; `IngestionApiTest.rematch`; `IngestionApiTest.permissions` |
+| FR-046 | `AdapterTest.csv`; `IngestionApiTest.csvImport` |
+| FR-047 | `AdapterTest.json` |
+| FR-048 | `AttendanceCalculatorTest.incompleteKeepsFirstIn`; `AttendanceCalculatorTest.deterministic`; `AttendanceProcessingApiTest.ingestedPunchesProcessed`; `AttendanceProcessingApiTest.absencesAndFuture`; `AttendanceProcessingApiTest.idempotentAndJoinDate`; … +1 more |
+| FR-050 | `AdjustmentApiTest.manualCreate`; `AdjustmentApiTest.validation`; `AttendanceCalculatorTest.override` |
+| FR-051 | `AdjustmentApiTest.editIn`; `AdjustmentApiTest.validation`; `AttendanceCalculatorTest.override`; `attendance.test.tsx` “FR-051 submits a correction with reason and next-d” |
+| FR-052 | `AdjustmentApiTest.approvalFlow` |
+| FR-053 | `AdjustmentApiTest.lockAndOverride`; `AdjustmentApiTest.staleNotification`; `LeaveRequestApiTest.locked`; `PayrollFinalizationApiTest.attendanceLock`; `PayrollProcessingApiTest.lockAndState` |
+| FR-054 | `AdjustmentApiTest.exceptionsList`; `AttendanceProcessingApiTest.exceptionFilter` |
+| FR-055 | `AttendanceProcessingApiTest.detailAndSelfService`; `SelfServiceApiTest.attendanceDay` |
+| FR-056 | `AdjustmentApiTest.otApproval`; `attendance.test.tsx` “FR-056 approves selected pending overtime in bulk” |
+| FR-060 | `LeaveBalanceApiTest.seeded`; `LeaveBalanceApiTest.typeCrud` |
+| FR-061 | `LeaveBalanceApiTest.balancesAndPostings`; `LeaveBalanceApiTest.ownBalances` |
+| FR-062 | `LeaveBalanceApiTest.balancesAndPostings`; `LeaveBalanceApiTest.proRataJoiner`; `LeaveBalanceApiTest.monthlyAccrual`; `LeaveBalanceApiTest.carryForwardAndExpiry`; `LeaveRulesTest.proRata`; … +1 more |
+| FR-063 | `LeaveRequestApiTest.dayCounting`; `LeaveRequestApiTest.validation`; `LeaveRequestApiTest.overlap`; `LeaveRequestApiTest.attachments`; `LeaveRequestApiTest.locked`; … +2 more |
+| FR-064 | `LeaveRequestApiTest.approve`; `LeaveRequestApiTest.rejectAndUnpaid`; `LeaveRequestApiTest.cancellation` |
+| FR-065 | `LeaveRequestApiTest.calendar`; `leave.test.tsx` “FR-065 shows holidays and leave in the month grid” |
+| FR-066 | `LeaveRequestApiTest.rejectAndUnpaid`; `PayrollProcessingApiTest.unpaidLeave` |
+| FR-070 | `ApprovalApiTest.seeded`; `ApprovalApiTest.mostSpecific`; `ApprovalApiTest.workflowValidation` |
+| FR-071 | `ApprovalApiTest.autoApprove`; `ApprovalApiTest.multiLevel`; `ApprovalApiTest.reject`; `ApprovalApiTest.cancel`; `ApprovalApiTest.exclusionsAndFallback`; … +1 more |
+| FR-072 | `ApprovalApiTest.multiLevel` |
+| FR-073 | `ApprovalApiTest.delegation`; `ApprovalApiTest.expiredDelegation` |
+| FR-074 | `NotificationTest.approvalNotifications`; `NotificationTest.noSendOnRollback`; `NotificationTest.failureIsolated` |
+| FR-080 | `PayrollConfigApiTest.graphRules`; `PayrollConfigApiTest.typeFields`; `PayrollConfigApiTest.basicProtected`; `PayrollEngineTest.grossAndFixedUnit`; `payroll.test.tsx` “FR-080 the component form shows the fields of the ” |
+| FR-081 | `PayrollConfigApiTest.seededSriLanka`; `PayrollConfigApiTest.editStatutory`; `PayrollConfigApiTest.slabRules`; `PayrollEngineTest.configurableRate` |
+| FR-082 | `PayrollEngineTest.applicability`; `PayrollEngineTest.overrides`; `SalaryStructureApiTest.supersede`; `SalaryStructureApiTest.lineRules`; `SalaryStructureApiTest.finalizedPeriod`; … +1 more |
+| FR-083 | `PayrollEngineTest.oneTime`; `PayrollProcessingApiTest.oneTimeAndStale` |
+| FR-084 | `PayrollProcessingApiTest.periods`; `PayrollProcessingApiTest.lockAndState` |
+| FR-085 | `PayrollEngineTest.proration`; `PayrollEngineTest.negativeNet`; `PayrollEngineTest.rounding`; `PayrollProcessingApiTest.process`; `PayrollProcessingApiTest.overtime` |
+| FR-086 | `PayrollFinalizationApiTest.submitGuards`; `PayrollProcessingApiTest.oneTimeAndStale`; `PayrollProcessingApiTest.staleOnAttendance`; `payroll.test.tsx` “FR-086 a stale draft cannot be submitted until rep” |
+| FR-087 | `PayrollFinalizationApiTest.submitAndApprove`; `PayrollFinalizationApiTest.rejectAndSendBack`; `PayrollFinalizationApiTest.finalizeLocks`; `PayrollFinalizationApiTest.payslipNumbersUnique`; `PayrollFinalizationApiTest.databaseTrigger`; … +3 more |
+| FR-088 | `PayslipEmailApiTest.email`; `PayslipEmailApiTest.failures`; `PayslipExportApiTest.payslip`; `PayslipExportApiTest.bulk`; `PayslipExportApiTest.guards`; … +5 more |
+| FR-089 | `PayslipExportApiTest.register`; `PayslipExportApiTest.departmentSummary`; `TableExporterTest.csv`; `TableExporterTest.xlsx` |
+| FR-095 | `PayslipExportApiTest.asReports`; `TableExporterTest.pdf`; `ReportApiTest.catalog`; `ReportApiTest.employeeList`; `ReportApiTest.attendance`; … +6 more |
+| FR-096 | `DashboardApiTest.kpis`; `DashboardApiTest.pendingApprovals`; `DashboardApiTest.payroll`; `reports.test.tsx` “FR-096 dashboard shows KPIs, headcount and payroll”; `reports.test.tsx` “FR-096 dashboard shows the payroll period and OT c” |
+| FR-100 | `SelfServiceApiTest.profile`; `SelfServiceApiTest.documents`; `monthly.spec.ts` “NFR-020 FR-087 FR-088 FR-100 monthly flow: setup →”; `portal.test.tsx` “FR-100 shows the own profile”; `portal.test.tsx` “FR-100 shows balances and cancels an own pending l” |
+| NFR-001 | `HealthEndpointTest.healthUpWithoutMail`; `SpaFallbackTest.clientRoutes`; `SpaFallbackTest.apiAndAssets` |
+| NFR-002 | `AuthApiTest.prodRequiresSecret` |
+| NFR-003 | `AuthApiTest.bcryptCost` |
+| NFR-004 | `PayrollPerformanceTest.thousandEmployees` |
+| NFR-005 | `DatabasePlatformTest.vendor`; `ArchitectureTest.noJdbcOutsidePlatform` |
+| NFR-006 | `SchemaValidationTest.flywayAndValidate` |
+| NFR-007 | `ApiDocsTest.spec`; `ApiDocsTest.off` |
+| NFR-008 | `AuditApiTest.securityEventsAudited`; `ErrorHandlingTest.correlationEchoed`; `ErrorHandlingTest.correlationGenerated` |
+| NFR-009 | `ErrorHandlingTest.notFound`; `ErrorHandlingTest.validation`; `ErrorHandlingTest.malformed`; `ErrorHandlingTest.unexpected`; `client.test.ts` “NFR-009 parses problem+json into ApiError with fie”; … +1 more |
+| NFR-010 | `i18n.test.ts` “has no duplicate keys within an object”; `i18n.test.ts` “defines every literal key used with t() in the sou”; `i18n.test.ts` “defines the product title” |
+| NFR-011 | Manual: backup → change → restore drill on the Docker stack (2026-10-07), procedure in `docs/backup-recovery.md`; scripts `deploy/backup/*.sh` |
+| NFR-012 | `responsive.spec.ts` “NFR-012 employee portal and dashboard at 360 px wi” |
+| NFR-013 | `PayrollEngineTest.rounding` |
+| NFR-014 | `EmployeeApiTest.softDelete` |
+| NFR-015 | `IdsTest.version7` |
+| NFR-016 | `EmployeeApiTest.search` |
+| NFR-017 | `EmployeeApiTest.optimisticLock`; `OrgApiTest.staleUpdate` |
+| NFR-018 | `ArchitectureTest` (ArchUnit: no JDBC/native SQL outside platform, module web layers private) |
+| NFR-019 | `AuthApiTest.securityHeaders`; `AuthApiTest.loginRateLimit` |
+| NFR-020 | `monthly.spec.ts` “NFR-020 FR-087 FR-088 FR-100 monthly flow: setup →”; The suites themselves: `./mvnw verify`, `./check.sh`, `npm run e2e` (all green at every commit) |
+| NFR-021 | Review: `specs/design.md`, `/api/docs` (`ApiDocsTest`), `docs/install-onprem.md`, `docs/deploy-cloud.md`, `docs/backup-recovery.md`, `docs/release-update.md` |
