@@ -13,6 +13,7 @@ import java.util.UUID;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -102,6 +103,32 @@ public class EmployeeService {
     @Transactional(readOnly = true)
     public Page<Employee> search(SearchFilter f, Pageable pageable) {
         return employees.findAll(spec(f, scope.current()), pageable);
+    }
+
+    /**
+     * Employees of a company within the current user's scope who are employed at some point in [from, to],
+     * optionally limited to departments (already expanded) or a single employee.
+     */
+    @Transactional(readOnly = true)
+    public List<Employee> employedInScope(UUID companyId, java.util.Set<UUID> departmentIds, UUID employeeId,
+            LocalDate from, LocalDate to) {
+        EmployeeScope s = scope.current();
+        Specification<Employee> spec = (root, query, cb) -> {
+            List<jakarta.persistence.criteria.Predicate> p = new ArrayList<>();
+            p.add(s.toPredicate(cb, root.get("id"), root.get("companyId"), root.get("branchId"), root.get("departmentId")));
+            p.add(cb.equal(root.get("companyId"), companyId));
+            p.add(cb.lessThanOrEqualTo(root.get("joinDate"), to));
+            p.add(cb.or(cb.isNull(root.get("exitDate")), cb.greaterThanOrEqualTo(root.get("exitDate"), from)));
+            p.add(cb.notEqual(root.get("status"), EmployeeStatus.INACTIVE));
+            if (departmentIds != null) {
+                p.add(root.get("departmentId").in(departmentIds));
+            }
+            if (employeeId != null) {
+                p.add(cb.equal(root.get("id"), employeeId));
+            }
+            return cb.and(p.toArray(jakarta.persistence.criteria.Predicate[]::new));
+        };
+        return employees.findAll(spec, Sort.by("employeeNumber"));
     }
 
     @Transactional(readOnly = true)

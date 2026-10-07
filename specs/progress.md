@@ -2,8 +2,8 @@
 
 ## Status
 - Phase: 6 — Implement
-- Current task: T-014
-- Next: T-015
+- Current task: T-015
+- Next: T-016
 
 ## Log
 - 2026-10-07: Phases 1–5 complete (clarifications closed, requirements/design/tasks written). User waived approval gates ("start implementing").
@@ -20,3 +20,4 @@
 - 2026-10-07: T-011 done — Employee Hub (list/search/filters, profile form w/ contacts + custom fields, status change, history, documents). Dev launcher `DevHrmApplication` (embedded PG, no Docker); Playwright E2E harness (own backend :8081 + Vite :5174, fresh DB) with first smoke spec passing; E2E caught duplicate i18n key (fixed + bundle test). Test-support moved to `com.is2c.testsupport` so dev runs don't load test beans.
 - 2026-10-07: T-012 done — holiday calendar (branch applicability, overlap duplicate check, copy-year w/ Feb 29 skip, visible to company employees) + Holidays tab. 98 backend / 27 frontend tests green.
 - 2026-10-07: T-013 done — shifts (6 types, midnight/split/flex rules, deactivate-only), OT policies (min/round/cap/approval), rotation patterns + assignments (overlap checks), employee default-shift validation via EmployeeExtension; pure ShiftDefinition/OtPolicyDefinition in shift.api. 112 tests green.
+- 2026-10-07: T-014 done — pure ScheduleRules (roster > rotation > default/weekly-off; holidays → HOLIDAY keeping shift) + batch ScheduleResolver + GET /schedules. Fixed two latent bugs found by the API test: weekday-set converter turned NULL into empty set (overrode company weekly-off), and Hibernate dropped null OFF days in rotation patterns (V9 adds explicit off_day flag). 119 tests green.

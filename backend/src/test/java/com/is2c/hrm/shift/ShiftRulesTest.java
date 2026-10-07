@@ -63,7 +63,7 @@ class ShiftRulesTest {
         RotationPattern p = new RotationPattern(UUID.randomUUID());
         UUID a = UUID.randomUUID();
         UUID b = UUID.randomUUID();
-        p.getDays().addAll(java.util.Arrays.asList(a, a, b, null));
+        p.setDays(java.util.Arrays.asList(a, a, b, null));
         assertThat(p.shiftOnOffset(0)).isEqualTo(a);
         assertThat(p.shiftOnOffset(2)).isEqualTo(b);
         assertThat(p.shiftOnOffset(3)).isNull();

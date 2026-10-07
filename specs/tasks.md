@@ -62,7 +62,7 @@ Commands: backend `cd backend && ./mvnw -q verify`; frontend `cd frontend && npm
   - Requirements: FR-030, FR-031, FR-032
   - Done when: API tests for validation rules (night/split/flex) & overlap pass.
 
-- [ ] T-014: ScheduleResolver + `/schedules` endpoint.
+- [x] T-014: ScheduleResolver + `/schedules` endpoint.
   - Requirements: FR-033, FR-040 (data)
   - Done when: unit tests for precedence, holidays, weekly-off, rotation modulo pass.
 

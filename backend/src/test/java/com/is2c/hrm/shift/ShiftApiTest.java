@@ -139,8 +139,12 @@ class ShiftApiTest extends ApiTestBase {
         String b = createShift(shift("B", "FIXED", "14:00", "22:00"));
         postAs(admin, "/api/v1/companies/{c}/rotation-patterns",
                 Map.of("name", "AB-off", "days", Arrays.asList(a, a, b, b, null, null)), acme.companyId())
-                .andExpect(status().isCreated()).andExpect(jsonPath("$.days", hasSize(6)))
-                .andExpect(jsonPath("$.days[4]").doesNotExist());
+                .andExpect(status().isCreated()).andExpect(jsonPath("$.days", hasSize(6)));
+        // Reloaded from the database: OFF days must survive persistence.
+        getAs(admin, "/api/v1/companies/{c}/rotation-patterns", acme.companyId())
+                .andExpect(jsonPath("$[0].days", hasSize(6)))
+                .andExpect(jsonPath("$[0].days[2]").value(b))
+                .andExpect(jsonPath("$[0].days[4]").isEmpty());
         postAs(admin, "/api/v1/companies/{c}/rotation-patterns", Map.of("name", "empty", "days", List.of()), acme.companyId())
                 .andExpect(status().isUnprocessableContent());
         postAs(admin, "/api/v1/shifts/{id}/deactivate", null, b);

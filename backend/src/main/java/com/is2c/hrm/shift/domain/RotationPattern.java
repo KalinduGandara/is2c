@@ -29,8 +29,7 @@ public class RotationPattern extends BaseEntity {
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "rotation_pattern_day", joinColumns = @JoinColumn(name = "pattern_id"))
     @OrderColumn(name = "day_index")
-    @Column(name = "shift_id")
-    private List<UUID> days = new ArrayList<>();
+    private List<PatternDay> days = new ArrayList<>();
 
     protected RotationPattern() {
     }
@@ -42,7 +41,17 @@ public class RotationPattern extends BaseEntity {
     /** Shift id for a day offset from the cycle start (null = OFF). */
     public UUID shiftOnOffset(long daysSinceStart) {
         int n = days.size();
-        return days.get((int) Math.floorMod(daysSinceStart, n));
+        return days.get((int) Math.floorMod(daysSinceStart, n)).shiftId();
+    }
+
+    /** Shift ids per cycle day; null entries are OFF days. */
+    public List<UUID> getDays() {
+        return days.stream().map(PatternDay::shiftId).collect(java.util.stream.Collectors.toCollection(ArrayList::new));
+    }
+
+    public void setDays(List<UUID> shiftIds) {
+        days.clear();
+        shiftIds.forEach(id -> days.add(PatternDay.of(id)));
     }
 
     public UUID getCompanyId() {
@@ -55,9 +64,5 @@ public class RotationPattern extends BaseEntity {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public List<UUID> getDays() {
-        return days;
     }
 }

@@ -77,7 +77,7 @@ public class RotationService {
         validate(companyId, d);
         RotationPattern p = new RotationPattern(companyId);
         p.setName(d.name().trim());
-        p.getDays().addAll(d.days());
+        p.setDays(d.days());
         patterns.save(p);
         audit.record(AuditEntry.of("CREATE", "ROTATION_PATTERN", p.getId()).company(companyId).after(d));
         return p;
@@ -90,8 +90,7 @@ public class RotationService {
         Versions.check(p, d.version());
         validate(p.getCompanyId(), d);
         p.setName(d.name().trim());
-        p.getDays().clear();
-        p.getDays().addAll(d.days());
+        p.setDays(d.days());
         audit.record(AuditEntry.of("UPDATE", "ROTATION_PATTERN", id).company(p.getCompanyId()).after(d));
         return p;
     }
