@@ -9,6 +9,7 @@ import { LeavePage } from '../features/leave/LeavePage';
 import { OrganizationPage } from '../features/org/OrganizationPage';
 import { PayrollPage } from '../features/payroll/PayrollPage';
 import { PeriodPage } from '../features/payroll/PeriodPage';
+import { ReportsPage } from '../features/reports/ReportsPage';
 import { ShiftsPage } from '../features/shifts/ShiftsPage';
 
 /** Feature modules register their pages here. */
@@ -22,5 +23,6 @@ export const featureRoutes: RouteObject[] = [
   { path: 'payroll', element: <RequirePermission anyOf={['PAYROLL:VIEW']}><PayrollPage /></RequirePermission> },
   { path: 'payroll/periods/:id', element: <RequirePermission anyOf={['PAYROLL:VIEW']}><PeriodPage /></RequirePermission> },
   { path: 'approvals', element: <ApprovalsPage /> },
+  { path: 'reports', element: <RequirePermission anyOf={['REPORT:VIEW', 'AUDIT:VIEW']}><ReportsPage /></RequirePermission> },
   { path: 'admin', element: <RequirePermission anyOf={['ADMIN:VIEW', 'AUDIT:VIEW']}><AdminPage /></RequirePermission> },
 ];

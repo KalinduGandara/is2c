@@ -154,7 +154,7 @@ Commands: backend `cd backend && ./mvnw -q verify`; frontend `cd frontend && npm
   - Requirements: FR-095, FR-096, FR-008 (export)
   - Done when: API tests pass.
 
-- [ ] T-035: Frontend reports, dashboard, audit log.
+- [x] T-035: Frontend reports, dashboard, audit log.
   - Requirements: FR-095, FR-096, FR-008 (UI)
   - Done when: component tests pass.
 
