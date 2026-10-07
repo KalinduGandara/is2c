@@ -168,7 +168,7 @@ Commands: backend `cd backend && ./mvnw -q verify`; frontend `cd frontend && npm
   - Requirements: NFR-004, NFR-007, NFR-010
   - Done when: perf test < 60 s; docs endpoint test passes.
 
-- [ ] T-038: Packaging — Dockerfile (multi-stage, SPA embedded), compose on-prem/cloud, Caddy, backup/restore scripts, docs (install on-prem, cloud deploy, backup & recovery, release/update).
+- [x] T-038: Packaging — Dockerfile (multi-stage, SPA embedded), compose on-prem/cloud, Caddy, backup/restore scripts, docs (install on-prem, cloud deploy, backup & recovery, release/update).
   - Requirements: NFR-001, NFR-002, NFR-011, NFR-021
   - Done when: `docker compose -f deploy/compose.onprem.yml up` serves login over HTTPS and backup script produces a dump that restores.
 

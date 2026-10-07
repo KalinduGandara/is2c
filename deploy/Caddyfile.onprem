@@ -1,0 +1,6 @@
+# On-prem: HTTPS with Caddy's internal CA (install the root certificate on client PCs, see docs/install-onprem.md).
+{$HRM_HOSTNAME} {
+	tls internal
+	encode gzip
+	reverse_proxy app:8080
+}

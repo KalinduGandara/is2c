@@ -1,0 +1,10 @@
+# Cloud: automatic public certificate for HRM_DOMAIN, HSTS (NFR-002).
+{
+	email {$HRM_ACME_EMAIL}
+}
+
+{$HRM_DOMAIN} {
+	encode gzip
+	header Strict-Transport-Security "max-age=31536000; includeSubDomains"
+	reverse_proxy app:8080
+}

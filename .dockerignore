@@ -1,0 +1,10 @@
+.git
+**/node_modules
+backend/target
+frontend/dist
+frontend/test-results
+frontend/playwright-report
+deploy/.env
+deploy/backups
+specs
+docs

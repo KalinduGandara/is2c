@@ -2,3 +2,6 @@ logging:
   structured:
     format:
       console: ecs
+server:
+  # behind Caddy: trust X-Forwarded-* from private networks so client IPs reach rate limiting and audit
+  forward-headers-strategy: native

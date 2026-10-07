@@ -21,6 +21,7 @@ Spec-driven project. **Source of truth: `specs/`** — read `specs/tasks.md` and
 - Local backend (no Docker): `cd backend && ./mvnw spring-boot:test-run -Dspring-boot.run.main-class=com.is2c.hrm.DevHrmApplication` → :8080, admin / Admin#Pass123 (forced change)
 - E2E: `cd frontend && npm run e2e` (starts its own backend :8081 with a fresh DB and Vite :5174)
 - Frontend full check: `cd frontend && ./check.sh`; backend test totals: `backend/test-summary.sh`
+- Docker (from repo root): `cp deploy/.env.example deploy/.env` → `docker compose -f deploy/compose.onprem.yml up -d --build` (HTTPS via Caddy; cloud: `compose.cloud.yml`); backup `docker compose -f deploy/compose.onprem.yml exec backup /scripts/backup.sh`; ops docs in `docs/`
 
 ## Conventions
 - Base package `com.is2c.hrm.<module>` with `domain/` (entities, repositories), `service/`, `web/` (controllers, DTO records), optional `api/` (cross-module interfaces). Cross-module calls only via `api` or services; enforced by ArchUnit.

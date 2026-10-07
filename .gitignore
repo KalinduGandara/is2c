@@ -19,3 +19,5 @@ frontend/*.tsbuildinfo
 # Local env
 .env
 deploy/.env
+deploy/backups/*
+!deploy/backups/.gitkeep
