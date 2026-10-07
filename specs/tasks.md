@@ -40,7 +40,7 @@ Commands: backend `cd backend && ./mvnw -q verify`; frontend `cd frontend && npm
   - Requirements: FR-019, FR-020
   - Done when: API tests pass.
 
-- [ ] T-009: Frontend shell — API client (token refresh, problem+json), auth context, login & change-password pages, permission-aware AppShell nav, i18n setup, reusable DataTable / form drawer / confirm components, routing.
+- [x] T-009: Frontend shell — API client (token refresh, problem+json), auth context, login & change-password pages, permission-aware AppShell nav, i18n setup, reusable DataTable / form drawer / confirm components, routing.
   - Requirements: FR-001, FR-002, FR-003 (UI), NFR-010, NFR-012
   - Done when: Vitest tests for client refresh/error parsing, login form and nav filtering pass; lint & typecheck pass.
 

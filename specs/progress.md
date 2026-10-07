@@ -2,8 +2,8 @@
 
 ## Status
 - Phase: 6 — Implement
-- Current task: T-009
-- Next: T-010
+- Current task: T-010
+- Next: T-011
 
 ## Log
 - 2026-10-07: Phases 1–5 complete (clarifications closed, requirements/design/tasks written). User waived approval gates ("start implementing").
@@ -15,3 +15,4 @@
 - 2026-10-07: T-006 done — `admin` module: user CRUD/activate/deactivate/reset, last-super-admin guard, custom roles & matrix, escalation guards; scope-filtered user admin. 69 tests green.
 - 2026-10-07: T-007 done — employee master (numbering w/ concurrency, validations, manager cycle check, status lifecycle, employment history, soft delete via usage SPI, scoped search). Default-shift validation deferred to T-013 (shift module). 87 tests green.
 - 2026-10-07: T-008 done — custom field defs (typed validation, hidden-when-inactive), FileStorage SPI + local impl, content-sniffed documents (PDF/JPEG/PNG/DOCX, 10 MB), download as attachment, soft delete. 94 tests green.
+- 2026-10-07: T-009 done — frontend shell: API client (problem+json, single-flight refresh), auth context, login/change-password, permission-aware AppShell nav, company context, i18n, DataTable. Refresh token kept in sessionStorage (cleared on tab close). 12 frontend tests green.
