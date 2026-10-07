@@ -110,7 +110,7 @@ Commands: backend `cd backend && ./mvnw -q verify`; frontend `cd frontend && npm
   - Requirements: FR-060, FR-061, FR-062
   - Done when: unit + API tests pass.
 
-- [ ] T-025: Leave applications — day counting, validations, approval handler, cancel, calendar, attendance reprocess, self-service leave endpoints.
+- [x] T-025: Leave applications — day counting, validations, approval handler, cancel, calendar, attendance reprocess, self-service leave endpoints.
   - Requirements: FR-063, FR-064, FR-065, FR-066 (data), FR-100 (leave)
   - Done when: API tests pass.
 

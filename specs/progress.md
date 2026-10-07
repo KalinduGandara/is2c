@@ -2,8 +2,8 @@
 
 ## Status
 - Phase: 6 — Implement
-- Current task: T-025
-- Next: T-026
+- Current task: T-026
+- Next: T-027
 
 ## Log
 - 2026-10-07: Phases 1–5 complete (clarifications closed, requirements/design/tasks written). User waived approval gates ("start implementing").
@@ -31,3 +31,4 @@
 - 2026-10-07: T-022 done — manual create/edit adjustments (mandatory reason, before/after, raw events untouched, ADD vs EDIT permission), ATTENDANCE_CORRECTION approval handler (pending → applied/rejected/cancelled, one pending per day), payroll lock with audited CONFIGURE override (processor ignoreLock path), stale notifications, exceptions endpoint, OT approve/reject. 193 tests green.
 - 2026-10-07: T-023 done — Attendance UI (daily grid + process, exceptions with bulk OT approve/reject, day drawer with punches/corrections/correction form incl. next-day OUT & lock override, CSV import, sources with one-time key display, unmatched + rematch) and Approvals UI (inbox/my requests with detail drawer, delegations, workflow editor). 34 frontend tests green.
 - 2026-10-07: T-024 done — leave types (seeded Annual 14/Casual 7/Medical 7/No Pay unlimited, configurable), balances with ledger (opening/adjust w/ reason, audited), lazy creation with upfront pro-rata grant (round down 0.5) or monthly accrual, idempotent accrual / year-end carry-forward (cap) / expiry (taken consumes CF first) jobs + scheduler, /me/leave/balances. 202 tests green.
+- 2026-10-07: T-025 done — leave applications (self & on behalf, JSON or multipart with attachments), schedule-based day counting, validations (order, single year, half-day, eligibility, overlap w/ opposite halves allowed, balance/negative/unlimited, attachment threshold, payroll lock), LEAVE_REQUEST handler (pending→taken / release), employee & HR cancellation (approved returns days), attendance reprocess, ApprovedLeaveLookup (paid flag, merged half days), calendar & request list. 212 tests green.
