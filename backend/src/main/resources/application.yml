@@ -22,6 +22,10 @@ spring:
     multipart:
       max-file-size: 10MB
       max-request-size: 50MB
+  jackson:
+    deserialization:
+      # Omitted primitive fields (e.g. boolean flags) default to false/0 instead of a 400.
+      fail-on-null-for-primitives: false
   messages:
     basename: messages
     encoding: UTF-8

@@ -41,7 +41,7 @@ class EmployeeExtrasApiTest extends ApiTestBase {
     @BeforeEach
     void setUp() throws Exception {
         root = data.bearerFor("root", "SUPER_ADMIN");
-        acme = org.structure(root, "ACME");
+        acme = orgs.structure(root, "ACME");
         hr = data.bearerFor("hr", "HR_MANAGER");
     }
 
@@ -78,7 +78,7 @@ class EmployeeExtrasApiTest extends ApiTestBase {
         field("medical_due", "DATE", false, null);
         field("smoker", "BOOLEAN", false, null);
         field("epf_no", "TEXT", true, null);
-        Map<String, Object> body = org.employeeBody(acme, "A", "B");
+        Map<String, Object> body = orgs.employeeBody(acme, "A", "B");
         body.put("customFields", Map.of("tshirt", "XL", "dependants", "two", "medical_due", "31/12/2026",
                 "smoker", "maybe", "unknown", "x"));
         postAs(hr, "/api/v1/employees", body).andExpect(status().isUnprocessableContent())
@@ -87,7 +87,7 @@ class EmployeeExtrasApiTest extends ApiTestBase {
                         "customFields.epf_no", "customFields.unknown")));
         body.put("customFields", Map.of("tshirt", "M", "dependants", "2.50", "medical_due", "2026-12-31",
                 "smoker", "FALSE", "epf_no", "E123"));
-        JsonNode e = org.post(hr, "/api/v1/employees", body);
+        JsonNode e = orgs.post(hr, "/api/v1/employees", body);
         assertThat(e.get("customFields").get("dependants").asString()).isEqualTo("2.5");
         assertThat(e.get("customFields").get("smoker").asString()).isEqualTo("false");
         assertThat(e.get("customFields").get("epf_no").asString()).isEqualTo("E123");
@@ -97,9 +97,9 @@ class EmployeeExtrasApiTest extends ApiTestBase {
     @DisplayName("FR-019 deactivated fields are hidden but their values are kept")
     void deactivate() throws Exception {
         field("locker", "TEXT", false, null);
-        Map<String, Object> body = org.employeeBody(acme, "A", "B");
+        Map<String, Object> body = orgs.employeeBody(acme, "A", "B");
         body.put("customFields", Map.of("locker", "L-12"));
-        JsonNode e = org.post(hr, "/api/v1/employees", body);
+        JsonNode e = orgs.post(hr, "/api/v1/employees", body);
         String id = e.get("id").asString();
         JsonNode def = body(getAs(hr, "/api/v1/companies/{c}/custom-fields", acme.companyId())).get(0);
         putAs(hr, "/api/v1/custom-fields/{id}", Map.of("label", "Locker", "active", false, "version",
@@ -120,7 +120,7 @@ class EmployeeExtrasApiTest extends ApiTestBase {
     @Test
     @DisplayName("FR-020 upload, list, download (as attachment) and soft-delete documents")
     void documents() throws Exception {
-        UUID emp = org.employee(hr, acme, "A", "B");
+        UUID emp = orgs.employee(hr, acme, "A", "B");
         JsonNode doc = body(upload(emp, "Contract", "../../etc/contract.pdf", PDF).andExpect(status().isCreated()));
         assertThat(doc.get("contentType").asString()).isEqualTo("application/pdf");
         assertThat(doc.get("fileName").asString()).isEqualTo("contract.pdf");
@@ -140,7 +140,7 @@ class EmployeeExtrasApiTest extends ApiTestBase {
     @Test
     @DisplayName("FR-020 disallowed content types (sniffed, not by extension) and oversize files are rejected")
     void documentValidation() throws Exception {
-        UUID emp = org.employee(hr, acme, "A", "B");
+        UUID emp = orgs.employee(hr, acme, "A", "B");
         upload(emp, "Contract", "evil.pdf", "<script>alert(1)</script>".getBytes(StandardCharsets.UTF_8))
                 .andExpect(status().isUnprocessableContent())
                 .andExpect(jsonPath("$.errors[0].field").value("file"));
@@ -153,7 +153,7 @@ class EmployeeExtrasApiTest extends ApiTestBase {
     @Test
     @DisplayName("FR-020 DOCX files are recognised by structure; plain ZIPs are rejected")
     void docx() throws Exception {
-        UUID emp = org.employee(hr, acme, "A", "B");
+        UUID emp = orgs.employee(hr, acme, "A", "B");
         upload(emp, "Certificate", "c.docx", zip("[Content_Types].xml", "word/document.xml"))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.contentType").value(
@@ -164,7 +164,7 @@ class EmployeeExtrasApiTest extends ApiTestBase {
     @Test
     @DisplayName("FR-020 documents respect data scope and permissions")
     void documentAccess() throws Exception {
-        UUID emp = org.employee(hr, acme, "A", "B");
+        UUID emp = orgs.employee(hr, acme, "A", "B");
         upload(emp, "Contract", "c.pdf", PDF).andExpect(status().isCreated());
         getAs(data.bearerFor("e", "EMPLOYEE"), "/api/v1/employees/{id}/documents", emp).andExpect(status().isForbidden());
     }

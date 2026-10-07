@@ -35,7 +35,7 @@ public abstract class ApiTestBase {
     protected TestData data;
 
     @Autowired
-    protected OrgFixtures org;
+    protected OrgFixtures orgs;
 
     @Autowired
     private DbCleaner cleaner;

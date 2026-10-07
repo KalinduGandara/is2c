@@ -66,7 +66,7 @@ Commands: backend `cd backend && ./mvnw -q verify`; frontend `cd frontend && npm
   - Requirements: FR-033, FR-040 (data)
   - Done when: unit tests for precedence, holidays, weekly-off, rotation modulo pass.
 
-- [ ] T-015: Rosters backend — create, entries, bulk assign, copy, validate/conflicts, publish/lock/unlock, revisions, mark attendance for reprocessing hook.
+- [x] T-015: Rosters backend — create, entries, bulk assign, copy, validate/conflicts, publish/lock/unlock, revisions, mark attendance for reprocessing hook.
   - Requirements: FR-035, FR-036, FR-037, FR-038, FR-039, FR-040
   - Done when: API tests for each criterion pass.
 

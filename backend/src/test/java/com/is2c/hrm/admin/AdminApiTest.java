@@ -33,8 +33,8 @@ class AdminApiTest extends ApiTestBase {
     @BeforeEach
     void setUp() throws Exception {
         root = data.bearerFor("root", "SUPER_ADMIN");
-        companyA = org.company(root, "A");
-        companyB = org.company(root, "B");
+        companyA = orgs.company(root, "A");
+        companyB = orgs.company(root, "B");
     }
 
     private Map<String, Object> user(String username, ScopeType scope, List<String> roles) {

@@ -47,7 +47,7 @@ class OrgApiTest extends ApiTestBase {
     @Test
     @DisplayName("FR-010 creating a company applies defaults, creates settings, audits and publishes CompanyCreatedEvent")
     void createCompany() throws Exception {
-        JsonNode c = org.post(admin, "/api/v1/companies", Map.of("code", "acme", "legalName", "Acme (Pvt) Ltd"));
+        JsonNode c = orgs.post(admin, "/api/v1/companies", Map.of("code", "acme", "legalName", "Acme (Pvt) Ltd"));
         assertThat(c.get("code").asString()).isEqualTo("ACME");
         assertThat(c.get("currency").asString()).isEqualTo("LKR");
         assertThat(c.get("statutoryPack").asString()).isEqualTo("LK");
@@ -71,7 +71,7 @@ class OrgApiTest extends ApiTestBase {
     @Test
     @DisplayName("FR-010 duplicate code, invalid currency and invalid time zone are rejected with 422")
     void companyValidation() throws Exception {
-        org.company(admin, "ACME");
+        orgs.company(admin, "ACME");
         postAs(admin, "/api/v1/companies", Map.of("code", "acme", "legalName", "Other"))
                 .andExpect(status().isUnprocessableContent())
                 .andExpect(jsonPath("$.errors[0].field").value("code"));
@@ -85,7 +85,7 @@ class OrgApiTest extends ApiTestBase {
     @Test
     @DisplayName("FR-010 only global-scope users with ORG:CONFIGURE can create companies")
     void createCompanyRestrictions() throws Exception {
-        UUID acme = org.company(admin, "ACME");
+        UUID acme = orgs.company(admin, "ACME");
         String scopedAdmin = data.bearer(data.user("ca", ScopeType.COMPANY,
                 Set.of(new ScopeItem(ScopeItemType.COMPANY, acme)), "COMPANY_ADMIN"));
         postAs(scopedAdmin, "/api/v1/companies", Map.of("code", "B", "legalName", "B")).andExpect(status().isForbidden());
@@ -96,7 +96,7 @@ class OrgApiTest extends ApiTestBase {
     @Test
     @DisplayName("NFR-017 updating with a stale version returns 409")
     void staleUpdate() throws Exception {
-        UUID acme = org.company(admin, "ACME");
+        UUID acme = orgs.company(admin, "ACME");
         Map<String, Object> body = new HashMap<>(Map.of("code", "ACME", "legalName", "Acme 2", "version", 0));
         putAs(admin, "/api/v1/companies/{id}", body, acme).andExpect(status().isOk())
                 .andExpect(jsonPath("$.legalName").value("Acme 2"));
@@ -107,7 +107,7 @@ class OrgApiTest extends ApiTestBase {
     @Test
     @DisplayName("FR-016 settings can be changed, are validated and audited")
     void settings() throws Exception {
-        UUID acme = org.company(admin, "ACME");
+        UUID acme = orgs.company(admin, "ACME");
         Map<String, Object> s = new HashMap<>();
         s.put("weeklyOffDays", List.of("SATURDAY", "SUNDAY"));
         s.put("employeeNumberFormat", "E-{BRANCH}-{SEQ:4}");
@@ -132,27 +132,27 @@ class OrgApiTest extends ApiTestBase {
     @Test
     @DisplayName("FR-011 branch codes are unique per company; deleted branches disappear")
     void branches() throws Exception {
-        UUID a = org.company(admin, "A");
-        UUID b = org.company(admin, "B");
-        UUID colombo = org.branch(admin, a, "CMB");
-        org.branch(admin, b, "CMB");
+        UUID a = orgs.company(admin, "A");
+        UUID b = orgs.company(admin, "B");
+        UUID colombo = orgs.branch(admin, a, "CMB");
+        orgs.branch(admin, b, "CMB");
         postAs(admin, "/api/v1/companies/{c}/branches", Map.of("code", "cmb", "name", "dup"), a)
                 .andExpect(status().isUnprocessableContent());
         getAs(admin, "/api/v1/companies/{c}/branches", a).andExpect(jsonPath("$", hasSize(1)));
         deleteAs(admin, "/api/v1/branches/{id}", colombo).andExpect(status().isNoContent());
         getAs(admin, "/api/v1/companies/{c}/branches", a).andExpect(jsonPath("$", hasSize(0)));
-        org.branch(admin, a, "CMB"); // code reusable after soft delete
+        orgs.branch(admin, a, "CMB"); // code reusable after soft delete
     }
 
     @Test
     @DisplayName("FR-012 departments form a tree; cycles, cross-company parents and deleting parents are rejected")
     void departments() throws Exception {
-        UUID a = org.company(admin, "A");
-        UUID b = org.company(admin, "B");
-        UUID ops = org.department(admin, a, "OPS", null);
-        UUID wh = org.department(admin, a, "WH", ops);
-        UUID shift = org.department(admin, a, "SHIFT", wh);
-        UUID foreign = org.department(admin, b, "FIN", null);
+        UUID a = orgs.company(admin, "A");
+        UUID b = orgs.company(admin, "B");
+        UUID ops = orgs.department(admin, a, "OPS", null);
+        UUID wh = orgs.department(admin, a, "WH", ops);
+        UUID shift = orgs.department(admin, a, "SHIFT", wh);
+        UUID foreign = orgs.department(admin, b, "FIN", null);
 
         getAs(admin, "/api/v1/companies/{c}/departments/tree", a).andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(1)))
@@ -177,13 +177,13 @@ class OrgApiTest extends ApiTestBase {
     @Test
     @DisplayName("FR-013 designations, grades and employment categories are maintained per company")
     void lookups() throws Exception {
-        UUID a = org.company(admin, "A");
-        org.lookup(admin, a, "designations", "SE");
-        JsonNode grade = org.post(admin, "/api/v1/companies/" + a + "/grades", Map.of("code", "G1", "name", "Grade 1", "rank", 3));
+        UUID a = orgs.company(admin, "A");
+        orgs.lookup(admin, a, "designations", "SE");
+        JsonNode grade = orgs.post(admin, "/api/v1/companies/" + a + "/grades", Map.of("code", "G1", "name", "Grade 1", "rank", 3));
         assertThat(grade.get("rank").asInt()).isEqualTo(3);
-        JsonNode cat = org.post(admin, "/api/v1/companies/" + a + "/employment-categories", Map.of("code", "PERM", "name", "Permanent"));
+        JsonNode cat = orgs.post(admin, "/api/v1/companies/" + a + "/employment-categories", Map.of("code", "PERM", "name", "Permanent"));
         assertThat(cat.get("otEligible").asBoolean()).isTrue();
-        JsonNode exec = org.post(admin, "/api/v1/companies/" + a + "/employment-categories",
+        JsonNode exec = orgs.post(admin, "/api/v1/companies/" + a + "/employment-categories",
                 Map.of("code", "EXEC", "name", "Executive", "otEligible", false));
         assertThat(exec.get("otEligible").asBoolean()).isFalse();
 
@@ -198,8 +198,8 @@ class OrgApiTest extends ApiTestBase {
     @Test
     @DisplayName("FR-006 company-scoped users only see their companies; others are 404")
     void companyScope() throws Exception {
-        UUID a = org.company(admin, "A");
-        UUID b = org.company(admin, "B");
+        UUID a = orgs.company(admin, "A");
+        UUID b = orgs.company(admin, "B");
         String scoped = data.bearer(data.user("ca", ScopeType.COMPANY,
                 Set.of(new ScopeItem(ScopeItemType.COMPANY, a)), "COMPANY_ADMIN"));
         getAs(scoped, "/api/v1/companies").andExpect(jsonPath("$", hasSize(1)))
@@ -214,9 +214,9 @@ class OrgApiTest extends ApiTestBase {
     @Test
     @DisplayName("FR-006 branch-scoped users can read their company's configuration but not change it")
     void branchScopeReadsCompany() throws Exception {
-        UUID a = org.company(admin, "A");
-        UUID b = org.company(admin, "B");
-        UUID br = org.branch(admin, a, "CMB");
+        UUID a = orgs.company(admin, "A");
+        UUID b = orgs.company(admin, "B");
+        UUID br = orgs.branch(admin, a, "CMB");
         String bm = data.bearer(data.user("bm", ScopeType.BRANCH,
                 Set.of(new ScopeItem(ScopeItemType.BRANCH, br)), "BRANCH_MANAGER"));
         getAs(bm, "/api/v1/companies").andExpect(jsonPath("$", hasSize(1)));
@@ -229,11 +229,11 @@ class OrgApiTest extends ApiTestBase {
     @Test
     @DisplayName("FR-012 department scope expands to descendants")
     void departmentScopeDescendants() throws Exception {
-        UUID a = org.company(admin, "A");
-        UUID ops = org.department(admin, a, "OPS", null);
-        UUID wh = org.department(admin, a, "WH", ops);
-        UUID shift = org.department(admin, a, "SHIFT", wh);
-        org.department(admin, a, "FIN", null);
+        UUID a = orgs.company(admin, "A");
+        UUID ops = orgs.department(admin, a, "OPS", null);
+        UUID wh = orgs.department(admin, a, "WH", ops);
+        UUID shift = orgs.department(admin, a, "SHIFT", wh);
+        orgs.department(admin, a, "FIN", null);
         assertThat(com.is2c.hrm.org.service.DataScopeServiceAccess.descendants(ops, jdbc))
                 .containsExactlyInAnyOrder(ops, wh, shift);
     }

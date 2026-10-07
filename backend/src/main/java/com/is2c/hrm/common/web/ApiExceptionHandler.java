@@ -68,6 +68,7 @@ public class ApiExceptionHandler {
     @ExceptionHandler({HttpMessageNotReadableException.class, MethodArgumentTypeMismatchException.class,
             MissingServletRequestParameterException.class, MissingServletRequestPartException.class})
     ResponseEntity<ProblemDetail> badRequest(Exception ex) {
+        log.debug("Bad request: {}", ex.getMessage());
         return problem(HttpStatus.BAD_REQUEST, "BAD_REQUEST", "Malformed request", List.of());
     }
 

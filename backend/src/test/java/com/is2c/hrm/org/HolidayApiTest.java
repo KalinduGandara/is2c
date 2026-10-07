@@ -27,8 +27,8 @@ class HolidayApiTest extends ApiTestBase {
     @BeforeEach
     void setUp() throws Exception {
         admin = data.bearerFor("root", "SUPER_ADMIN");
-        acme = org.structure(admin, "ACME");
-        kandy = org.branch(admin, acme.companyId(), "KDY");
+        acme = orgs.structure(admin, "ACME");
+        kandy = orgs.branch(admin, acme.companyId(), "KDY");
     }
 
     private Map<String, Object> holiday(String date, String name, Boolean all, List<UUID> branches) {
@@ -88,14 +88,14 @@ class HolidayApiTest extends ApiTestBase {
     void visibility() throws Exception {
         postAs(admin, "/api/v1/companies/{c}/holidays", holiday("2026-02-04", "Independence Day", null, null), acme.companyId());
         String hr = data.bearerFor("hr", "HR_MANAGER");
-        UUID emp = org.employee(hr, acme, "Self", "Service");
+        UUID emp = orgs.employee(hr, acme, "Self", "Service");
         var u = data.user("selfie", ScopeType.OWN, Set.of(), "EMPLOYEE");
         String employee = data.bearer(data.linkEmployee(u, emp));
         getAs(employee, "/api/v1/companies/{c}/holidays?year=2026", acme.companyId()).andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(1)));
         postAs(employee, "/api/v1/companies/{c}/holidays", holiday("2026-03-01", "x", null, null), acme.companyId())
                 .andExpect(status().isForbidden());
-        UUID other = org.company(admin, "OTHER");
+        UUID other = orgs.company(admin, "OTHER");
         getAs(employee, "/api/v1/companies/{c}/holidays?year=2026", other).andExpect(status().isNotFound());
     }
 }

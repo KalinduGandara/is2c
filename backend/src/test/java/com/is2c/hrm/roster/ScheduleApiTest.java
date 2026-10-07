@@ -20,7 +20,7 @@ class ScheduleApiTest extends ApiTestBase {
     @DisplayName("FR-033/FR-040 schedules combine default shift, rotation, weekly-off and holidays")
     void schedules() throws Exception {
         String admin = data.bearerFor("root", "SUPER_ADMIN");
-        Structure acme = org.structure(admin, "ACME");
+        Structure acme = orgs.structure(admin, "ACME");
         String hr = data.bearerFor("hr", "HR_MANAGER");
         String day = body(postAs(admin, "/api/v1/companies/{c}/shifts",
                 Map.of("code", "DAY", "name", "Day", "type", "FIXED", "s1Start", "08:00", "s1End", "17:00"),
@@ -28,10 +28,10 @@ class ScheduleApiTest extends ApiTestBase {
         String night = body(postAs(admin, "/api/v1/companies/{c}/shifts",
                 Map.of("code", "NGT", "name", "Night", "type", "NIGHT", "s1Start", "22:00", "s1End", "06:00"),
                 acme.companyId())).get("id").asString();
-        Map<String, Object> body = org.employeeBody(acme, "Default", "Worker");
+        Map<String, Object> body = orgs.employeeBody(acme, "Default", "Worker");
         body.put("defaultShiftId", day);
-        UUID regular = org.employee(hr, body);
-        UUID rotating = org.employee(hr, body);
+        UUID regular = orgs.employee(hr, body);
+        UUID rotating = orgs.employee(hr, body);
         String pattern = body(postAs(admin, "/api/v1/companies/{c}/rotation-patterns",
                 Map.of("name", "nights", "days", java.util.Arrays.asList(night, null)), acme.companyId())).get("id").asString();
         postAs(hr, "/api/v1/rotation-patterns/{id}/assignments", Map.of("employeeIds", List.of(rotating),

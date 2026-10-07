@@ -27,7 +27,7 @@ class ShiftApiTest extends ApiTestBase {
     @BeforeEach
     void setUp() throws Exception {
         admin = data.bearerFor("root", "SUPER_ADMIN");
-        acme = org.structure(admin, "ACME");
+        acme = orgs.structure(admin, "ACME");
         hr = data.bearerFor("hr", "HR_MANAGER");
     }
 
@@ -158,7 +158,7 @@ class ShiftApiTest extends ApiTestBase {
         String a = createShift(shift("A", "FIXED", "06:00", "14:00"));
         String pattern = body(postAs(admin, "/api/v1/companies/{c}/rotation-patterns",
                 Map.of("name", "A", "days", List.of(a)), acme.companyId())).get("id").asString();
-        UUID emp = org.employee(hr, acme, "Rota", "Worker");
+        UUID emp = orgs.employee(hr, acme, "Rota", "Worker");
         postAs(hr, "/api/v1/rotation-patterns/{id}/assignments", Map.of("employeeIds", List.of(emp),
                 "startDate", "2026-01-01", "endDate", "2026-06-30"), pattern).andExpect(status().isCreated());
         postAs(hr, "/api/v1/rotation-patterns/{id}/assignments", Map.of("employeeIds", List.of(emp),
@@ -169,8 +169,8 @@ class ShiftApiTest extends ApiTestBase {
         deleteAs(hr, "/api/v1/rotation-assignments/{id}", later).andExpect(status().isNoContent());
         deleteAs(admin, "/api/v1/rotation-patterns/{id}", pattern).andExpect(status().isUnprocessableContent());
 
-        Structure other = org.structure(admin, "OTHER");
-        UUID foreign = org.employee(hr, other, "Other", "Co");
+        Structure other = orgs.structure(admin, "OTHER");
+        UUID foreign = orgs.employee(hr, other, "Other", "Co");
         postAs(hr, "/api/v1/rotation-patterns/{id}/assignments", Map.of("employeeIds", List.of(foreign),
                 "startDate", "2026-01-01"), pattern).andExpect(status().isUnprocessableContent());
     }
@@ -179,10 +179,10 @@ class ShiftApiTest extends ApiTestBase {
     @DisplayName("FR-015 employee default shift must be an active shift of the same company")
     void defaultShift() throws Exception {
         String day = createShift(shift("DAY", "FIXED", "08:00", "17:00"));
-        Map<String, Object> body = org.employeeBody(acme, "A", "B");
+        Map<String, Object> body = orgs.employeeBody(acme, "A", "B");
         body.put("defaultShiftId", day);
-        org.employee(hr, body);
-        Structure other = org.structure(admin, "OTHER");
+        orgs.employee(hr, body);
+        Structure other = orgs.structure(admin, "OTHER");
         String foreign = body(postAs(admin, "/api/v1/companies/{c}/shifts", shift("X", "FIXED", "08:00", "17:00"),
                 other.companyId())).get("id").asString();
         body.put("defaultShiftId", foreign);
