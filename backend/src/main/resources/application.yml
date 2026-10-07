@@ -1,0 +1,38 @@
+spring:
+  application:
+    name: hrm
+  datasource:
+    url: ${HRM_DB_URL:jdbc:postgresql://localhost:5432/hrm}
+    username: ${HRM_DB_USER:hrm}
+    password: ${HRM_DB_PASSWORD:hrm}
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: UTC
+          batch_size: 100
+        order_inserts: true
+        order_updates: true
+  flyway:
+    locations: classpath:db/migration/{vendor}
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 50MB
+  messages:
+    basename: messages
+    encoding: UTF-8
+
+server:
+  shutdown: graceful
+  error:
+    include-stacktrace: never
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
