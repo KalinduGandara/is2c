@@ -10,7 +10,7 @@ Commands: backend `cd backend && ./mvnw -q verify`; frontend `cd frontend && npm
   - Requirements: NFR-020, NFR-006
   - Done when: `./mvnw verify` and `npm run lint && npm run typecheck && npm test -- --run` pass; first commit made.
 
-- [ ] T-002: Common infrastructure — base entity (UUID, version, audit columns, soft delete), problem+json exception handling, validation → 422, correlation-id filter + MDC, `PageResponse`, `Clock` bean, `HrmProperties`, `DatabasePlatform` SPI + `PostgresDatabasePlatform` (vendor migration location, sequence counter), Flyway V1 baseline, ArchUnit rules (module boundaries, no native SQL outside `platform`).
+- [x] T-002: Common infrastructure — base entity (UUID, version, audit columns, soft delete), problem+json exception handling, validation → 422, correlation-id filter + MDC, `PageResponse`, `Clock` bean, `HrmProperties`, `DatabasePlatform` SPI + `PostgresDatabasePlatform` (vendor migration location, sequence counter), Flyway V1 baseline, ArchUnit rules (module boundaries, no native SQL outside `platform`).
   - Requirements: NFR-005, NFR-006, NFR-008, NFR-009, NFR-013, NFR-014, NFR-015, NFR-016, NFR-017, NFR-018
   - Done when: tests for error format, correlation header echo, sequence counter concurrency, ArchUnit rules pass.
 

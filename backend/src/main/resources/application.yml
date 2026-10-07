@@ -25,6 +25,11 @@ spring:
   messages:
     basename: messages
     encoding: UTF-8
+  data:
+    web:
+      pageable:
+        default-page-size: 20
+        max-page-size: 200
 
 server:
   shutdown: graceful
@@ -36,3 +41,21 @@ management:
     web:
       exposure:
         include: health,info
+
+hrm:
+  edition: ${HRM_EDITION:ONPREM}
+  db:
+    vendor: ${HRM_DB_VENDOR:postgresql}
+  jwt:
+    secret: ${HRM_JWT_SECRET:}
+  storage:
+    path: ${HRM_STORAGE_PATH:data/files}
+  mail:
+    enabled: ${HRM_MAIL_ENABLED:false}
+    from: ${HRM_MAIL_FROM:hrm@localhost}
+  cors:
+    origins: ${HRM_CORS_ORIGINS:}
+  admin:
+    username: ${HRM_ADMIN_USERNAME:}
+    password: ${HRM_ADMIN_PASSWORD:}
+  api-docs: ${HRM_API_DOCS:false}
