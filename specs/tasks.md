@@ -88,7 +88,7 @@ Commands: backend `cd backend && ./mvnw -q verify`; frontend `cd frontend && npm
   - Requirements: FR-048, FR-055
   - Done when: integration tests (ingest → process → daily) pass.
 
-- [ ] T-020: Approval engine — workflows (most-specific resolution), transactions & level snapshot, eligibility, fallback, approve/reject/cancel/auto, inbox, my requests, delegation; seeded workflows via company initializer.
+- [x] T-020: Approval engine — workflows (most-specific resolution), transactions & level snapshot, eligibility, fallback, approve/reject/cancel/auto, inbox, my requests, delegation; seeded workflows via company initializer.
   - Requirements: FR-070, FR-071, FR-072, FR-073
   - Done when: API tests for each criterion pass (using a test handler).
 

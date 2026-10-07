@@ -352,5 +352,5 @@ Test naming references requirement IDs (e.g. `@DisplayName("FR-063 rejects overl
 | D7 | Embedded PostgreSQL for tests | Testcontainers; H2 | Docker not guaranteed; H2 differs from Postgres (triggers, types). |
 | D8 | Spring Boot serves SPA | Separate nginx container for SPA | Single artifact simplifies on-prem install (`java -jar` possible). |
 | D9 | UUID keys (app-generated, time-ordered) | DB identity/sequences | Portable across vendors, safe to expose, no round-trip. |
-| D10 | Approval engine with handler SPI + level snapshot | Per-module bespoke approval logic | One engine for leave/attendance/payroll (§4.7); snapshot prevents config drift on in-flight items. |
+| D10 | Approval engine with handler SPI + level snapshot; transaction types are open string codes registered by handlers (not a closed enum) | Per-module bespoke approval logic | One engine for leave/attendance/payroll (§4.7); snapshot prevents config drift on in-flight items. |
 | D11 | Text JSON columns for audit/snapshots | `jsonb` | Portability (NFR-005); not queried by content. |

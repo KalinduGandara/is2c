@@ -70,6 +70,20 @@ public class TestData {
         return passwordHash;
     }
 
+    /** Runs code with the given user as the authenticated principal (for calling services directly). */
+    public <T> T runAs(AppUser user, java.util.function.Supplier<T> action) {
+        principals.evict(user.getId());
+        var principal = principals.load(user.getId()).orElseThrow();
+        var previous = org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication();
+        org.springframework.security.core.context.SecurityContextHolder.getContext()
+                .setAuthentication(new com.is2c.hrm.security.config.HrmAuthenticationToken(principal));
+        try {
+            return action.get();
+        } finally {
+            org.springframework.security.core.context.SecurityContextHolder.getContext().setAuthentication(previous);
+        }
+    }
+
     /** Bearer header value for the user without going through the login endpoint. */
     public String bearer(AppUser user) {
         principals.evict(user.getId());
