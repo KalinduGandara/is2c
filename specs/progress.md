@@ -2,8 +2,8 @@
 
 ## Status
 - Phase: 6 — Implement
-- Current task: T-023
-- Next: T-024
+- Current task: T-024
+- Next: T-025
 
 ## Log
 - 2026-10-07: Phases 1–5 complete (clarifications closed, requirements/design/tasks written). User waived approval gates ("start implementing").
@@ -29,3 +29,4 @@
 - 2026-10-07: T-020 done — approval engine: workflows (most-specific dept>branch>company, 1-5 levels, unique scope), handler SPI with open string types, level snapshot, eligibility (manager/role-in-scope/user, requester & subject excluded, HR_MANAGER fallback recorded), approve/reject(comment)/cancel, auto-approve, inbox/my-requests/detail, delegation (on-behalf-of, non-transitive, overlap checks), seeded defaults, ApprovalEvent for notifications. 182 tests green.
 - 2026-10-07: T-021 done — NotificationChannel SPI (EMAIL via SMTP when hrm.mail.enabled, LOG otherwise), after-commit async dispatch of approval requested/completed, synchronous deliver() returning success for payslip emailing; failures logged only. 185 tests green.
 - 2026-10-07: T-022 done — manual create/edit adjustments (mandatory reason, before/after, raw events untouched, ADD vs EDIT permission), ATTENDANCE_CORRECTION approval handler (pending → applied/rejected/cancelled, one pending per day), payroll lock with audited CONFIGURE override (processor ignoreLock path), stale notifications, exceptions endpoint, OT approve/reject. 193 tests green.
+- 2026-10-07: T-023 done — Attendance UI (daily grid + process, exceptions with bulk OT approve/reject, day drawer with punches/corrections/correction form incl. next-day OUT & lock override, CSV import, sources with one-time key display, unmatched + rematch) and Approvals UI (inbox/my requests with detail drawer, delegations, workflow editor). 34 frontend tests green.

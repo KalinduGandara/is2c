@@ -100,7 +100,7 @@ Commands: backend `cd backend && ./mvnw -q verify`; frontend `cd frontend && npm
   - Requirements: FR-050, FR-051, FR-052, FR-053, FR-054, FR-056
   - Done when: API tests pass (lock tested once payroll periods exist via repository fixture).
 
-- [ ] T-023: Frontend attendance & approvals — daily grid, day detail with edit/manual create & history, exceptions, CSV import, sources, OT approval; approval inbox, my requests, workflows config, delegations.
+- [x] T-023: Frontend attendance & approvals — daily grid, day detail with edit/manual create & history, exceptions, CSV import, sources, OT approval; approval inbox, my requests, workflows config, delegations.
   - Requirements: FR-045…056, FR-070…073 (UI)
   - Done when: component tests pass; manual run.
 
