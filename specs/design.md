@@ -77,7 +77,7 @@ Request flow: Caddy → Spring Security filter chain (correlation id → rate li
 │   └── src/main/java/com/is2c/hrm/
 │       ├── HrmApplication.java
 │       ├── common/        # errors (problem+json), paging, money, time, base entities, i18n, web config
-│       ├── platform/      # DatabasePlatform SPI + postgres impl, FileStorage SPI + local impl
+│       ├── platform/      # DatabasePlatform SPI + postgres impl, FileStorage SPI + local impl, table exporters
 │       ├── security/      # JWT, users, roles, permissions, data scope, login, refresh tokens
 │       ├── admin/         # user & role administration (depends on security + org)
 │       ├── audit/
@@ -90,7 +90,7 @@ Request flow: Caddy → Spring Security filter chain (correlation id → rate li
 │       ├── approval/      # workflows, transactions, delegation, handler SPI
 │       ├── notification/
 │       ├── payroll/       # components, slabs, statutory packs, structures, periods, engine, payslips
-│       ├── report/        # report definitions, exporters (PDF/Excel/CSV), dashboard
+│       ├── report/        # report definitions, dashboard
 │   └── src/main/resources/
 │       ├── application.yml, application-prod.yml
 │       ├── messages.properties
@@ -114,7 +114,7 @@ Each module package has: `domain/` (entities, repositories), `service/` (busines
 | Module | Responsibilities | Requirements |
 |---|---|---|
 | common | Problem-details error handling, validation, paging DTO, `Money` helpers, `Clock` bean, base entity (UUID id, version, created/updated by/at, deleted_at), correlation id filter, i18n messages | NFR-008, 009, 010, 013, 014, 015, 016, 017 |
-| platform | `DatabasePlatform` (vendor name, migration location, `lockForUpdate` sequence counter), `PostgresDatabasePlatform`; `FileStorage`, `LocalFileStorage` | NFR-005, FR-014, FR-020 |
+| platform | `DatabasePlatform` (vendor name, migration location, `lockForUpdate` sequence counter), `PostgresDatabasePlatform`; `FileStorage`, `LocalFileStorage`; `export.TableData` + `TableExporter` (CSV with BOM & formula-injection guard, POI XLSX, OpenPDF A4 with "Page n of N") — lives here, not in report, because payroll exports use it and report depends on payroll | NFR-005, FR-014, FR-020, FR-089, FR-095 |
 | security | Users, roles, permissions, login/refresh/logout, lockout, password policy, bootstrap admin, JWT config, `CurrentUser`, `DataScopeService`, rate limit, security headers | FR-001…007, NFR-002, 003, 019 |
 | admin | User CRUD, activation, password reset, scope assignment; custom roles & matrix; escalation guards (cannot grant ALL scope without having it, SUPER_ADMIN only by SUPER_ADMIN, no role/permission the actor lacks, non-global admins manage only users confined to companies they fully cover) | FR-003 (reset), FR-004, FR-005, FR-006 |
 | audit | `AuditService.record(...)`, audit search/export, append-only enforcement | FR-008 |
@@ -127,7 +127,7 @@ Each module package has: `domain/` (entities, repositories), `service/` (busines
 | approval | Workflow definitions, resolution, transactions, inbox, delegation, `ApprovalHandler` SPI | FR-070…073 |
 | notification | `NotificationService`, `NotificationChannel` SPI, email & log channels, after-commit dispatch | FR-074 |
 | payroll | Components, slab tables, `StatutoryPack` SPI + `SriLankaStatutoryPack`, salary structures, periods, one-time items, `PayrollEngine` (pure), `PayrollProcessor`, approval handler, finalization, payslip PDF, register exports | FR-080…089 |
-| report | `TabularReport` model, report providers, `PdfExporter`, `ExcelExporter`, `CsvExporter`, dashboard KPIs | FR-095, 096 |
+| report | Report providers producing `platform.export.TableData`, dashboard KPIs | FR-095, 096 |
 | selfservice | `/api/v1/me/**` delegating to module services with the linked employee | FR-100 |
 
 ---

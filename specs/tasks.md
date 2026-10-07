@@ -140,7 +140,7 @@ Commands: backend `cd backend && ./mvnw -q verify`; frontend `cd frontend && npm
   - Requirements: FR-087, FR-053
   - Done when: API + DB trigger tests pass.
 
-- [ ] T-032: Exporters & payslips — PDF/Excel/CSV exporters, payslip PDF (single/bulk), email payslips, payroll register & department summary.
+- [x] T-032: Exporters & payslips — PDF/Excel/CSV exporters, payslip PDF (single/bulk), email payslips, payroll register & department summary.
   - Requirements: FR-088, FR-089
   - Done when: tests parse generated PDF/XLSX/CSV and check figures.
 
