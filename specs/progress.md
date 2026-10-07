@@ -2,8 +2,8 @@
 
 ## Status
 - Phase: 6 — Implement
-- Current task: T-037
-- Next: T-038
+- Current task: T-038
+- Next: T-039
 
 ## Log
 - 2026-10-07: Phases 1–5 complete (clarifications closed, requirements/design/tasks written). User waived approval gates ("start implementing").
@@ -43,3 +43,4 @@
 - 2026-10-07: T-034 done — report module: catalog filtered by permission (REPORT:VIEW + PAYROLL:VIEW / AUDIT:VIEW where noted) with typed params; 10 reports (employee list, daily attendance, attendance summary, attendance edits, leave balances, leave usage, roster grid, payroll register, department summary, audit log) as JSON and pdf/xlsx/csv (REPORT:EXPORT), params validated 422; GET /audit/export (AUDIT:EXPORT, ≤10k newest rows); dashboard KPIs (company-time-zone today, scope-filtered, payroll only with PAYROLL:VIEW). Calculator fix found by the dashboard test: an unclosed IN now records first IN and lateness (design §7.2 updated). 275 tests green.
 - 2026-10-07: T-035 done — Reports page (catalog list, typed parameter inputs incl. org lookups/leave types/rosters/payroll periods, on-screen table with header lines and totals, PDF/Excel/CSV export with REPORT:EXPORT, Audit log tab for AUDIT:VIEW), KPI dashboard (today counts, approvals link, headcount bars, payroll period & OT cost for payroll users, 60 s refresh), audit log date filters + export (AUDIT:EXPORT). Fixed flaky roster E2E locator (exact badge text). 47 unit + 2 E2E green.
 - 2026-10-07: T-036 done — self-service endpoints GET /me/profile (with org names), /me/documents (+content), /me/schedule (≤62 days), /me/attendance/{date} (raw events), /me/payslips (+{periodId}.pdf, own finalized only; others 404); portal UI at /me (profile & documents, change-password link, month attendance with punch drawer, 14-day schedule, leave balances/requests/apply/cancel, payslips download). Test infra: DbCleaner retries TRUNCATE on deadlock with leftover after-commit async work. 280 backend, 50 frontend unit, 2 E2E green.
+- 2026-10-07: T-037 done — springdoc 3.1.1: OpenAPI 3 at /api/docs, UI at /api/docs/ui, bearer JWT scheme, only when hrm.api-docs=true (dev launcher on); perf test (-Pperf) seeds 1,000 employees + 49k punches and times payroll processing incl. attendance reprocessing: 48 s → 4.2 s after removing per-employee structure queries (each auto-flushed ~31k managed attendance rows); i18n test checks every literal t() key exists. Known gap vs NFR-010: feature screens (T-016 onwards) use literal English labels, not i18n keys. 283 backend, 51 frontend green.

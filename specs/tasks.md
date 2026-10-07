@@ -164,7 +164,7 @@ Commands: backend `cd backend && ./mvnw -q verify`; frontend `cd frontend && npm
 
 ## Hardening & Delivery
 
-- [ ] T-037: OpenAPI docs config, performance test (1,000 employees payroll), i18n bundle completeness check.
+- [x] T-037: OpenAPI docs config, performance test (1,000 employees payroll), i18n bundle completeness check.
   - Requirements: NFR-004, NFR-007, NFR-010
   - Done when: perf test < 60 s; docs endpoint test passes.
 

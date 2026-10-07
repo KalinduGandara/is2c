@@ -109,6 +109,12 @@ public class PayrollProcessor {
         Map<UUID, String> deptNames = org.departmentNames(deptIds);
         Map<UUID, String> desigNames = org.designationNames(desigIds);
 
+        // one query up front: per-employee queries inside the loop would each auto-flush (and dirty-check) the
+        // attendance rows held in this transaction (NFR-004)
+        Map<UUID, SalaryStructure> structuresAtEnd = ids.isEmpty() ? Map.of()
+                : structures.findEffectiveOn(ids, period.getEndDate()).stream()
+                        .collect(Collectors.toMap(SalaryStructure::getEmployeeId, x -> x, (a, b) -> a));
+
         long periodDays = ChronoUnit.DAYS.between(period.getStartDate(), period.getEndDate()) + 1;
         int processed = 0;
         int skipped = 0;
@@ -116,7 +122,8 @@ public class PayrollProcessor {
         for (Employee e : staff) {
             LocalDate structureDate = e.getExitDate() != null && e.getExitDate().isBefore(period.getEndDate())
                     ? e.getExitDate() : period.getEndDate();
-            SalaryStructure s = structures.findEffectiveOn(List.of(e.getId()), structureDate).stream().findFirst().orElse(null);
+            SalaryStructure s = structureDate.equals(period.getEndDate()) ? structuresAtEnd.get(e.getId())
+                    : structures.findEffectiveOn(List.of(e.getId()), structureDate).stream().findFirst().orElse(null);
             if (s == null) {
                 exceptions.save(new PayrollException(period.getId(), e.getId(), "NO_SALARY_STRUCTURE",
                         e.getEmployeeNumber() + " has no salary structure effective on " + structureDate + "; skipped", false));
