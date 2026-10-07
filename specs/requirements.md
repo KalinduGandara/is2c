@@ -329,7 +329,7 @@ As a user, I want to sign in with username and password so that I can use the sy
 - Calculation types:
   - FIXED: amount from the salary-structure line or one-time item.
   - PERCENT_OF: rate % × basis value, basis ∈ {`COMPONENT:<code>`, `BASE:<name>`, `GROSS`}.
-  - PER_UNIT: units × unit rate, units from an attendance metric (OT_WORKDAY_HOURS, OT_OFFDAY_HOURS, OT_HOLIDAY_HOURS, EXTRA_HOURS, NO_PAY_DAYS, LATE_HOURS, SHORT_HOURS, ABSENT_DAYS, WORKED_DAYS); unit rate = fixed amount, or `basis value / divisor × multiplier`.
+  - PER_UNIT: units × unit rate, units from an attendance metric (OT_WORKDAY_HOURS, OT_OFFDAY_HOURS, OT_HOLIDAY_HOURS, EXTRA_HOURS, NO_PAY_DAYS, LATE_HOURS, SHORT_HOURS, ABSENT_DAYS, WORKED_DAYS); unit rate = fixed amount, or `basis value / divisor × multiplier` (an empty divisor uses the company's no-pay divisor setting).
   - SLAB: progressive slab table (FR-081) applied to the basis value.
 - WHEN a component's basis refers to a component or base whose members have an equal or higher sequence, THE SYSTEM SHALL reject the configuration with 422 (no forward references/cycles).
 - A system component BASIC (EARNING, FIXED, RECURRING, PER_EMPLOYEE, prorate, bases STATUTORY & TAXABLE, sequence 10) SHALL exist for each company and cannot be deleted.
@@ -341,7 +341,7 @@ As a user, I want to sign in with username and password so that I can use the sy
   - EPF_ER: EMPLOYER_CONTRIBUTION, PERCENT_OF `BASE:STATUTORY`, 12 %.
   - ETF: EMPLOYER_CONTRIBUTION, PERCENT_OF `BASE:STATUTORY`, 3 %.
   - APIT: DEDUCTION, SLAB on `BASE:TAXABLE` using table `APIT_MONTHLY`: 0–150,000 @ 0 %; 150,000–233,333 @ 6 %; 233,333–275,000 @ 18 %; 275,000–316,667 @ 24 %; 316,667–358,333 @ 30 %; > 358,333 @ 36 %.
-  - Standard non-statutory components: OT_WORKDAY (PER_UNIT OT_WORKDAY_HOURS, `COMPONENT:BASIC / 240 × 1.5`), OT_OFFDAY (× 1.5), OT_HOLIDAY (× 2.0), EXTRA_HOURS (`COMPONENT:BASIC / 240 × 1.0`), NO_PAY (DEDUCTION PER_UNIT NO_PAY_DAYS, `COMPONENT:BASIC / 30 × 1`, bases STATUTORY & TAXABLE), BONUS, INCENTIVE, COMMISSION (EARNING FIXED ONE_TIME, TAXABLE), ALLOWANCE (EARNING FIXED RECURRING, TAXABLE), LOAN_DEDUCTION, SALARY_ADVANCE (DEDUCTION FIXED).
+  - Standard non-statutory components: OT_WORKDAY (PER_UNIT OT_WORKDAY_HOURS, `COMPONENT:BASIC / 240 × 1.5`), OT_OFFDAY (× 1.5), OT_HOLIDAY (× 2.0), EXTRA_HOURS (`COMPONENT:BASIC / 240 × 1.0`), NO_PAY (DEDUCTION PER_UNIT NO_PAY_DAYS, `COMPONENT:BASIC / divisor × 1` where an empty divisor means the company's no-pay divisor setting (FR-016, default 30), bases STATUTORY & TAXABLE), BONUS, INCENTIVE, COMMISSION (EARNING FIXED ONE_TIME, TAXABLE), ALLOWANCE (EARNING FIXED RECURRING, TAXABLE), LOAN_DEDUCTION, SALARY_ADVANCE (DEDUCTION FIXED).
 - An authorized user (`PAYROLL:CONFIGURE`) SHALL be able to view and edit statutory components (rates, basis, slab rows) on a "Statutory settings" screen; changes are audited and affect only payroll processed afterwards.
 - Slab tables: name, rows (lower bound inclusive, upper bound exclusive or open, rate %); rows SHALL be contiguous and non-overlapping starting at 0 (422 otherwise).
 - Calculation code SHALL contain no statutory rates or thresholds (enforced by code review & tests that change seeded values and observe changed results).

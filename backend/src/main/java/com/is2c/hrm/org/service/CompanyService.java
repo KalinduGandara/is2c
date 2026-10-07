@@ -36,9 +36,12 @@ public class CompanyService {
     private final DataScopeService scope;
     private final AuditService audit;
     private final ApplicationEventPublisher events;
+    private final org.springframework.beans.factory.ObjectProvider<com.is2c.hrm.org.api.StatutoryPackCatalog> packs;
 
     public CompanyService(CompanyRepository companies, CompanySettingsRepository settingsRepo, DataScopeService scope,
-            AuditService audit, ApplicationEventPublisher events) {
+            AuditService audit, ApplicationEventPublisher events,
+            org.springframework.beans.factory.ObjectProvider<com.is2c.hrm.org.api.StatutoryPackCatalog> packs) {
+        this.packs = packs;
         this.companies = companies;
         this.settingsRepo = settingsRepo;
         this.scope = scope;
@@ -142,8 +145,15 @@ public class CompanyService {
         c.setTimeZone(d.timeZone() == null || d.timeZone().isBlank() ? "Asia/Colombo" : d.timeZone());
     }
 
-    private static void validate(CompanyData d) {
+    private void validate(CompanyData d) {
         List<FieldError> errors = new java.util.ArrayList<>();
+        if (d.statutoryPack() != null && !d.statutoryPack().isBlank()) {
+            packs.ifAvailable(c -> {
+                if (!c.codes().contains(d.statutoryPack().toUpperCase())) {
+                    errors.add(new FieldError("statutoryPack", "must be one of " + c.codes()));
+                }
+            });
+        }
         if (d.code() == null || !d.code().matches("[A-Za-z0-9_-]{1,20}")) {
             errors.add(new FieldError("code", "must be 1-20 letters, digits, '-' or '_'"));
         }

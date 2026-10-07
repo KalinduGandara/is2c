@@ -120,7 +120,7 @@ Commands: backend `cd backend && ./mvnw -q verify`; frontend `cd frontend && npm
 
 ## Payroll
 
-- [ ] T-027: Payroll config — components (validation incl. forward refs), slab tables, `StatutoryPack` SPI + `LK` pack, statutory endpoint, company initializer seeding.
+- [x] T-027: Payroll config — components (validation incl. forward refs), slab tables, `StatutoryPack` SPI + `LK` pack, statutory endpoint, company initializer seeding.
   - Requirements: FR-080, FR-081, FR-010 (seeding)
   - Done when: API tests pass incl. seeded LK values.
 

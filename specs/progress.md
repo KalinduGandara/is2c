@@ -2,8 +2,8 @@
 
 ## Status
 - Phase: 6 — Implement
-- Current task: T-027
-- Next: T-028
+- Current task: T-028
+- Next: T-029
 
 ## Log
 - 2026-10-07: Phases 1–5 complete (clarifications closed, requirements/design/tasks written). User waived approval gates ("start implementing").
@@ -33,3 +33,4 @@
 - 2026-10-07: T-024 done — leave types (seeded Annual 14/Casual 7/Medical 7/No Pay unlimited, configurable), balances with ledger (opening/adjust w/ reason, audited), lazy creation with upfront pro-rata grant (round down 0.5) or monthly accrual, idempotent accrual / year-end carry-forward (cap) / expiry (taken consumes CF first) jobs + scheduler, /me/leave/balances. 202 tests green.
 - 2026-10-07: T-025 done — leave applications (self & on behalf, JSON or multipart with attachments), schedule-based day counting, validations (order, single year, half-day, eligibility, overlap w/ opposite halves allowed, balance/negative/unlimited, attachment threshold, payroll lock), LEAVE_REQUEST handler (pending→taken / release), employee & HR cancellation (approved returns days), attendance reprocess, ApprovedLeaveLookup (paid flag, merged half days), calendar & request list. 212 tests green.
 - 2026-10-07: T-026 done — Leave UI (requests w/ filters, detail drawer, attachments download, HR cancel, apply on behalf; month calendar; balances w/ opening/adjust; leave types config; jobs), reusable ApplyLeaveForm (multipart JSON data part, half days). Test renderer uses Mantine env="test". 36 frontend tests green.
+- 2026-10-07: T-027 done — payroll components (FIXED/PERCENT_OF/PER_UNIT/SLAB, named bases, sequence graph validation incl. forward refs & self-base), slab tables (contiguous from 0), StatutoryPack SPI + LK pack (EPF 8/12, ETF 3, APIT 2025 table, OT 1.5/1.5/2.0 @ Basic/240, NO_PAY @ company divisor, bonus/incentive/commission/allowance/loan/advance), BASIC system component, statutory view, pack catalog validates company pack. Spec: FR-081 NO_PAY divisor reconciled with FR-016 setting. 220 tests green.
