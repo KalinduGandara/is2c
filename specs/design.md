@@ -91,7 +91,6 @@ Request flow: Caddy → Spring Security filter chain (correlation id → rate li
 │       ├── notification/
 │       ├── payroll/       # components, slabs, statutory packs, structures, periods, engine, payslips
 │       ├── report/        # report definitions, exporters (PDF/Excel/CSV), dashboard
-│       └── selfservice/   # /api/v1/me facade
 │   └── src/main/resources/
 │       ├── application.yml, application-prod.yml
 │       ├── messages.properties

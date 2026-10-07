@@ -131,6 +131,32 @@ public class EmployeeService {
         return employees.findAll(spec, Sort.by("employeeNumber"));
     }
 
+    @Transactional(readOnly = true)
+    public java.util.Map<UUID, Employee> byIds(java.util.Collection<UUID> ids) {
+        java.util.Map<UUID, Employee> map = new java.util.HashMap<>();
+        if (!ids.isEmpty()) {
+            employees.findByIdIn(ids).forEach(e -> map.put(e.getId(), e));
+        }
+        return map;
+    }
+
+    /** Employees of a company employed at some point in [from, to] (no data-scope filter; internal processing). */
+    @Transactional(readOnly = true)
+    public List<Employee> employedBetween(UUID companyId, java.util.Collection<UUID> ids, LocalDate from, LocalDate to) {
+        Specification<Employee> spec = (root, query, cb) -> {
+            List<jakarta.persistence.criteria.Predicate> p = new ArrayList<>();
+            p.add(cb.equal(root.get("companyId"), companyId));
+            p.add(cb.lessThanOrEqualTo(root.get("joinDate"), to));
+            p.add(cb.or(cb.isNull(root.get("exitDate")), cb.greaterThanOrEqualTo(root.get("exitDate"), from)));
+            p.add(cb.notEqual(root.get("status"), EmployeeStatus.INACTIVE));
+            if (ids != null) {
+                p.add(root.get("id").in(ids));
+            }
+            return cb.and(p.toArray(jakarta.persistence.criteria.Predicate[]::new));
+        };
+        return employees.findAll(spec, Sort.by("employeeNumber"));
+    }
+
     /**
      * Lower-cased badge IDs and employee numbers of a company mapped to employee ids, for matching device punches
      * (FR-045). Badges take precedence over numbers when they collide.

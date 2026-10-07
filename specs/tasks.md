@@ -84,7 +84,7 @@ Commands: backend `cd backend && ./mvnw -q verify`; frontend `cd frontend && npm
   - Requirements: FR-048
   - Done when: unit-test table covering each rule passes.
 
-- [ ] T-019: `AttendanceProcessor` — batch processing, triggers, nightly job, daily/events views, self-service attendance.
+- [x] T-019: `AttendanceProcessor` — batch processing, triggers, nightly job, daily/events views, self-service attendance.
   - Requirements: FR-048, FR-055
   - Done when: integration tests (ingest → process → daily) pass.
 
