@@ -136,7 +136,7 @@ Commands: backend `cd backend && ./mvnw -q verify`; frontend `cd frontend && npm
   - Requirements: FR-083, FR-084, FR-085, FR-086, FR-066
   - Done when: API tests pass.
 
-- [ ] T-031: Payroll approval & finalization — submit → approval engine, send back, finalize, locked trigger, attendance lock integration.
+- [x] T-031: Payroll approval & finalization — submit → approval engine, send back, finalize, locked trigger, attendance lock integration.
   - Requirements: FR-087, FR-053
   - Done when: API + DB trigger tests pass.
 

@@ -2,8 +2,8 @@
 
 ## Status
 - Phase: 6 — Implement
-- Current task: T-031
-- Next: T-032
+- Current task: T-032
+- Next: T-033
 
 ## Log
 - 2026-10-07: Phases 1–5 complete (clarifications closed, requirements/design/tasks written). User waived approval gates ("start implementing").
@@ -37,3 +37,4 @@
 - 2026-10-07: T-028 done — V16 payroll core schema (structures, periods, items, results/lines w/ DB lock trigger, exceptions); salary structures (effective-dated supersede, line validation per component type, finalized-period guard, stale marking), payroll usage checker. 224 tests green.
 - 2026-10-07: T-029 done — pure PayrollEngine (sequence order, applicability AUTOMATIC/PER_EMPLOYEE/ONE_TIME/exclusions, FIXED w/ proration, PERCENT_OF, PER_UNIT fixed/basis w/ default divisor & overrides, progressive SLAB, named bases ± by kind, GROSS, HALF_UP lines, zero lines omitted). 11 engine tests with LK worked examples written first (incl. APIT 22,250.04 on 315,625). 235 tests green.
 - 2026-10-07: T-030 done — payroll periods (start-day ranges, overlap/duplicate checks), one-time items (ONE_TIME fixed components, stale on change), PayrollProcessor (attendance reprocess, metrics incl. payable OT & unpaid leave & absent-as-no-pay, proration, structure on period end/exit, engine, name snapshots, NO_SALARY_STRUCTURE / NEGATIVE_NET (blocking) / ATTENDANCE_EXCEPTIONS), scoped results/detail/exceptions/totals, AttendanceLockPolicy impl (IN_REVIEW+ locks; DRAFT stale). Spec FR-083 clarified to ONE_TIME fixed components. 243 tests green.
+- 2026-10-07: T-031 done — PayrollApprovalService: submit (DRAFT only, rejects stale/blocking with 422) → PAYROLL_APPROVAL transaction + IN_REVIEW (attendance locked), send back with mandatory comment (cancels transaction, DRAFT), handler callbacks (approve → APPROVED, reject/cancel → DRAFT), finalize (PAYROLL:APPROVE, APPROVED only) locks results/lines and assigns per-company payslip numbers PS-YYYYMM-nnnnnn; post-finalize changes 409; DB trigger verified for UPDATE/DELETE; every transition audited. 250 tests green.

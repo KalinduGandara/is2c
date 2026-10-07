@@ -25,6 +25,7 @@ import com.is2c.hrm.payroll.domain.PayrollOneTimeItem;
 import com.is2c.hrm.payroll.domain.PayrollPeriod;
 import com.is2c.hrm.payroll.domain.PayrollResult;
 import com.is2c.hrm.payroll.domain.PayrollResultLine;
+import com.is2c.hrm.payroll.service.PayrollApprovalService;
 import com.is2c.hrm.payroll.service.PayrollPeriodService;
 import com.is2c.hrm.payroll.service.PayrollProcessor;
 
@@ -33,9 +34,14 @@ import com.is2c.hrm.payroll.service.PayrollProcessor;
 public class PayrollPeriodController {
 
     private final PayrollPeriodService periods;
+    private final PayrollApprovalService review;
 
-    public PayrollPeriodController(PayrollPeriodService periods) {
+    public PayrollPeriodController(PayrollPeriodService periods, PayrollApprovalService review) {
         this.periods = periods;
+        this.review = review;
+    }
+
+    public record CommentRequest(String comment) {
     }
 
     public record OpenRequest(UUID companyId, int year, int month) {
@@ -107,6 +113,24 @@ public class PayrollPeriodController {
     @PreAuthorize("hasAuthority('PAYROLL:EDIT')")
     public PayrollProcessor.Summary process(@PathVariable UUID id) {
         return periods.process(id);
+    }
+
+    @PostMapping("/periods/{id}/submit")
+    @PreAuthorize("hasAuthority('PAYROLL:EDIT')")
+    public PeriodDto submit(@PathVariable UUID id) {
+        return PeriodDto.of(review.submit(id));
+    }
+
+    @PostMapping("/periods/{id}/send-back")
+    @PreAuthorize("hasAnyAuthority('PAYROLL:EDIT', 'PAYROLL:APPROVE')")
+    public PeriodDto sendBack(@PathVariable UUID id, @RequestBody(required = false) CommentRequest body) {
+        return PeriodDto.of(review.sendBack(id, body == null ? null : body.comment()));
+    }
+
+    @PostMapping("/periods/{id}/finalize")
+    @PreAuthorize("hasAuthority('PAYROLL:APPROVE')")
+    public PeriodDto finalizePeriod(@PathVariable UUID id) {
+        return PeriodDto.of(review.finalizePeriod(id));
     }
 
     @GetMapping("/periods/{id}/results")
