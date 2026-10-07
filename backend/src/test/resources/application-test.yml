@@ -2,3 +2,9 @@ logging:
   level:
     root: WARN
     com.is2c.hrm: INFO
+hrm:
+  jwt:
+    secret: test-secret-test-secret-test-secret-0123456789
+  admin:
+    username: admin
+    password: Bootstrap#Pass1

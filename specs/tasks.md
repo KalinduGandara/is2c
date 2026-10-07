@@ -14,7 +14,7 @@ Commands: backend `cd backend && ./mvnw -q verify`; frontend `cd frontend && npm
   - Requirements: NFR-005, NFR-006, NFR-008, NFR-009, NFR-013, NFR-014, NFR-015, NFR-016, NFR-017, NFR-018
   - Done when: tests for error format, correlation header echo, sequence counter concurrency, ArchUnit rules pass.
 
-- [ ] T-003: Security core — users/roles/permissions schema, seeded 9 roles + matrix, bootstrap super admin, login/refresh/logout/me, lockout, refresh rotation & reuse detection, password policy + change password, must-change gate, BCrypt, JWT config, security headers, CORS, login rate limit, security-event logging.
+- [x] T-003: Security core — users/roles/permissions schema, seeded 9 roles + matrix, bootstrap super admin, login/refresh/logout/me, lockout, refresh rotation & reuse detection, password policy + change password, must-change gate, BCrypt, JWT config, security headers, CORS, login rate limit, security-event logging.
   - Requirements: FR-001, FR-002, FR-003, FR-005 (seed), NFR-002, NFR-003, NFR-019
   - Done when: API tests for every FR-001..003 criterion pass.
 
