@@ -18,6 +18,6 @@ import org.springframework.test.context.ContextConfiguration;
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
 @ContextConfiguration(initializers = EmbeddedPostgresInitializer.class)
-@Import({TestClockConfig.class, DbCleaner.class, TestData.class, SecuredProbeController.class})
+@Import({TestClockConfig.class, DbCleaner.class, TestData.class, SecuredProbeController.class, OrgFixtures.class})
 public @interface IntegrationTest {
 }

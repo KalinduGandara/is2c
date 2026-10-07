@@ -101,7 +101,7 @@ As a user, I want to sign in with username and password so that I can use the sy
 - Updates SHALL use optimistic locking; WHEN a stale version is submitted, THE SYSTEM SHALL respond 409.
 
 ### FR-016 Company settings — §1, §4.2, §4.6
-- Each company SHALL have editable settings (`ORG:CONFIGURE`): default weekly-off days (default SUNDAY), employee-number format (FR-014), payroll period start day (1–28, default 1), absent-day-as-no-pay flag (default true), no-pay divisor (default 30), attendance punch window before/after shift in minutes (defaults 240/240), half-day leave split mode.
+- Each company SHALL have editable settings (`ORG:CONFIGURE`): default weekly-off days (default SUNDAY), employee-number format (FR-014), payroll period start day (1–28, default 1), absent-day-as-no-pay flag (default true), no-pay divisor (default 30), attendance punch window before/after shift in minutes (defaults 240/240), roster week-start day (default MONDAY).
 - Changes SHALL be audited (FR-008) and apply to subsequent processing only.
 
 ### FR-017 Employee status lifecycle & employment history — §4.1, §8

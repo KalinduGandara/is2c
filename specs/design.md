@@ -117,7 +117,7 @@ Each module package has: `domain/` (entities, repositories), `service/` (busines
 | platform | `DatabasePlatform` (vendor name, migration location, `lockForUpdate` sequence counter), `PostgresDatabasePlatform`; `FileStorage`, `LocalFileStorage` | NFR-005, FR-014, FR-020 |
 | security | Users, roles, permissions, login/refresh/logout, lockout, password policy, bootstrap admin, JWT config, `CurrentUser`, `DataScopeService`, rate limit, security headers | FR-001…007, NFR-002, 003, 019 |
 | audit | `AuditService.record(...)`, audit search/export, append-only enforcement | FR-008 |
-| org | Companies, settings, branches, departments (tree), designations, grades, categories, holidays, `CompanyInitializer` (orchestrates seeding via other modules' `api`) | FR-010…013, FR-016, FR-025 |
+| org | Companies, settings, branches, departments (tree), designations, grades, categories, holidays, `DataScopeService`, `OrgDirectory` read API; publishes `CompanyCreatedEvent` that other modules handle to seed per-company defaults | FR-010…013, FR-016, FR-025 |
 | employee | Employees, numbering, history, emergency contacts, custom fields, documents, search | FR-014, 015, 017…020 |
 | shift | Shifts, rotation patterns & assignments, OT policies, `ScheduleResolver` | FR-030…033 |
 | roster | Rosters, entries, bulk assign, copy, conflict detection, publish/lock, revisions | FR-035…040 |
@@ -230,6 +230,7 @@ All tables: `id UUID PK` (app-generated time-ordered UUID), and for mutable mast
 `X:*` = all seven actions. "Approve" of workflow items is governed by workflow eligibility (FR-071), not by `APPROVE` permissions; `APPROVE` gates non-workflow approvals (roster publish, OT approval, payroll finalize).
 
 ### 6.3 Data scope (FR-006)
+Implemented by `org.service.DataScopeService` (scope is an org-structure concern); the employee module supplies employee placements through `org.api.EmployeePlacementLookup`, and modules that reference org records implement `org.api.OrgReferenceChecker` (deletion guards) — avoiding module cycles. Company-level **reads** require `coversCompany` (ALL, company in scope, or the company of a scoped branch/department/own employee); company-level **writes** require `coversWholeCompany` (ALL or company explicitly in a COMPANY scope).
 `DataScopeService.current()` returns an `EmployeeScope` (ALL | sets of company ids, branch ids, department ids expanded with descendants | own employee id). Repository queries take it as a JPA `Specification<Employee>` (or the equivalent JPQL predicate on `employee.companyId/branchId/departmentId/id`). `assertInScope(employee)` throws `NotFoundException` (404). Company-level resources (settings, shifts, leave types…) check `scope.coversCompany(companyId)` — branch/department-scoped users "cover" their branch's company for read-only lookups.
 
 ### 6.4 Other
