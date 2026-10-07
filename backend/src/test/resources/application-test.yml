@@ -3,6 +3,8 @@ logging:
     root: WARN
     com.is2c.hrm: INFO
 hrm:
+  storage:
+    path: target/test-files
   jwt:
     secret: test-secret-test-secret-test-secret-0123456789
   admin:

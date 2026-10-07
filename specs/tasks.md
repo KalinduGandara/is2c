@@ -36,7 +36,7 @@ Commands: backend `cd backend && ./mvnw -q verify`; frontend `cd frontend && npm
   - Requirements: FR-014, FR-015, FR-017, FR-018, FR-007 (no salary in profile)
   - Done when: API tests for each criterion incl. concurrent numbering pass.
 
-- [ ] T-008: Custom fields + documents — field definitions & value validation; `FileStorage` + local impl; upload (size/type sniffing), list, download, soft delete.
+- [x] T-008: Custom fields + documents — field definitions & value validation; `FileStorage` + local impl; upload (size/type sniffing), list, download, soft delete.
   - Requirements: FR-019, FR-020
   - Done when: API tests pass.
 

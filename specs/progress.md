@@ -2,8 +2,8 @@
 
 ## Status
 - Phase: 6 — Implement
-- Current task: T-008
-- Next: T-009
+- Current task: T-009
+- Next: T-010
 
 ## Log
 - 2026-10-07: Phases 1–5 complete (clarifications closed, requirements/design/tasks written). User waived approval gates ("start implementing").
@@ -14,3 +14,4 @@
 - 2026-10-07: T-005 done — companies (+defaults, CompanyCreatedEvent), settings, branches, department tree (cycle checks), lookups, DataScopeService in org, EmployeeNumberFormat. Delete-with-employees guard via OrgReferenceChecker SPI (exercised in T-007). 58 tests green.
 - 2026-10-07: T-006 done — `admin` module: user CRUD/activate/deactivate/reset, last-super-admin guard, custom roles & matrix, escalation guards; scope-filtered user admin. 69 tests green.
 - 2026-10-07: T-007 done — employee master (numbering w/ concurrency, validations, manager cycle check, status lifecycle, employment history, soft delete via usage SPI, scoped search). Default-shift validation deferred to T-013 (shift module). 87 tests green.
+- 2026-10-07: T-008 done — custom field defs (typed validation, hidden-when-inactive), FileStorage SPI + local impl, content-sniffed documents (PDF/JPEG/PNG/DOCX, 10 MB), download as attachment, soft delete. 94 tests green.
