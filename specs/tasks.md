@@ -54,7 +54,7 @@ Commands: backend `cd backend && ./mvnw -q verify`; frontend `cd frontend && npm
 
 ## Calendar, Shift & Roster
 
-- [ ] T-012: Holidays — backend CRUD, branch applicability, duplicate check, copy-year; frontend calendar/list.
+- [x] T-012: Holidays — backend CRUD, branch applicability, duplicate check, copy-year; frontend calendar/list.
   - Requirements: FR-025
   - Done when: API tests + component test pass.
 

@@ -2,8 +2,8 @@
 
 ## Status
 - Phase: 6 — Implement
-- Current task: T-012
-- Next: T-013
+- Current task: T-013
+- Next: T-014
 
 ## Log
 - 2026-10-07: Phases 1–5 complete (clarifications closed, requirements/design/tasks written). User waived approval gates ("start implementing").
@@ -18,3 +18,4 @@
 - 2026-10-07: T-009 done — frontend shell: API client (problem+json, single-flight refresh), auth context, login/change-password, permission-aware AppShell nav, company context, i18n, DataTable. Refresh token kept in sessionStorage (cleared on tab close). 12 frontend tests green.
 - 2026-10-07: T-010 done — generic EntityForm/CrudPanel; Organization setup (companies, settings, branches, department tree, lookups, custom fields); Administration (users w/ scope + reset/activate, roles permission matrix, audit search). 20 frontend tests green. Manual run against backend deferred to T-011 (dev runner).
 - 2026-10-07: T-011 done — Employee Hub (list/search/filters, profile form w/ contacts + custom fields, status change, history, documents). Dev launcher `DevHrmApplication` (embedded PG, no Docker); Playwright E2E harness (own backend :8081 + Vite :5174, fresh DB) with first smoke spec passing; E2E caught duplicate i18n key (fixed + bundle test). Test-support moved to `com.is2c.testsupport` so dev runs don't load test beans.
+- 2026-10-07: T-012 done — holiday calendar (branch applicability, overlap duplicate check, copy-year w/ Feb 29 skip, visible to company employees) + Holidays tab. 98 backend / 27 frontend tests green.
