@@ -172,6 +172,6 @@ Commands: backend `cd backend && ./mvnw -q verify`; frontend `cd frontend && npm
   - Requirements: NFR-001, NFR-002, NFR-011, NFR-021
   - Done when: `docker compose -f deploy/compose.onprem.yml up` serves login over HTTPS and backup script produces a dump that restores.
 
-- [ ] T-039: E2E smoke (Playwright) — full monthly flow at desktop & mobile viewport.
+- [x] T-039: E2E smoke (Playwright) — full monthly flow at desktop & mobile viewport.
   - Requirements: NFR-012, NFR-020
   - Done when: `npm run e2e` passes.

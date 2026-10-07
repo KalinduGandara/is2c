@@ -2,8 +2,8 @@
 
 ## Status
 - Phase: 6 — Implement
-- Current task: T-039
-- Next: Phase 7 (verify)
+- Current task: Phase 7 (verify)
+- Next: final report
 
 ## Log
 - 2026-10-07: Phases 1–5 complete (clarifications closed, requirements/design/tasks written). User waived approval gates ("start implementing").
@@ -45,3 +45,4 @@
 - 2026-10-07: T-036 done — self-service endpoints GET /me/profile (with org names), /me/documents (+content), /me/schedule (≤62 days), /me/attendance/{date} (raw events), /me/payslips (+{periodId}.pdf, own finalized only; others 404); portal UI at /me (profile & documents, change-password link, month attendance with punch drawer, 14-day schedule, leave balances/requests/apply/cancel, payslips download). Test infra: DbCleaner retries TRUNCATE on deadlock with leftover after-commit async work. 280 backend, 50 frontend unit, 2 E2E green.
 - 2026-10-07: T-037 done — springdoc 3.1.1: OpenAPI 3 at /api/docs, UI at /api/docs/ui, bearer JWT scheme, only when hrm.api-docs=true (dev launcher on); perf test (-Pperf) seeds 1,000 employees + 49k punches and times payroll processing incl. attendance reprocessing: 48 s → 4.2 s after removing per-employee structure queries (each auto-flushed ~31k managed attendance rows); i18n test checks every literal t() key exists. Known gap vs NFR-010: feature screens (T-016 onwards) use literal English labels, not i18n keys. 283 backend, 51 frontend green.
 - 2026-10-07: T-038 done — deploy/Dockerfile (node build → maven package with SPA embedded → non-root JRE image with healthcheck), compose.onprem.yml (internal-CA HTTPS) / compose.cloud.yml (Let's Encrypt + HSTS) with db, app, caddy and a daily backup service (pg_dump + documents archive, retention), backup.sh/restore.sh, .env.example, SPA history fallback (deep links), forward-headers behind Caddy in prod, docs (install-onprem, deploy-cloud, backup-recovery, release-update). Verified with Docker 27: stack healthy, SPA + deep link + login over HTTPS, HTTP→HTTPS redirect, CSP/HSTS headers, browser login without console errors, backup → change → restore drill brought back exactly the pre-backup DB rows and files. 285 backend tests green.
+- 2026-10-07: T-039 done — Playwright monthly flow (desktop): API setup of org/users/punch feed, salary structure in UI, employee applies leave in portal, HR approves in inbox, payroll open → process (incl. attendance reprocessing, net 92,000.00) → submit, HR approves & finalizes, employee downloads own payslip PDF; responsive spec at 360 px in desktop + Pixel 7 projects (dashboard and every portal tab without horizontal scroll). Flakiness root-caused to the shared E2E database (company selector defaulting to another spec's company) and fixed with explicit company selection. 5 E2E specs green 3× in a row.
