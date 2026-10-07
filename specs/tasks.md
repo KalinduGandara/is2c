@@ -58,7 +58,7 @@ Commands: backend `cd backend && ./mvnw -q verify`; frontend `cd frontend && npm
   - Requirements: FR-025
   - Done when: API tests + component test pass.
 
-- [ ] T-013: Shifts, OT policies, rotation patterns & assignments (backend).
+- [x] T-013: Shifts, OT policies, rotation patterns & assignments (backend).
   - Requirements: FR-030, FR-031, FR-032
   - Done when: API tests for validation rules (night/split/flex) & overlap pass.
 
