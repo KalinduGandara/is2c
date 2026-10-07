@@ -14,7 +14,7 @@ export function renderRoutes(routes: RouteObject[], initialPath = '/') {
   const router = createMemoryRouter(routes, { initialEntries: [initialPath] });
   const client = new QueryClient({ defaultOptions: { queries: { retry: false } } });
   const utils = render(
-    <MantineProvider>
+    <MantineProvider env="test">
       <Notifications />
       <ModalsProvider>
         <QueryClientProvider client={client}>

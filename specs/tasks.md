@@ -114,7 +114,7 @@ Commands: backend `cd backend && ./mvnw -q verify`; frontend `cd frontend && npm
   - Requirements: FR-063, FR-064, FR-065, FR-066 (data), FR-100 (leave)
   - Done when: API tests pass.
 
-- [ ] T-026: Frontend leave — types config, balances, apply (self & on behalf), requests, calendar.
+- [x] T-026: Frontend leave — types config, balances, apply (self & on behalf), requests, calendar.
   - Requirements: FR-060…065 (UI)
   - Done when: component tests pass.
 
