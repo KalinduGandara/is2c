@@ -9,8 +9,8 @@ Spec-driven project. **Source of truth: `specs/`** — read `specs/tasks.md` and
 
 ## Stack
 - Backend: Java 21, Spring Boot 4.1 (WebMVC, Security, Data JPA, Flyway), PostgreSQL 16+ — `backend/`
-- Frontend: React 19, Vite 8, TypeScript 6.0, Mantine 9, TanStack Query, React Router 8, react-i18next — `frontend/`
-- Tests: JUnit 5 + MockMvc + embedded PostgreSQL (zonky, no Docker needed), ArchUnit; Vitest + Testing Library; Playwright E2E
+- Frontend: React 19, Vite 8, TypeScript 6.0, Mantine 9 (+ spotlight), TanStack Query, React Router 8, react-i18next — `frontend/`
+- Tests: JUnit 5 + MockMvc + embedded PostgreSQL (zonky, no Docker needed), ArchUnit; Vitest + Testing Library; Playwright E2E + axe accessibility (`e2e/a11y.spec.ts`)
 - Packaging: Docker multi-stage + Compose (`deploy/`)
 
 ## Commands
@@ -33,3 +33,4 @@ Spec-driven project. **Source of truth: `specs/`** — read `specs/tasks.md` and
 - Tests reference requirement IDs in `@DisplayName("FR-xxx …")`; write tests first from acceptance criteria.
 - Commit per task: `feat(<module>): T-xxx <summary> [FR-xxx, …]`.
 - UI strings go through i18n keys (`frontend/src/i18n/en.json`).
+- UI: theme in `frontend/src/theme.ts` + `src/styles/global.css`; reuse `src/components/` (`PageHeader`, `DataTable`, `CrudPanel`, `StatusBadge`, `EmptyState`, `PageLoader`, `StatCard`, `useUrlTab`, `format.ts`). Never show raw enums (use `StatusBadge`/`humanize`), confirm destructive actions, give every list a loading and empty state, keep pages usable at 360 px and in dark mode; E2E selectors use accessible names, so report label changes.

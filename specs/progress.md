@@ -2,7 +2,7 @@
 
 ## Status
 - Phase: 7 — Verify (complete)
-- Current task: done (all T-001…T-039 + review fixes)
+- Current task: done (all T-001…T-040 + review fixes)
 - Next: open question on OT/no-pay basis (see final report)
 
 ## Log
@@ -47,6 +47,7 @@
 - 2026-10-07: T-038 done — deploy/Dockerfile (node build → maven package with SPA embedded → non-root JRE image with healthcheck), compose.onprem.yml (internal-CA HTTPS) / compose.cloud.yml (Let's Encrypt + HSTS) with db, app, caddy and a daily backup service (pg_dump + documents archive, retention), backup.sh/restore.sh, .env.example, SPA history fallback (deep links), forward-headers behind Caddy in prod, docs (install-onprem, deploy-cloud, backup-recovery, release-update). Verified with Docker 27: stack healthy, SPA + deep link + login over HTTPS, HTTP→HTTPS redirect, CSP/HSTS headers, browser login without console errors, backup → change → restore drill brought back exactly the pre-backup DB rows and files. 285 backend tests green.
 - 2026-10-07: T-039 done — Playwright monthly flow (desktop): API setup of org/users/punch feed, salary structure in UI, employee applies leave in portal, HR approves in inbox, payroll open → process (incl. attendance reprocessing, net 92,000.00) → submit, HR approves & finalizes, employee downloads own payslip PDF; responsive spec at 360 px in desktop + Pixel 7 projects (dashboard and every portal tab without horizontal scroll). Flakiness root-caused to the shared E2E database (company selector defaulting to another spec's company) and fixed with explicit company selection. 5 E2E specs green 3× in a row.
 - 2026-10-07: Phase 7 review fixes — 13 findings from an independent review against requirements.md: takeover of stronger users and global role edits by company admins (FR-005/007), unscoped delegations (FR-073), approval on dates locked after submission (FR-053), finalized payroll visibility tied to live employees (V17 branch_id snapshot), company-wide payroll/roster actions by department-scoped users, CSV import/rematch outside scope, exports without PAYROLL:VIEW, approved OT re-flagged as pending after reprocess, payroll exceptions and roster entries leaking out of scope, /me leave 403→404, AUTO approval and rematch audited, login rate-limit map pruned. All with failing-first tests; design §6.3 updated.
+- 2026-10-11: T-040 done — UI/UX modernisation. Theme (`src/theme.ts`, `src/styles/global.css`): indigo brand palette, Inter bundled locally (CSP font-src 'self'), light/dark/auto colour scheme, contrast overrides for dimmed/error/"light"-variant text. App shell: grouped icon sidebar with approvals inbox badge and current company, header with ⌘K/`/` command palette (`@mantine/spotlight`: pages, actions, server-side employee search), company switcher, theme toggle, user menu; document titles per page; scroll restoration. Shared components: PageHeader (icon/description/back), DataTable (card, skeletons, empty states, keyboard-openable rows, page totals), StatusBadge + `humanize`/`formatDate`, EmptyState, PageLoader, StatCard, `useUrlTab` (tabs in `?tab=`), CrudPanel filter + "Delete <entity>?" confirmation. New sign-in/change-password (split layout, live password-rule checklist; button "Update password"), dashboard (greeting, KPI cards, attendance ring, quick actions by permission), 404 and no-access pages. Every module: icon headers, URL tabs, humanized statuses/dates, confirmations for destructive actions, month/date pickers instead of free text, 360 px layouts. Behaviour changes: roster Publish disabled while edits are unsaved; exit date required in the UI for Resigned/Terminated. E2E: new `shell.spec.ts` (auth, nav, palette, theme, URL state, keyboard, CRUD confirm, permissions) and `a11y.spec.ts` (axe WCAG 2.1 AA on all main screens + portal, light and dark — found and fixed contrast and ARIA violations); responsive spec covers every module page at 360 px. Existing specs updated for humanized labels; employee spec now selects its company explicitly. Deps: @fontsource-variable/inter 5.3.0, @mantine/spotlight 9.7.1, @axe-core/playwright 4.13.0 (dev). Known gap unchanged: module-level labels are literal English (NFR-010). 69 frontend unit, 22 E2E green.
 
 ## Traceability matrix
 
@@ -54,11 +55,11 @@ Each requirement is mapped to the tests whose names cite it (JUnit `@DisplayName
 
 | Requirement | Verified by |
 |---|---|
-| FR-001 | `AuthApiTest.loginSuccess`; `AuthApiTest.invalidCredentials`; `AuthApiTest.lockout`; `AuthApiTest.successResetsCounter`; `AuthApiTest.inactiveUser`; … +4 more |
+| FR-001 | `AuthApiTest.loginSuccess`; `AuthApiTest.invalidCredentials`; `AuthApiTest.lockout`; `AuthApiTest.successResetsCounter`; `AuthApiTest.inactiveUser`; … +4 more; `shell.spec.ts` “FR-001 login validates required fields and reports bad credentials” |
 | FR-002 | `AuthApiTest.refreshRotation`; `AuthApiTest.refreshExpired`; `AuthApiTest.logoutAndHashing`; `client.test.ts` “FR-002 refreshes once on 401 and retries with the ”; `client.test.ts` “FR-002 clears the session and notifies when refres” |
-| FR-003 | `AdminApiTest.resetPassword`; `AuthApiTest.changePassword`; `AuthApiTest.mustChangeGate`; `LoginPage.test.tsx` “FR-001/FR-003 signs in and redirects to change pas”; `LoginPage.test.tsx` “FR-003 change-password form checks confirmation be” |
+| FR-003 | `AdminApiTest.resetPassword`; `AuthApiTest.changePassword`; `AuthApiTest.mustChangeGate`; `LoginPage.test.tsx` “FR-001/FR-003 signs in and redirects to change pas”; `LoginPage.test.tsx` “FR-003 change-password form checks confirmation be”; `shell.spec.ts` “FR-003 forced password change checks the rules and confirmation before saving” |
 | FR-004 | `AdminApiTest.createUser`; `AdminApiTest.createValidation`; `AdminApiTest.deactivate`; `AdminApiTest.lastSuperAdmin`; `AuthApiTest.bootstrapAdmin`; … +1 more |
-| FR-005 | `AdminApiTest.escalation`; `AdminApiTest.customRoles`; `AdminApiTest.systemRoles`; `AdminApiTest.roleEscalation`; `AdminApiTest.catalog`; … +14 more |
+| FR-005 | `AdminApiTest.escalation`; `AdminApiTest.customRoles`; `AdminApiTest.systemRoles`; `AdminApiTest.roleEscalation`; `AdminApiTest.catalog`; … +14 more; `AppLayout.test.tsx` “FR-005 groups navigation by area and shows the pending approvals count”; `shell.spec.ts` “FR-005 employees only see their modules and get a clear message elsewhere” |
 | FR-006 | `AdminApiTest.scopedAdministration`; `AdminApiTest.escalation`; `DelegationScopeApiTest.scopedDelegations`; `AttendanceProcessingApiTest.scope`; `EmployeeApiTest.departmentScope`; … +6 more |
 | FR-007 | `AdminApiTest.noTakeoverOfStrongerUsers`; `EmployeeApiTest.noSalary`; `PayrollConfigApiTest.permissions`; `PayrollProcessingApiTest.permissions`; `PayslipExportApiTest.exportNeedsView`; … +1 more |
 | FR-008 | `ApprovalApiTest.autoApprove`; `AuditApiTest.immutable`; `AuditApiTest.recordContents`; `AuditApiTest.searchFilters`; `AuditApiTest.permission`; … +6 more |
@@ -131,7 +132,7 @@ Each requirement is mapped to the tests whose names cite it (JUnit `@DisplayName
 | NFR-009 | `ErrorHandlingTest.notFound`; `ErrorHandlingTest.validation`; `ErrorHandlingTest.malformed`; `ErrorHandlingTest.unexpected`; `client.test.ts` “NFR-009 parses problem+json into ApiError with fie”; … +1 more |
 | NFR-010 | `i18n.test.ts` “has no duplicate keys within an object”; `i18n.test.ts` “defines every literal key used with t() in the sou”; `i18n.test.ts` “defines the product title” |
 | NFR-011 | Manual: backup → change → restore drill on the Docker stack (2026-10-07), procedure in `docs/backup-recovery.md`; scripts `deploy/backup/*.sh` |
-| NFR-012 | `responsive.spec.ts` “NFR-012 employee portal and dashboard at 360 px wi” |
+| NFR-012 | `responsive.spec.ts` “NFR-012 employee portal and dashboard at 360 px wi”; `responsive.spec.ts` “NFR-012 every module page fits a 360 px screen…”; `shell.spec.ts` “NFR-012 grouped sidebar…”; `a11y.spec.ts` (axe WCAG 2.1 AA, light + dark); `components.test.tsx` “NFR-012 opens clickable rows with the keyboard” |
 | NFR-013 | `PayrollEngineTest.rounding` |
 | NFR-014 | `EmployeeApiTest.softDelete` |
 | NFR-015 | `IdsTest.version7` |

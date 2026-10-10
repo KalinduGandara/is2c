@@ -175,3 +175,10 @@ Commands: backend `cd backend && ./mvnw -q verify`; frontend `cd frontend && npm
 - [x] T-039: E2E smoke (Playwright) — full monthly flow at desktop & mobile viewport.
   - Requirements: NFR-012, NFR-020
   - Done when: `npm run e2e` passes.
+
+## UX
+
+- [x] T-040: UI/UX modernisation — theme (brand palette, self-hosted Inter, light/dark), app shell (grouped icon sidebar, ⌘K command palette, company switcher, user menu), shared components (PageHeader, DataTable states, StatusBadge, EmptyState, PageLoader, StatCard, useUrlTab, format helpers), redesigned sign-in/password/dashboard/404/no-access screens, per-module polish, WCAG AA fixes.
+  - Requirements: NFR-012, FR-001, FR-003, FR-005, FR-096, FR-100
+  - Done when: `npm run lint && npm run typecheck && npx vitest --run` and `npm run e2e` (incl. shell, axe a11y in light + dark, 360 px responsive) pass.
+

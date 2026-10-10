@@ -59,8 +59,8 @@ Request flow: Caddy → Spring Security filter chain (correlation id → rate li
 | API docs | springdoc-openapi | NFR-007. |
 | Build | Maven (wrapper) | CL-G1. |
 | Backend tests | JUnit 5, AssertJ, Spring Boot Test + MockMvc, zonky embedded-postgres, ArchUnit | Real Postgres without Docker (clarification assumption 8); architecture rules. |
-| Frontend | React 19, Vite 8, TypeScript 6.0, Mantine 9 (core, dates, form, notifications), TanStack Query 5, React Router 8, react-i18next, dayjs | SRS §7.1; Mantine gives accessible, responsive enterprise components quickly. TS 6.0 because typescript-eslint does not support TS 7 yet. |
-| Frontend tests | Vitest + Testing Library; Playwright (E2E) | NFR-020. |
+| Frontend | React 19, Vite 8, TypeScript 6.0, Mantine 9 (core, dates, form, notifications, modals, spotlight), Tabler icons, Inter (self-hosted via @fontsource), TanStack Query 5, React Router 8, react-i18next, dayjs | SRS §7.1; Mantine gives accessible, responsive enterprise components quickly. TS 6.0 because typescript-eslint does not support TS 7 yet. |
+| Frontend tests | Vitest + Testing Library; Playwright (E2E) + axe-core (accessibility) | NFR-020. |
 | Packaging | Docker multi-stage image; Docker Compose (app, postgres, caddy, backup) | CL-F6. |
 
 ---
@@ -326,7 +326,10 @@ Codes include `VALIDATION_FAILED`, `NOT_FOUND`, `FORBIDDEN`, `CONFLICT`, `OPTIMI
 - **Time**: injected `java.time.Clock` (tests fix it); attendance in company time zone.
 - **Transactions**: service-layer `@Transactional`; notifications via `@TransactionalEventListener(AFTER_COMMIT)` + async executor.
 - **Scheduling**: `@Scheduled` cron (configurable): attendance nightly 01:00, leave accrual 00:30 on day 1, year-end/expiry 00:45 daily (idempotent checks). Single instance per customer → no distributed lock.
-- **Frontend**: Mantine `AppShell` with role-aware navigation from `/auth/me` permissions; feature folders; `api/client.ts` fetch wrapper with token refresh & problem+json parsing; TanStack Query for caching; generic `DataTable` (server pagination), `CrudDrawer` forms with Mantine form validation mirroring server rules; i18n keys in `src/i18n/en.json`. Built assets copied into backend `static/` during Maven `prepare-package` (frontend-maven-plugin not used; Dockerfile builds frontend stage then backend stage) — dev uses Vite proxy to `localhost:8080`.
+- **Frontend**: Mantine `AppShell` with role-aware navigation from `/auth/me` permissions, grouped by area (`app/nav.ts` `group`, icons in `layout/navIcons.tsx`), approvals inbox badge, ⌘K command palette (`layout/CommandPalette.tsx`: pages, actions, employee search), company switcher, light/dark toggle; feature folders; `api/client.ts` fetch wrapper with token refresh & problem+json parsing; TanStack Query for caching; i18n keys in `src/i18n/en.json`.
+  - **Design system**: `theme.ts` (brand palette, Inter, radius, component defaults) + `styles/global.css` (surface tokens, table/tab/nav classes, WCAG AA contrast overrides). CSP allows only self-hosted fonts.
+  - **Shared UI** (`components/`): `PageHeader` (icon, description, back link), `DataTable` (card, skeleton loading, empty state, keyboard-openable rows, server pagination), `CrudPanel` + `EntityForm` (drawer forms mirroring server rules, filter, delete confirmation), `StatusBadge` (enum → readable label + colour), `format.ts` (`humanize`, `formatDate`, `formatDateTime`), `EmptyState`, `PageLoader`, `StatCard`, `useUrlTab` (active tab in `?tab=`).
+  - **UX rules**: never show raw enum values; confirm destructive actions; loading/empty states instead of blank areas; pickers for dates/months; usable at 360 px without page-level horizontal scroll; dark-mode safe colours only. Built assets copied into backend `static/` during Maven `prepare-package` (frontend-maven-plugin not used; Dockerfile builds frontend stage then backend stage) — dev uses Vite proxy to `localhost:8080`.
 
 ---
 
@@ -339,8 +342,9 @@ Codes include `VALIDATION_FAILED`, `NOT_FOUND`, `FORBIDDEN`, `CONFLICT`, `OPTIMI
 | DB-level | Audit append-only trigger, locked payroll trigger, unique constraints | integration tests issuing raw JDBC in test code |
 | Architecture | Module boundaries, no native SQL outside `platform`, controllers secured | ArchUnit |
 | Performance | Payroll processing 1,000 employees × 1 month < 60 s (tagged `perf`, run in `mvn verify -Pperf`) | JUnit |
-| Frontend unit | API client (refresh, errors), permission-based nav, key forms (leave apply validation, login) | Vitest + Testing Library |
-| E2E smoke | Login → create employee → apply/approve leave → process attendance → process/approve/finalize payroll → download payslip | Playwright against `spring-boot:test-run` (embedded PG) + Vite preview |
+| Frontend unit | API client (refresh, errors), permission-based nav, layout, shared components, key forms (leave apply validation, login) | Vitest + Testing Library |
+| E2E smoke | Login → create employee → apply/approve leave → process attendance → process/approve/finalize payroll → download payslip; app shell (navigation, command palette, theme, URL state, keyboard, permissions); 360 px responsive | Playwright against `spring-boot:test-run` (embedded PG) + Vite |
+| Accessibility | WCAG 2.1 A/AA automated checks on every main screen and the portal, light and dark; serious/critical violations fail | Playwright + @axe-core/playwright |
 
 Test naming references requirement IDs (e.g. `@DisplayName("FR-063 rejects overlapping leave")`) so the traceability matrix can be generated by grep.
 
