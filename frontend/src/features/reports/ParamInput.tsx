@@ -1,6 +1,8 @@
 import { NumberInput, Select, TextInput } from '@mantine/core';
+import { DateInput } from '@mantine/dates';
 import { useQuery } from '@tanstack/react-query';
 import { api } from '../../api/client';
+import { formatDate, humanize } from '../../components/format';
 import { toOptions, useBranches, useDepartments, useLookups } from '../org/useOrgData';
 import { periodLabel, type PayrollPeriod } from '../payroll/types';
 import type { ReportParam } from './types';
@@ -42,9 +44,9 @@ function useOptions(type: string, companyId: string): Option[] | null {
     case 'designation': return toOptions(designations.data);
     case 'category': return toOptions(categories.data);
     case 'leaveType': return toOptions(leaveTypes.data);
-    case 'roster': return (rosters.data ?? []).map((r) => ({ value: r.id, label: `${r.name} (${r.startDate} → ${r.endDate})` }));
-    case 'payrollPeriod': return (periods.data ?? []).map((p) => ({ value: p.id, label: `${periodLabel(p)} — ${p.status}` }));
-    case 'employeeStatus': return ['ACTIVE', 'INACTIVE', 'RESIGNED', 'TERMINATED'].map((s) => ({ value: s, label: s }));
+    case 'roster': return (rosters.data ?? []).map((r) => ({ value: r.id, label: `${r.name} (${formatDate(r.startDate)} – ${formatDate(r.endDate)})` }));
+    case 'payrollPeriod': return (periods.data ?? []).map((p) => ({ value: p.id, label: `${periodLabel(p)} — ${humanize(p.status)}` }));
+    case 'employeeStatus': return ['ACTIVE', 'INACTIVE', 'RESIGNED', 'TERMINATED'].map((s) => ({ value: s, label: humanize(s) }));
     default: return null;
   }
 }
@@ -52,15 +54,21 @@ function useOptions(type: string, companyId: string): Option[] | null {
 /** Renders the input for one report parameter based on its type (the company parameter is implicit). */
 export function ParamInput({ param, companyId, value, onChange }: Props) {
   const options = useOptions(param.type, companyId);
-  const common = { label: param.label, withAsterisk: param.required };
+  const common = { label: param.label, withAsterisk: param.required, w: '100%' };
   if (options) {
-    return <Select {...common} data={options} value={value || null} onChange={(v) => onChange(v ?? '')} clearable={!param.required} searchable w={240} />;
+    return (
+      <Select {...common} data={options} value={value || null} onChange={(v) => onChange(v ?? '')} clearable={!param.required} searchable
+        placeholder={param.required ? `Select ${param.label.toLowerCase()}` : `Any ${param.label.toLowerCase()}`} />
+    );
   }
   if (param.type === 'year') {
-    return <NumberInput {...common} value={value} onChange={(v) => onChange(String(v))} min={2000} max={2100} w={120} />;
+    return <NumberInput {...common} value={value} onChange={(v) => onChange(String(v))} min={2000} max={2100} allowDecimal={false} />;
   }
-  return (
-    <TextInput {...common} placeholder={param.type === 'date' ? 'YYYY-MM-DD' : undefined} value={value}
-      onChange={(e) => onChange(e.currentTarget.value)} w={param.type === 'date' ? 160 : 220} />
-  );
+  if (param.type === 'date') {
+    return (
+      <DateInput {...common} valueFormat="YYYY-MM-DD" placeholder="YYYY-MM-DD" clearable={!param.required} value={value || null}
+        onChange={(v) => onChange(v ? String(v) : '')} />
+    );
+  }
+  return <TextInput {...common} placeholder={param.required ? undefined : 'Optional'} value={value} onChange={(e) => onChange(e.currentTarget.value)} />;
 }

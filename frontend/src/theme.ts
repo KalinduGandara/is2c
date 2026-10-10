@@ -1,0 +1,85 @@
+import {
+  ActionIcon,
+  Badge,
+  Button,
+  Card,
+  Drawer,
+  Menu,
+  Modal,
+  NavLink,
+  Paper,
+  Popover,
+  SegmentedControl,
+  Table,
+  Tabs,
+  Tooltip,
+  createTheme,
+  type MantineColorsTuple,
+} from '@mantine/core';
+
+/** Indigo-violet brand scale (light → dark). */
+const brand: MantineColorsTuple = [
+  '#eef2ff',
+  '#e0e7ff',
+  '#c7d2fe',
+  '#a5b4fc',
+  '#818cf8',
+  '#6366f1',
+  '#4f46e5',
+  '#4338ca',
+  '#3730a3',
+  '#312e81',
+];
+
+export const theme = createTheme({
+  primaryColor: 'brand',
+  primaryShade: { light: 6, dark: 6 },
+  colors: { brand },
+  fontFamily: "'Inter Variable', Inter, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif",
+  fontFamilyMonospace: "ui-monospace, SFMono-Regular, Menlo, Consolas, monospace",
+  headings: {
+    fontFamily: "'Inter Variable', Inter, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif",
+    fontWeight: '650',
+    sizes: {
+      h1: { fontSize: '1.75rem', lineHeight: '1.25' },
+      h2: { fontSize: '1.5rem', lineHeight: '1.3' },
+      h3: { fontSize: '1.25rem', lineHeight: '1.35' },
+      h4: { fontSize: '1.0625rem', lineHeight: '1.4' },
+      h5: { fontSize: '0.9375rem', lineHeight: '1.45' },
+    },
+  },
+  defaultRadius: 'md',
+  cursorType: 'pointer',
+  focusRing: 'auto',
+  shadows: {
+    xs: '0 1px 2px rgba(16, 24, 40, 0.05)',
+    sm: '0 1px 3px rgba(16, 24, 40, 0.08), 0 1px 2px rgba(16, 24, 40, 0.04)',
+    md: '0 4px 12px -2px rgba(16, 24, 40, 0.08), 0 2px 4px -2px rgba(16, 24, 40, 0.04)',
+    lg: '0 12px 24px -4px rgba(16, 24, 40, 0.10), 0 4px 8px -4px rgba(16, 24, 40, 0.05)',
+  },
+  components: {
+    Button: Button.extend({ defaultProps: { radius: 'md' }, styles: { root: { fontWeight: 600 } } }),
+    ActionIcon: ActionIcon.extend({ defaultProps: { radius: 'md' } }),
+    Badge: Badge.extend({
+      defaultProps: { variant: 'light', radius: 'sm' },
+      styles: { root: { textTransform: 'none', fontWeight: 600, letterSpacing: 0 } },
+    }),
+    Paper: Paper.extend({ defaultProps: { radius: 'md' } }),
+    Card: Card.extend({ defaultProps: { radius: 'md', withBorder: true } }),
+    Modal: Modal.extend({
+      defaultProps: { centered: true, radius: 'lg', overlayProps: { backgroundOpacity: 0.45, blur: 3 } },
+      styles: { title: { fontWeight: 650, fontSize: 'var(--mantine-font-size-lg)' } },
+    }),
+    Drawer: Drawer.extend({
+      defaultProps: { padding: 'lg', overlayProps: { backgroundOpacity: 0.35, blur: 2 } },
+      styles: { title: { fontWeight: 650, fontSize: 'var(--mantine-font-size-lg)' } },
+    }),
+    Menu: Menu.extend({ defaultProps: { radius: 'md', shadow: 'md', withinPortal: true } }),
+    Popover: Popover.extend({ defaultProps: { radius: 'md', shadow: 'md' } }),
+    Tooltip: Tooltip.extend({ defaultProps: { withArrow: true, openDelay: 300 } }),
+    Table: Table.extend({ defaultProps: { verticalSpacing: 'sm', horizontalSpacing: 'md' } }),
+    Tabs: Tabs.extend({ styles: { tab: { fontWeight: 500 } } }),
+    NavLink: NavLink.extend({ defaultProps: { variant: 'light' } }),
+    SegmentedControl: SegmentedControl.extend({ defaultProps: { radius: 'md' } }),
+  },
+});

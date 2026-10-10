@@ -39,7 +39,7 @@ test('NFR-020 FR-087 FR-088 FR-100 monthly flow: setup → leave → attendance 
   await selectCompany(page, 'MFLOW');
 
   // salary structure through the employee's Salary tab
-  await page.getByText('Employee Hub').first().click();
+  await page.getByRole('link', { name: 'Employee Hub' }).click();
   await page.getByText('Nimal').first().click();
   await page.getByRole('tab', { name: 'Salary' }).click();
   await page.getByRole('button', { name: 'New structure' }).click();
@@ -50,7 +50,7 @@ test('NFR-020 FR-087 FR-088 FR-100 monthly flow: setup → leave → attendance 
 
   // --- employee: applies for leave in the portal -------------------------------------------------------------
   const employee = await as(browser, 'nimal', 'Emp#Initial12345', 'Emp#Changed12345');
-  await employee.getByText('My Portal').first().click();
+  await employee.getByRole('link', { name: 'My Portal' }).click();
   await employee.getByRole('tab', { name: 'Leave' }).click();
   await employee.getByRole('button', { name: 'Apply for leave' }).click();
   const dialog = employee.getByRole('dialog');
@@ -63,20 +63,20 @@ test('NFR-020 FR-087 FR-088 FR-100 monthly flow: setup → leave → attendance 
   await employee.getByRole('button', { name: label, exact: true }).click();
   await employee.getByRole('button', { name: label, exact: true }).click();
   await dialog.getByRole('button', { name: 'Apply' }).click();
-  await expect(employee.getByRole('cell', { name: 'PENDING' })).toBeVisible();
+  await expect(employee.getByRole('cell', { name: 'Pending' })).toBeVisible();
 
   // --- HR manager: approves the leave from the inbox ----------------------------------------------------------
   const hr = await as(browser, 'hr1', 'Hr#Initial12345', 'Hr#Changed12345');
-  await hr.getByText('Approvals').first().click();
+  await hr.getByRole('link', { name: /^Approvals/ }).click();
   await hr.getByRole('cell', { name: /Nimal Perera/ }).first().click();
   await hr.getByRole('button', { name: 'Approve' }).click();
   await expect(hr.getByRole('cell', { name: /Nimal Perera/ })).toHaveCount(0);
   await employee.reload();
   await employee.getByRole('tab', { name: 'Leave' }).click();
-  await expect(employee.getByRole('cell', { name: 'APPROVED' })).toBeVisible();
+  await expect(employee.getByRole('cell', { name: 'Approved' })).toBeVisible();
 
   // --- payroll: open, process (incl. attendance reprocessing), submit ---------------------------------------
-  await page.getByText('Payroll').first().click();
+  await page.getByRole('link', { name: 'Payroll', exact: true }).click();
   await page.getByRole('button', { name: 'Open period' }).click();
   await page.getByLabel('Year').fill(String(year));
   await page.getByLabel('Month').fill(String(month));
@@ -86,20 +86,21 @@ test('NFR-020 FR-087 FR-088 FR-100 monthly flow: setup → leave → attendance 
   await expect(page.getByRole('cell', { name: 'Nimal Perera' })).toBeVisible();
   await expect(page.getByRole('cell', { name: '92,000.00' })).toBeVisible(); // 100,000 − EPF 8%
   await page.getByRole('button', { name: 'Submit for review' }).click();
-  await expect(page.getByText('IN_REVIEW')).toBeVisible();
+  await expect(page.getByRole('main').getByText('In review', { exact: true })).toBeVisible();
 
   // --- HR manager: approves payroll and finalizes ------------------------------------------------------------
-  await hr.getByText('Approvals').first().click();
+  await hr.getByRole('link', { name: /^Approvals/ }).click();
   await hr.reload();
   await selectCompany(hr, 'MFLOW');
   await hr.getByRole('cell', { name: /Payroll/ }).first().click();
   await hr.getByRole('button', { name: 'Approve' }).click();
-  await hr.getByText('Payroll').first().click();
+  await hr.getByRole('link', { name: 'Payroll', exact: true }).click();
   await hr.getByRole('cell', { name: `${MONTHS[month - 1]} ${year}` }).click();
-  await expect(hr.getByText('APPROVED', { exact: true })).toBeVisible();
+  await expect(hr.getByRole('heading', { name: `Payroll — ${MONTHS[month - 1]} ${year}` })).toBeVisible();
+  await expect(hr.getByRole('main').getByText('Approved', { exact: true })).toBeVisible();
   await hr.getByRole('button', { name: 'Finalize' }).click();
   await hr.getByRole('dialog').getByRole('button', { name: 'Finalize' }).click();
-  await expect(hr.getByText('FINALIZED', { exact: true })).toBeVisible();
+  await expect(hr.getByRole('main').getByText('Finalized', { exact: true })).toBeVisible();
   await expect(hr.getByRole('cell', { name: /^PS-/ })).toBeVisible();
 
   // --- employee: downloads the payslip ------------------------------------------------------------------------

@@ -33,3 +33,6 @@ if (!('fonts' in document)) {
 if (!Element.prototype.scrollIntoView) {
   Element.prototype.scrollIntoView = () => {};
 }
+
+// React Router's ScrollRestoration scrolls the window on navigation; jsdom does not implement scrollTo.
+window.scrollTo = (() => {}) as typeof window.scrollTo;

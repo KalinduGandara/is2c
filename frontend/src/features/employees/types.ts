@@ -1,5 +1,7 @@
 export type EmployeeStatus = 'ACTIVE' | 'RESIGNED' | 'TERMINATED' | 'INACTIVE';
 
+export const EMPLOYEE_STATUSES: EmployeeStatus[] = ['ACTIVE', 'RESIGNED', 'TERMINATED', 'INACTIVE'];
+
 export interface EmployeeListItem {
   id: string;
   companyId: string;

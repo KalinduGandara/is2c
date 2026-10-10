@@ -11,7 +11,7 @@
     "delete": "Delete",
     "search": "Search",
     "actions": "Actions",
-    "confirmDelete": "Are you sure you want to delete this record?",
+    "confirmDelete": "This permanently removes the record. This can't be undone.",
     "yes": "Yes",
     "no": "No",
     "saved": "Saved",
@@ -34,7 +34,22 @@
     "upload": "Upload",
     "refresh": "Refresh",
     "view": "View",
-    "export": "Export"
+    "export": "Export",
+    "deleteEntity": "Delete {{entity}}?",
+    "pageOf": "Page {{page}} of {{pages}}",
+    "pageOfWithTotal": "Page {{page}} of {{pages}} · {{total}} records",
+    "filterPlaceholder": "Filter…",
+    "noMatches": "No matching records",
+    "tryDifferentSearch": "Try a different search term.",
+    "nothingYet": "No {{entity}} records yet",
+    "createFirst": "Create the first {{entity}} to get started.",
+    "selectCompanyFirst": "Select a company first",
+    "selectCompanyHint": "Choose a company in the header, or create one under Organization Setup.",
+    "noPermission": "You don't have access to this page",
+    "noPermissionHint": "Ask an administrator if you need access to this module.",
+    "notFoundHint": "The page you're looking for doesn't exist or has moved.",
+    "goHome": "Go to dashboard",
+    "goBack": "Go back"
   },
   "auth": {
     "signIn": "Sign in",
@@ -50,7 +65,23 @@
     "passwordRules": "At least 10 characters with upper- and lower-case letters, a digit and a symbol.",
     "mustChange": "You must change your password before continuing.",
     "passwordChanged": "Password changed",
-    "required": "Required"
+    "required": "Required",
+    "welcomeBack": "Welcome back",
+    "signInSubtitle": "Sign in with your work account to continue.",
+    "heroTitle": "People, time and pay — in one place.",
+    "heroSubtitle": "Attendance, rosters, leave, payroll and approvals for your whole organisation.",
+    "heroPoint1": "Real-time attendance and shift rostering",
+    "heroPoint2": "Leave and approval workflows with delegation",
+    "heroPoint3": "Statutory-compliant payroll and payslips",
+    "rule": {
+      "length": "At least 10 characters",
+      "case": "Upper- and lower-case letters",
+      "digit": "At least one number",
+      "symbol": "At least one symbol"
+    },
+    "changePasswordSubtitle": "Choose a strong password you don't use anywhere else.",
+    "capsLock": "Caps Lock is on",
+    "updatePassword": "Update password"
   },
   "nav": {
     "dashboard": "Dashboard",
@@ -64,5 +95,75 @@
     "reports": "Reports",
     "administration": "Administration",
     "selfService": "My Portal"
+  },
+  "navGroup": {
+    "overview": "Overview",
+    "people": "People",
+    "time": "Time & attendance",
+    "pay": "Payroll",
+    "insights": "Insights & admin"
+  },
+  "navHint": {
+    "dashboard": "Today's workforce at a glance",
+    "self": "Your profile, attendance, leave and payslips",
+    "approvals": "Requests waiting for your decision",
+    "employees": "Employee records, documents and salaries",
+    "organization": "Companies, branches, departments and holidays",
+    "attendance": "Daily attendance, corrections and device feeds",
+    "shifts": "Shifts, rosters, rotations and OT policies",
+    "leave": "Leave requests, balances and policies",
+    "payroll": "Payroll periods, components and statutory rules",
+    "reports": "Standard reports and exports",
+    "administration": "Users, roles, permissions and audit log"
+  },
+  "layout": {
+    "toggleNav": "Toggle navigation",
+    "closeNav": "Close navigation",
+    "mainNav": "Main navigation",
+    "darkMode": "Dark mode",
+    "lightMode": "Light mode",
+    "pendingCount": "{{count}} pending"
+  },
+  "spotlight": {
+    "open": "Search",
+    "placeholder": "Search pages and actions…",
+    "placeholderWithEmployees": "Search pages, actions or employees…",
+    "pages": "Pages",
+    "actions": "Actions",
+    "employees": "Employees",
+    "newEmployee": "Add new employee",
+    "toggleTheme": "Toggle dark mode",
+    "nothingFound": "Nothing found"
+  },
+  "dashboard": {
+    "greeting": {
+      "morning": "Good morning, {{name}}",
+      "afternoon": "Good afternoon, {{name}}",
+      "evening": "Good evening, {{name}}"
+    },
+    "subtitle": "Here's what's happening at {{company}} today.",
+    "activeEmployees": "Active employees",
+    "presentToday": "Present today",
+    "absentToday": "Absent today",
+    "lateToday": "Late arrivals",
+    "onLeaveToday": "On leave today",
+    "pendingApprovals": "My pending approvals",
+    "attendanceRate": "Attendance today",
+    "ofActive": "of active employees",
+    "notMarked": "Not yet marked",
+    "headcount": "Headcount by department",
+    "noActive": "No active employees yet.",
+    "payroll": "Payroll",
+    "payrollPeriod": "Current period",
+    "noPeriod": "No open period",
+    "otCost": "OT cost",
+    "quickActions": "Quick actions",
+    "viewAll": "View all",
+    "reviewApprovals": "Review approvals",
+    "addEmployee": "Add employee",
+    "viewAttendance": "Daily attendance",
+    "openPayroll": "Payroll periods",
+    "applyLeave": "My leave",
+    "viewReports": "Reports"
   }
 }

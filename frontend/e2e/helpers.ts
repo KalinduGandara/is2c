@@ -20,7 +20,7 @@ export async function loginAsAdmin(page: Page) {
     await page.getByRole('textbox', { name: 'Current password' }).fill(ADMIN.bootstrap);
     await page.getByRole('textbox', { name: 'New password', exact: true }).fill(ADMIN.password);
     await page.getByRole('textbox', { name: 'Confirm new password' }).fill(ADMIN.password);
-    await page.getByRole('button', { name: 'Save' }).click();
+    await page.getByRole('button', { name: 'Update password' }).click();
   }
   await expect(page.getByRole('button', { name: 'User menu' })).toBeVisible();
 }
@@ -56,7 +56,7 @@ export async function loginAs(page: Page, username: string, initial: string, cha
   await page.getByRole('textbox', { name: 'Current password' }).fill(initial);
   await page.getByRole('textbox', { name: 'New password', exact: true }).fill(changed);
   await page.getByRole('textbox', { name: 'Confirm new password' }).fill(changed);
-  await page.getByRole('button', { name: 'Save' }).click();
+  await page.getByRole('button', { name: 'Update password' }).click();
   await expect(page.getByRole('button', { name: 'User menu' })).toBeVisible();
 }
 
@@ -103,7 +103,11 @@ export async function createUser(page: Page, username: string, password: string,
 /** Picks the working company in the header selector (rendered once the user's companies have loaded and there are several). */
 export async function selectCompany(page: Page, code: string) {
   const selector = page.getByRole('combobox', { name: 'Company' });
+  // With a single accessible company the header shows a chip instead of a selector.
+  await expect(selector.or(page.getByRole('banner').getByText(code, { exact: true }))).toBeVisible();
+  if (!(await selector.isVisible())) return;
   await selector.click();
-  await page.getByRole('option', { name: code, exact: true }).click();
+  // options show the code with the legal name underneath
+  await page.getByRole('option', { name: new RegExp(`^${code}\\b`) }).click();
   await expect(selector).toHaveValue(code);
 }

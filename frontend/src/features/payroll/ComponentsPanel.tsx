@@ -1,10 +1,10 @@
-import { Badge } from '@mantine/core';
+import { Badge, Code, Group, Stack, Text, Tooltip } from '@mantine/core';
 import { useQuery } from '@tanstack/react-query';
 import { api } from '../../api/client';
 import { useAuth } from '../../auth/AuthContext';
 import { CrudPanel } from '../../components/CrudPanel';
 import type { FieldSpec } from '../../components/EntityForm';
-import type { PayrollComponent, SlabTable } from './types';
+import { KIND_COLOR, KIND_LABEL, money, type PayrollComponent, type SlabTable } from './types';
 
 const opts = (values: [string, string][]) => values.map(([value, label]) => ({ value, label }));
 
@@ -15,6 +15,28 @@ const UNIT_METRICS = opts([
   ['EXTRA_HOURS', 'Extra hours'], ['NO_PAY_DAYS', 'No-pay days'], ['LATE_HOURS', 'Late hours'], ['SHORT_HOURS', 'Short hours'],
   ['ABSENT_DAYS', 'Absent days'], ['WORKED_DAYS', 'Worked days'],
 ]);
+
+const unitLabel = (metric: string | null) => UNIT_METRICS.find((u) => u.value === metric)?.label ?? 'unit';
+
+/** Short human-readable formula, e.g. "8% of BASIC" or "2,500.00 per OT hours (workday)". */
+export function formula(c: PayrollComponent, slabs: SlabTable[] = []): string {
+  switch (c.calcType) {
+    case 'FIXED':
+      return c.assignment === 'AUTOMATIC' ? 'Fixed amount for everyone' : 'Amount set per employee';
+    case 'PERCENT_OF':
+      return `${c.ratePercent ?? '?'}% of ${c.basisRef ?? '?'}`;
+    case 'PER_UNIT':
+      return c.unitRateMode === 'FIXED_AMOUNT'
+        ? `${money(c.unitFixedAmount)} per ${unitLabel(c.unitMetric)}`
+        : `${c.basisRef ?? '?'} ÷ ${c.divisor ?? 'no-pay divisor'} × ${c.multiplier ?? 1} per ${unitLabel(c.unitMetric)}`;
+    case 'SLAB': {
+      const t = slabs.find((s) => s.id === c.slabTableId);
+      return `${t ? t.code : 'Slab table'} on ${c.basisRef ?? '?'}`;
+    }
+    default:
+      return '';
+  }
+}
 
 /** FR-080 earnings, deductions and employer contributions with type-dependent calculation fields. */
 export function ComponentsPanel({ companyId }: { companyId: string }) {
@@ -50,18 +72,29 @@ export function ComponentsPanel({ companyId }: { companyId: string }) {
       queryKey={['payroll-components', companyId]}
       load={() => api<PayrollComponent[]>(`/companies/${companyId}/payroll-components`)}
       rowKey={(r) => r.id}
+      description="Earnings, deductions and employer contributions, calculated in sequence order."
       columns={[
-        { key: 'seq', header: '#', render: (r) => r.sequence, width: 50 },
-        { key: 'code', header: 'Code', render: (r) => r.code },
-        { key: 'name', header: 'Name', render: (r) => r.name },
-        { key: 'kind', header: 'Kind', render: (r) => KINDS.find((k) => k.value === r.kind)?.label },
-        { key: 'calc', header: 'Calculation', render: (r) => CALC_TYPES.find((k) => k.value === r.calcType)?.label },
+        { key: 'seq', header: '#', render: (r) => <Text size="sm" c="dimmed" className="tabular">{r.sequence}</Text>, width: 50 },
+        { key: 'name', header: 'Component', render: (r) => (
+          <Stack gap={0}>
+            <Text size="sm" fw={600}>{r.name}</Text>
+            <Code fz="xs" w="fit-content">{r.code}</Code>
+          </Stack>
+        ) },
+        { key: 'kind', header: 'Type', render: (r) => <Badge variant="light" color={KIND_COLOR[r.kind]} miw="max-content">{KIND_LABEL[r.kind]}</Badge> },
+        { key: 'calc', header: 'Calculation', render: (r) => (
+          <Stack gap={0}>
+            <Text size="sm">{CALC_TYPES.find((k) => k.value === r.calcType)?.label}</Text>
+            <Text size="xs" c="dimmed">{formula(r, slabs)}</Text>
+          </Stack>
+        ) },
         { key: 'freq', header: 'Frequency', render: (r) => (r.frequency === 'ONE_TIME' ? 'One-time' : 'Recurring') },
         { key: 'flags', header: '', render: (r) => (
-          <>
-            {r.statutory && <Badge size="xs" mr={4}>Statutory</Badge>}
-            {!r.active && <Badge size="xs" color="gray">Inactive</Badge>}
-          </>
+          <Group gap={4} wrap="nowrap">
+            {r.statutory && <Badge size="sm" variant="outline">Statutory</Badge>}
+            {r.systemComponent && <Tooltip label="Built-in component"><Badge size="sm" variant="outline" color="gray">System</Badge></Tooltip>}
+            {!r.active && <Badge size="sm" color="gray">Inactive</Badge>}
+          </Group>
         ) },
       ]}
       fields={fields}

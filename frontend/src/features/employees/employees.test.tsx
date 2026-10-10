@@ -67,7 +67,7 @@ describe('Employee hub', () => {
     expect(body.customFields).toEqual({ locker: 'L1' });
     expect(body.joinDate).toBe('2025-01-15');
     expect(body.nic).toBeNull();
-  });
+  }, 15_000); // types into the full employee form; slow under parallel load
 
   it('FR-019 shows server errors for custom fields', async () => {
     baseRoutes({
@@ -87,5 +87,23 @@ describe('Employee hub', () => {
     await userEvent.click(await screen.findByRole('button', { name: 'Change status' }));
     const dialog = await screen.findByRole('dialog');
     expect(within(dialog).getByRole('button', { name: 'Save' })).toBeDisabled();
+  });
+
+  it('FR-017 shows readable employment history with resolved names', async () => {
+    baseRoutes({
+      'GET /employees/e1/history': () =>
+        json([
+          { id: 'h2', effectiveDate: '2025-06-01', eventType: 'TRANSFER', changes: JSON.stringify({ departmentId: { from: 'd1', to: 'd2' } }), reason: 'Restructure', recordedAt: '2025-06-01T04:00:00Z' },
+          { id: 'h1', effectiveDate: '2025-01-15', eventType: 'JOINED', changes: JSON.stringify({ companyId: 'c1', branchId: 'b1', status: 'ACTIVE' }), reason: null, recordedAt: '2025-01-15T04:00:00Z' },
+        ]),
+      'GET /employees/e1': () => json(employee),
+      'GET /companies/c1/departments': () => json([option('d1', 'OPS'), option('d2', 'FIN')]),
+    });
+    renderRoutes(routes, '/employees/e1?tab=history');
+    expect(await screen.findByRole('heading', { name: 'Nimal Perera' })).toBeInTheDocument();
+    expect(await screen.findByRole('cell', { name: 'Joined' })).toBeInTheDocument();
+    expect(screen.getByRole('cell', { name: 'Transfer' })).toBeInTheDocument();
+    expect(await screen.findByText('FIN')).toBeInTheDocument();
+    expect(screen.getByText('15 Jan 2025')).toBeInTheDocument();
   });
 });

@@ -45,7 +45,7 @@ test('create a shift in the UI, roster an employee and publish', async ({ page }
   await page.getByRole('button', { name: 'Save (1)' }).click();
   await expect(page.getByRole('button', { name: 'Save (0)' })).toBeVisible();
   await page.getByRole('button', { name: 'Publish' }).click();
-  await expect(page.getByText('PUBLISHED', { exact: true })).toBeVisible();
+  await expect(page.getByText('Published', { exact: true })).toBeVisible();
 
   const schedule = await apiAs(page, 'GET', `/schedules?companyId=${cid}&from=2026-03-16&to=2026-03-16`);
   expect(schedule.body[0].days[0]).toMatchObject({ shiftCode: 'DAY', source: 'ROSTER' });

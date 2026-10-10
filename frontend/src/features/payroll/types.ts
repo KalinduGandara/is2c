@@ -159,3 +159,15 @@ export const money = (v: number | null | undefined) => (v === null || v === unde
 
 export const periodLabel = (p: Pick<PayrollPeriod, 'year' | 'month'>) =>
   new Date(Date.UTC(p.year, p.month - 1, 1)).toLocaleString('en-US', { month: 'long', year: 'numeric', timeZone: 'UTC' });
+
+export const KIND_LABEL: Record<ComponentKind, string> = {
+  EARNING: 'Earning',
+  DEDUCTION: 'Deduction',
+  EMPLOYER_CONTRIBUTION: 'Employer contribution',
+};
+
+export const KIND_COLOR: Record<ComponentKind, string> = {
+  EARNING: 'green',
+  DEDUCTION: 'red',
+  EMPLOYER_CONTRIBUTION: 'grape',
+};

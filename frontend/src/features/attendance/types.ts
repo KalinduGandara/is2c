@@ -47,7 +47,7 @@ export interface DayDetail {
 
 export const STATUS_COLOR: Record<DayStatus, string> = {
   PRESENT: 'green', ABSENT: 'red', HALF_DAY: 'orange', ON_LEAVE: 'blue', HALF_DAY_LEAVE: 'cyan',
-  WEEKLY_OFF: 'gray', HOLIDAY: 'grape', INCOMPLETE: 'yellow', UNSCHEDULED: 'dark',
+  WEEKLY_OFF: 'gray', HOLIDAY: 'grape', INCOMPLETE: 'yellow', UNSCHEDULED: 'gray',
 };
 
 export const time = (v: string | null) => (v ? v.slice(11, 16) : '—');
@@ -63,3 +63,15 @@ export function daysAgo(n: number): string {
   d.setDate(d.getDate() - n);
   return d.toISOString().slice(0, 10);
 }
+
+/** 450 → "7h 30m"; 0 → "—". */
+export function duration(minutes: number | null | undefined): string {
+  if (!minutes) return '—';
+  const h = Math.floor(minutes / 60);
+  const m = minutes % 60;
+  return h ? (m ? `${h}h ${m}m` : `${h}h`) : `${m}m`;
+}
+
+export const EXCEPTION_COLOR: Record<string, string> = {
+  INCOMPLETE: 'yellow', ABSENT: 'red', LATE: 'orange', EARLY: 'orange', UNSCHEDULED: 'gray', OT_PENDING: 'teal',
+};

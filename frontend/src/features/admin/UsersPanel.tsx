@@ -1,24 +1,84 @@
-import { ActionIcon, Badge, Button, Drawer, Group, Menu, PasswordInput, Stack, TextInput } from '@mantine/core';
+import { ActionIcon, Avatar, Badge, Button, Drawer, Group, Menu, PasswordInput, Stack, Text, TextInput, Tooltip } from '@mantine/core';
 import { modals } from '@mantine/modals';
-import { IconDots, IconPlus } from '@tabler/icons-react';
+import {
+  IconDots,
+  IconKey,
+  IconLock,
+  IconPencil,
+  IconPlus,
+  IconSearch,
+  IconUserCheck,
+  IconUserOff,
+  IconUsers,
+} from '@tabler/icons-react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 import { api, type Page } from '../../api/client';
 import { useCompany } from '../../app/CompanyContext';
 import { useAuth } from '../../auth/AuthContext';
+import type { ScopeType } from '../../auth/types';
 import { DataTable } from '../../components/DataTable';
 import { EntityForm, type FormValues } from '../../components/EntityForm';
+import { formatDateTime } from '../../components/format';
 import { showError, showSuccess } from '../../components/notify';
+import { StatusBadge } from '../../components/StatusBadge';
 import { toOptions, useBranches, useDepartments } from '../org/useOrgData';
 import type { Role, User } from './types';
 
-const SCOPES = ['ALL', 'COMPANY', 'BRANCH', 'DEPARTMENT', 'OWN'].map((v) => ({ value: v, label: v }));
+const SCOPE_LABELS: Record<ScopeType, string> = {
+  ALL: 'All data',
+  COMPANY: 'Selected companies',
+  BRANCH: 'Selected branches',
+  DEPARTMENT: 'Selected departments',
+  OWN: 'Own records only',
+};
+const SCOPES = (Object.keys(SCOPE_LABELS) as ScopeType[]).map((v) => ({ value: v, label: SCOPE_LABELS[v] }));
 
 interface EmployeeOption {
   id: string;
   employeeNumber: string;
   firstName: string;
   lastName: string;
+}
+
+function scopeCount(user: User): number | null {
+  switch (user.scopeType) {
+    case 'COMPANY': return user.scopeCompanyIds.length;
+    case 'BRANCH': return user.scopeBranchIds.length;
+    case 'DEPARTMENT': return user.scopeDepartmentIds.length;
+    default: return null;
+  }
+}
+
+function ResetPasswordForm({ user, onDone }: { user: User; onDone: () => void }) {
+  const [value, setValue] = useState('');
+  const [busy, setBusy] = useState(false);
+  const submit = async () => {
+    setBusy(true);
+    try {
+      await api(`/admin/users/${user.id}/reset-password`, { method: 'POST', body: { temporaryPassword: value } });
+      showSuccess('Password reset; the user must change it at next login.');
+      onDone();
+    } catch (e) {
+      showError(e);
+    } finally {
+      setBusy(false);
+    }
+  };
+  return (
+    <form onSubmit={(e) => { e.preventDefault(); void submit(); }}>
+      <Stack>
+        <Text size="sm" c="dimmed">
+          Set a temporary password for <b>{user.displayName}</b>. They will be asked to choose a new one at next login.
+        </Text>
+        <PasswordInput label="Temporary password" withAsterisk data-autofocus value={value} onChange={(e) => setValue(e.currentTarget.value)} />
+        <Group justify="flex-end">
+          <Button variant="default" onClick={onDone}>Cancel</Button>
+          <Button type="submit" color="red" loading={busy} disabled={!value}>Reset</Button>
+        </Group>
+      </Stack>
+    </form>
+  );
 }
 
 export function UsersPanel() {
@@ -40,6 +100,8 @@ export function UsersPanel() {
     queryFn: () => api<Page<EmployeeOption>>('/employees', { query: { companyId, size: 200, sort: 'employeeNumber,asc' } }),
     enabled: !!companyId && can('EMPLOYEE:VIEW'),
   });
+  const roleName = new Map(roles.map((r) => [r.code, r.name]));
+  const canEdit = can('ADMIN:EDIT');
 
   const refresh = () => client.invalidateQueries({ queryKey: ['users'] });
 
@@ -49,7 +111,7 @@ export function UsersPanel() {
     { name: 'email', label: 'Email' },
     ...(user ? [] : [{ name: 'password', label: 'Initial password', required: true, description: 'User must change it at first login.' }]),
     { name: 'roles', label: 'Roles', type: 'multiselect' as const, required: true, options: roles.map((r) => ({ value: r.code, label: r.name })) },
-    { name: 'scopeType', label: 'Data scope', type: 'select' as const, required: true, options: SCOPES },
+    { name: 'scopeType', label: 'Data scope', type: 'select' as const, required: true, options: SCOPES, description: 'Which employees this user can see and act on.' },
     { name: 'scopeCompanyIds', label: 'Companies', type: 'multiselect' as const, options: companies.map((c) => ({ value: c.id, label: c.code })), visible: (v: FormValues) => v.scopeType === 'COMPANY' },
     { name: 'scopeBranchIds', label: 'Branches', type: 'multiselect' as const, options: toOptions(branches), visible: (v: FormValues) => v.scopeType === 'BRANCH' },
     { name: 'scopeDepartmentIds', label: 'Departments (includes sub-departments)', type: 'multiselect' as const, options: toOptions(departments), visible: (v: FormValues) => v.scopeType === 'DEPARTMENT' },
@@ -61,36 +123,42 @@ export function UsersPanel() {
   ];
 
   const resetPassword = (user: User) => {
-    let value = '';
-    modals.openConfirmModal({
-      title: `Reset password for ${user.username}`,
-      children: <PasswordInput label="Temporary password" onChange={(e) => (value = e.currentTarget.value)} />,
-      labels: { confirm: 'Reset', cancel: 'Cancel' },
-      onConfirm: async () => {
-        try {
-          await api(`/admin/users/${user.id}/reset-password`, { method: 'POST', body: { temporaryPassword: value } });
-          showSuccess('Password reset; the user must change it at next login.');
-        } catch (e) {
-          showError(e);
-        }
-      },
+    const id = modals.open({
+      title: `Reset password for ${user.username}?`,
+      children: <ResetPasswordForm user={user} onDone={() => modals.close(id)} />,
     });
   };
 
   const setActive = async (user: User, active: boolean) => {
     try {
       await api(`/admin/users/${user.id}/${active ? 'activate' : 'deactivate'}`, { method: 'POST' });
-      showSuccess();
+      showSuccess(active ? 'User activated' : 'User deactivated');
       await refresh();
     } catch (e) {
       showError(e);
     }
   };
 
+  const confirmDeactivate = (user: User) =>
+    modals.openConfirmModal({
+      title: `Deactivate ${user.displayName}?`,
+      children: <Text size="sm">They will no longer be able to sign in. You can activate the account again at any time.</Text>,
+      labels: { confirm: 'Deactivate', cancel: 'Cancel' },
+      confirmProps: { color: 'red' },
+      onConfirm: () => void setActive(user, false),
+    });
+
   return (
     <>
-      <Group justify="space-between" mb="sm">
-        <TextInput placeholder="Search users" value={q} onChange={(e) => { setQ(e.currentTarget.value); setPage(0); }} w={260} />
+      <Group justify="space-between" mb="sm" gap="sm" wrap="wrap">
+        <TextInput
+          leftSection={<IconSearch size={14} />}
+          placeholder="Search users"
+          aria-label="Search users"
+          value={q}
+          onChange={(e) => { setQ(e.currentTarget.value); setPage(0); }}
+          w={{ base: '100%', xs: 280 }}
+        />
         {can('ADMIN:ADD') && (
           <Button leftSection={<IconPlus size={16} />} onClick={() => setEditing({ user: null })}>
             Create user
@@ -103,44 +171,102 @@ export function UsersPanel() {
         rowKey={(r) => r.id}
         page={page}
         totalPages={data?.totalPages}
+        totalElements={data?.totalElements}
         onPageChange={setPage}
+        onRowClick={canEdit ? (r) => setEditing({ user: r }) : undefined}
+        rowLabel={(r) => `Edit ${r.displayName}`}
+        minWidth={760}
+        emptyIcon={<IconUsers size={20} stroke={1.5} />}
+        emptyTitle={q ? 'No matching users' : 'No users yet'}
+        emptyDescription={q ? 'Try a different name or username.' : 'Create a user to give someone access to the system.'}
         columns={[
-          { key: 'username', header: 'Username', render: (r) => r.username },
-          { key: 'name', header: 'Name', render: (r) => r.displayName },
-          { key: 'roles', header: 'Roles', render: (r) => r.roles.join(', ') },
-          { key: 'scope', header: 'Scope', render: (r) => r.scopeType },
           {
-            key: 'status', header: 'Status',
+            key: 'name', header: 'User',
             render: (r) => (
-              <Group gap={4}>
-                <Badge color={r.active ? 'green' : 'gray'}>{r.active ? 'Active' : 'Inactive'}</Badge>
-                {r.locked && <Badge color="red">Locked</Badge>}
+              <Group gap="sm" wrap="nowrap">
+                <Avatar name={r.displayName} color="initials" size="sm" radius="xl" />
+                <div style={{ minWidth: 0 }}>
+                  <Text size="sm" fw={500}>{r.displayName}</Text>
+                  <Text size="xs" c="dimmed">{r.username}{r.email ? ` · ${r.email}` : ''}</Text>
+                </div>
               </Group>
             ),
           },
           {
-            key: 'actions', header: '',
+            key: 'roles', header: 'Roles',
+            render: (r) => (
+              <Group gap={4}>
+                {r.roles.map((code) => (
+                  <Badge key={code} variant="light" color={code === 'SUPER_ADMIN' ? 'grape' : 'brand'} size="sm">
+                    {roleName.get(code) ?? code}
+                  </Badge>
+                ))}
+              </Group>
+            ),
+          },
+          {
+            key: 'scope', header: 'Scope',
+            render: (r) => {
+              const n = scopeCount(r);
+              return (
+                <Text size="sm">
+                  {SCOPE_LABELS[r.scopeType] ?? r.scopeType}
+                  {n !== null && <Text span c="dimmed" size="sm"> ({n})</Text>}
+                </Text>
+              );
+            },
+          },
+          {
+            key: 'status', header: 'Status',
+            render: (r) => (
+              <Group gap={4} wrap="nowrap">
+                <StatusBadge status={r.active ? 'ACTIVE' : 'INACTIVE'} />
+                {r.locked && <Badge color="red" variant="light" leftSection={<IconLock size={12} />}>Locked</Badge>}
+              </Group>
+            ),
+          },
+          { key: 'login', header: 'Last sign-in', render: (r) => <Text size="sm" c="dimmed">{r.lastLoginAt ? formatDateTime(r.lastLoginAt) : 'Never'}</Text> },
+          {
+            key: 'actions', header: '', width: 56, align: 'right',
             render: (r) =>
-              can('ADMIN:EDIT') && (
-                <Menu position="bottom-end">
-                  <Menu.Target>
-                    <ActionIcon variant="subtle" aria-label="User actions"><IconDots size={16} /></ActionIcon>
-                  </Menu.Target>
-                  <Menu.Dropdown>
-                    <Menu.Item onClick={() => setEditing({ user: r })}>Edit</Menu.Item>
-                    <Menu.Item onClick={() => resetPassword(r)}>Reset password</Menu.Item>
-                    <Menu.Item color={r.active ? 'red' : undefined} onClick={() => void setActive(r, !r.active)}>
-                      {r.active ? 'Deactivate' : 'Activate'}
-                    </Menu.Item>
-                  </Menu.Dropdown>
-                </Menu>
+              canEdit && (
+                <div onClick={(e) => e.stopPropagation()}>
+                  <Menu position="bottom-end" withinPortal>
+                    <Menu.Target>
+                      <Tooltip label="User actions">
+                        <ActionIcon variant="subtle" color="gray" aria-label="User actions"><IconDots size={16} /></ActionIcon>
+                      </Tooltip>
+                    </Menu.Target>
+                    <Menu.Dropdown>
+                      <Menu.Item leftSection={<IconPencil size={14} />} onClick={() => setEditing({ user: r })}>Edit</Menu.Item>
+                      <Menu.Item leftSection={<IconKey size={14} />} onClick={() => resetPassword(r)}>Reset password</Menu.Item>
+                      <Menu.Divider />
+                      {r.active ? (
+                        <Menu.Item color="red" leftSection={<IconUserOff size={14} />} onClick={() => confirmDeactivate(r)}>Deactivate</Menu.Item>
+                      ) : (
+                        <Menu.Item leftSection={<IconUserCheck size={14} />} onClick={() => void setActive(r, true)}>Activate</Menu.Item>
+                      )}
+                    </Menu.Dropdown>
+                  </Menu>
+                </div>
               ),
           },
         ]}
       />
-      <Drawer opened={editing !== null} onClose={() => setEditing(null)} title={editing?.user ? 'Edit user' : 'Create user'} position="right" size="md">
+      <Drawer opened={editing !== null} onClose={() => setEditing(null)} title={<Text fw={600}>{editing?.user ? 'Edit user' : 'Create user'}</Text>} position="right" size="md">
         {editing && (
           <Stack>
+            {editing.user && (
+              <Group gap="sm" wrap="nowrap">
+                <Avatar name={editing.user.displayName} color="initials" radius="xl" />
+                <div>
+                  <Text fw={600}>{editing.user.displayName}</Text>
+                  <Text size="xs" c="dimmed">
+                    Last sign-in: {editing.user.lastLoginAt ? formatDateTime(editing.user.lastLoginAt) : 'Never'}
+                  </Text>
+                </div>
+              </Group>
+            )}
             <EntityForm
               fields={fields(editing.user)}
               initialValues={

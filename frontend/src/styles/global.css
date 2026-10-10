@@ -1,0 +1,160 @@
+:root {
+  --app-bg: #f6f7fb;
+  --app-surface: #ffffff;
+  --app-border: var(--mantine-color-gray-2);
+  --app-nav-section: var(--mantine-color-gray-7);
+}
+
+/* WCAG AA contrast for secondary text (Mantine's default dimmed grey is ~3.3:1 on white). */
+:root[data-mantine-color-scheme='light'] {
+  --mantine-color-dimmed: #5c636b;
+  --mantine-color-error: #c92a2a;
+}
+
+:root[data-mantine-color-scheme='dark'] {
+  --mantine-color-dimmed: #a6a7ab;
+}
+
+/* "light" badges, avatars and subtle buttons: darken the tinted text to reach WCAG AA (4.5:1) in light mode. */
+:root[data-mantine-color-scheme='light'] {
+  --mantine-color-brand-light-color: color-mix(in srgb, var(--mantine-color-brand-filled) 55%, #000);
+  --mantine-color-dark-light-color: color-mix(in srgb, var(--mantine-color-dark-filled) 55%, #000);
+  --mantine-color-gray-light-color: color-mix(in srgb, var(--mantine-color-gray-filled) 55%, #000);
+  --mantine-color-red-light-color: color-mix(in srgb, var(--mantine-color-red-filled) 55%, #000);
+  --mantine-color-pink-light-color: color-mix(in srgb, var(--mantine-color-pink-filled) 55%, #000);
+  --mantine-color-grape-light-color: color-mix(in srgb, var(--mantine-color-grape-filled) 55%, #000);
+  --mantine-color-violet-light-color: color-mix(in srgb, var(--mantine-color-violet-filled) 55%, #000);
+  --mantine-color-indigo-light-color: color-mix(in srgb, var(--mantine-color-indigo-filled) 55%, #000);
+  --mantine-color-blue-light-color: color-mix(in srgb, var(--mantine-color-blue-filled) 55%, #000);
+  --mantine-color-cyan-light-color: color-mix(in srgb, var(--mantine-color-cyan-filled) 55%, #000);
+  --mantine-color-teal-light-color: color-mix(in srgb, var(--mantine-color-teal-filled) 55%, #000);
+  --mantine-color-green-light-color: color-mix(in srgb, var(--mantine-color-green-filled) 55%, #000);
+  --mantine-color-lime-light-color: color-mix(in srgb, var(--mantine-color-lime-filled) 55%, #000);
+  --mantine-color-yellow-light-color: color-mix(in srgb, var(--mantine-color-yellow-filled) 55%, #000);
+  --mantine-color-orange-light-color: color-mix(in srgb, var(--mantine-color-orange-filled) 55%, #000);
+}
+
+[data-mantine-color-scheme='dark'] {
+  --app-bg: var(--mantine-color-dark-8);
+  --app-surface: var(--mantine-color-dark-7);
+  --app-border: var(--mantine-color-dark-4);
+  --app-nav-section: var(--mantine-color-dark-1);
+}
+
+html,
+body {
+  background: var(--app-bg);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-feature-settings: 'cv11', 'ss01';
+}
+
+/* Cards and panels sit on the tinted page background. */
+.mantine-Paper-root[data-with-border],
+.mantine-Card-root {
+  background: var(--app-surface);
+  border-color: var(--app-border);
+}
+
+/* Tabular numbers keep money and counts aligned. */
+.tabular,
+.mantine-Table-td {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Data tables: quiet header, comfortable rows. */
+.app-table thead th {
+  font-size: var(--mantine-font-size-xs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--mantine-color-dimmed);
+  background: light-dark(var(--mantine-color-gray-0), var(--mantine-color-dark-6));
+  white-space: nowrap;
+}
+
+.app-table tbody tr[data-clickable] {
+  cursor: pointer;
+}
+
+.app-table tbody tr[data-clickable]:focus-visible {
+  outline: 2px solid var(--mantine-primary-color-filled);
+  outline-offset: -2px;
+}
+
+/* Scrollable tab lists on narrow screens. */
+.app-tabs-list {
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.app-tabs-list::-webkit-scrollbar {
+  display: none;
+}
+
+.app-tabs-list .mantine-Tabs-tab {
+  white-space: nowrap;
+}
+
+/* Sidebar navigation */
+.app-nav-link {
+  border-radius: var(--mantine-radius-md);
+  font-weight: 500;
+  margin-bottom: 2px;
+}
+
+.app-nav-link:not([data-active]) {
+  color: light-dark(var(--mantine-color-gray-7), var(--mantine-color-dark-0));
+}
+
+.app-nav-section {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--app-nav-section);
+  padding: var(--mantine-spacing-md) var(--mantine-spacing-sm) 6px;
+}
+
+.app-kbd-hint {
+  border: 1px solid var(--app-border);
+  border-radius: 4px;
+  padding: 0 5px;
+  font-size: 11px;
+  line-height: 18px;
+  color: var(--mantine-color-dimmed);
+}
+
+/* Interactive cards (links styled as cards). */
+.app-hover-card {
+  transition:
+    box-shadow 150ms ease,
+    transform 150ms ease,
+    border-color 150ms ease;
+  text-decoration: none;
+  color: inherit;
+}
+
+.app-hover-card:hover {
+  box-shadow: var(--mantine-shadow-md);
+  border-color: var(--mantine-primary-color-light-hover);
+  transform: translateY(-1px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .app-hover-card,
+  .app-hover-card:hover {
+    transition: none;
+    transform: none;
+  }
+}
+
+/* Login hero */
+.app-auth-hero {
+  background:
+    radial-gradient(1200px 600px at 10% -10%, rgba(129, 140, 248, 0.55), transparent 60%),
+    radial-gradient(900px 500px at 110% 110%, rgba(167, 139, 250, 0.45), transparent 60%),
+    linear-gradient(135deg, #312e81 0%, #4338ca 55%, #6d28d9 100%);
+  color: #fff;
+}

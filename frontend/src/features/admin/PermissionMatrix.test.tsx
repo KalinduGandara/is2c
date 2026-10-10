@@ -17,4 +17,15 @@ describe('PermissionMatrix', () => {
     await userEvent.click(screen.getByLabelText('ORG:VIEW'));
     expect(onChange).toHaveBeenLastCalledWith([]);
   });
+
+  it('FR-005 selects all actions of a module at once', async () => {
+    const onChange = vi.fn();
+    render(
+      <MantineProvider>
+        <PermissionMatrix catalog={{ modules: ['ORG', 'PAYROLL'], actions: ['VIEW', 'EDIT'] }} value={['ORG:VIEW']} onChange={onChange} />
+      </MantineProvider>,
+    );
+    await userEvent.click(screen.getByLabelText('All ORG permissions'));
+    expect(onChange).toHaveBeenLastCalledWith(['ORG:VIEW', 'ORG:EDIT']);
+  });
 });

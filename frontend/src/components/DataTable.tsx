@@ -1,12 +1,14 @@
-import { Center, Group, Loader, Pagination, ScrollArea, Table, Text } from '@mantine/core';
+import { Group, Pagination, Paper, ScrollArea, Skeleton, Table, Text } from '@mantine/core';
 import type { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
+import { EmptyState } from './EmptyState';
 
 export interface Column<T> {
   key: string;
   header: string;
   render: (row: T) => ReactNode;
   width?: number | string;
+  align?: 'left' | 'right' | 'center';
 }
 
 interface Props<T> {
@@ -16,56 +18,105 @@ interface Props<T> {
   loading?: boolean;
   page?: number;
   totalPages?: number;
+  /** Total matching records (shown in the footer when paginated). */
+  totalElements?: number;
   onPageChange?: (page: number) => void;
   onRowClick?: (row: T) => void;
+  /** Accessible label for clickable rows (defaults to the first column's text). */
+  rowLabel?: (row: T) => string;
+  emptyTitle?: string;
+  emptyDescription?: ReactNode;
+  emptyIcon?: ReactNode;
+  emptyAction?: ReactNode;
+  /** Render without the surrounding card (e.g. inside a drawer). */
+  bare?: boolean;
+  minWidth?: number;
 }
 
-/** Responsive table with optional server-side pagination (pages are 0-based like the API). */
-export function DataTable<T>({ columns, rows, rowKey, loading, page, totalPages, onPageChange, onRowClick }: Props<T>) {
+/** Card-framed responsive table with skeleton loading, empty state and optional server-side pagination (0-based pages). */
+export function DataTable<T>(props: Props<T>) {
+  const { columns, rows, rowKey, loading, page, totalPages, totalElements, onPageChange, onRowClick, rowLabel, bare, minWidth = 600 } = props;
   const { t } = useTranslation();
-  return (
+  const showSkeleton = loading && rows.length === 0;
+
+  const table = (
     <>
       <ScrollArea type="auto">
-        <Table striped highlightOnHover verticalSpacing="xs" miw={600}>
+        <Table highlightOnHover={!!onRowClick || rows.length > 0} miw={minWidth} className="app-table" aria-busy={loading || undefined}>
           <Table.Thead>
             <Table.Tr>
               {columns.map((c) => (
-                <Table.Th key={c.key} style={{ width: c.width }}>
+                <Table.Th key={c.key} style={{ width: c.width, textAlign: c.align }}>
                   {c.header}
                 </Table.Th>
               ))}
             </Table.Tr>
           </Table.Thead>
           <Table.Tbody>
+            {showSkeleton &&
+              Array.from({ length: 4 }, (_, i) => (
+                <Table.Tr key={`sk-${i}`}>
+                  {columns.map((c) => (
+                    <Table.Td key={c.key}>
+                      <Skeleton h={14} w={`${50 + ((i * 17 + c.key.length * 7) % 40)}%`} radius="sm" />
+                    </Table.Td>
+                  ))}
+                </Table.Tr>
+              ))}
             {rows.map((row) => (
               <Table.Tr
                 key={rowKey(row)}
+                data-clickable={onRowClick ? true : undefined}
+                tabIndex={onRowClick ? 0 : undefined}
+                aria-label={onRowClick && rowLabel ? rowLabel(row) : undefined}
                 onClick={onRowClick ? () => onRowClick(row) : undefined}
-                style={onRowClick ? { cursor: 'pointer' } : undefined}
+                onKeyDown={
+                  onRowClick
+                    ? (e) => {
+                        if ((e.key === 'Enter' || e.key === ' ') && e.target === e.currentTarget) {
+                          e.preventDefault();
+                          onRowClick(row);
+                        }
+                      }
+                    : undefined
+                }
               >
                 {columns.map((c) => (
-                  <Table.Td key={c.key}>{c.render(row)}</Table.Td>
+                  <Table.Td key={c.key} style={{ textAlign: c.align }}>
+                    {c.render(row)}
+                  </Table.Td>
                 ))}
               </Table.Tr>
             ))}
           </Table.Tbody>
         </Table>
       </ScrollArea>
-      {loading && (
-        <Center p="md">
-          <Loader size="sm" />
-        </Center>
-      )}
       {!loading && rows.length === 0 && (
-        <Text c="dimmed" ta="center" p="md">
-          {t('app.noRecords')}
-        </Text>
+        <EmptyState
+          compact
+          title={props.emptyTitle ?? t('app.noRecords')}
+          description={props.emptyDescription}
+          icon={props.emptyIcon}
+          action={props.emptyAction}
+        />
       )}
       {totalPages !== undefined && totalPages > 1 && onPageChange && (
-        <Group justify="center" mt="sm">
-          <Pagination total={totalPages} value={(page ?? 0) + 1} onChange={(p) => onPageChange(p - 1)} />
+        <Group justify="space-between" px="md" py="sm" style={{ borderTop: '1px solid var(--app-border)' }} wrap="wrap" gap="xs">
+          <Text size="sm" c="dimmed">
+            {totalElements !== undefined
+              ? t('app.pageOfWithTotal', { page: (page ?? 0) + 1, pages: totalPages, total: totalElements })
+              : t('app.pageOf', { page: (page ?? 0) + 1, pages: totalPages })}
+          </Text>
+          <Pagination size="sm" total={totalPages} value={(page ?? 0) + 1} onChange={(p) => onPageChange(p - 1)} />
         </Group>
       )}
     </>
+  );
+
+  if (bare) return table;
+  return (
+    <Paper withBorder style={{ overflow: 'hidden' }}>
+      {table}
+    </Paper>
   );
 }

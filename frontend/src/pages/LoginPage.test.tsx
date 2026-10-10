@@ -51,7 +51,7 @@ describe('LoginPage', () => {
     await userEvent.type(await screen.findByLabelText('Current password'), 'Old#Password1');
     await userEvent.type(screen.getByLabelText('New password'), 'New#Password1');
     await userEvent.type(screen.getByLabelText('Confirm new password'), 'Different#1');
-    await userEvent.click(screen.getByRole('button', { name: 'Save' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Update password' }));
     expect(await screen.findByText('Passwords do not match')).toBeInTheDocument();
     expect(calls.some((c) => c.url.includes('change-password'))).toBe(false);
   });

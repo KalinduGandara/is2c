@@ -26,7 +26,9 @@ describe('Attendance UI', () => {
       'POST /attendance/adjustments': () => json({ status: 'APPLIED' }),
     });
     renderPage(<DayDetailDrawer employeeId="e1" date="2026-03-16" onClose={() => {}} />);
-    expect(await screen.findByText('LATE')).toBeInTheDocument();
+    expect(await screen.findByText('Nimal Perera')).toBeInTheDocument();
+    expect(screen.getAllByText('Late').length).toBeGreaterThanOrEqual(2); // metric label + humanized exception badge
+    expect(screen.getByText('Device D1')).toBeInTheDocument();
     const submit = screen.getByRole('button', { name: 'Submit correction' });
     expect(submit).toBeDisabled();
     await userEvent.type(screen.getByLabelText('IN (HH:mm)'), '08:30');

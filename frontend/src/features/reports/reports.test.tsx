@@ -75,9 +75,9 @@ describe('Reports, dashboard and audit UI', () => {
     });
     renderPage(<DashboardView companyId="c1" />);
     expect(await screen.findByText('42')).toBeInTheDocument();
-    expect(screen.getByText('Late arrivals today')).toBeInTheDocument();
+    expect(screen.getByText('Late arrivals')).toBeInTheDocument();
     expect(screen.getByText('Finance')).toBeInTheDocument();
-    expect(screen.queryByText(/Payroll period/)).not.toBeInTheDocument();
+    expect(screen.queryByText('Current period')).not.toBeInTheDocument();
   });
 
   it('FR-096 dashboard shows the payroll period and OT cost for payroll users', async () => {
@@ -91,7 +91,8 @@ describe('Reports, dashboard and audit UI', () => {
       }),
     });
     renderPage(<DashboardView companyId="c1" />);
-    expect(await screen.findByText('March 2026 — DRAFT')).toBeInTheDocument();
+    expect(await screen.findByRole('link', { name: 'March 2026' })).toBeInTheDocument();
+    expect(screen.getByText('Draft')).toBeInTheDocument();
     expect(screen.getByText('12,500.00')).toBeInTheDocument();
   });
 

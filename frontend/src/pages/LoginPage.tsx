@@ -1,10 +1,12 @@
-import { Alert, Button, Center, Paper, PasswordInput, Stack, TextInput, Title } from '@mantine/core';
+import { Alert, Button, PasswordInput, Stack, Text, TextInput, Title } from '@mantine/core';
 import { useForm } from '@mantine/form';
+import { IconAlertCircle, IconLock, IconUser } from '@tabler/icons-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Navigate, useNavigate } from 'react-router';
 import { ApiError } from '../api/client';
 import { useAuth } from '../auth/AuthContext';
+import { AuthShell } from './AuthShell';
 
 export function LoginPage() {
   const { t } = useTranslation();
@@ -12,6 +14,7 @@ export function LoginPage() {
   const navigate = useNavigate();
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const [capsLock, setCapsLock] = useState(false);
   const form = useForm({
     initialValues: { username: '', password: '' },
     validate: {
@@ -36,24 +39,40 @@ export function LoginPage() {
   });
 
   return (
-    <Center mih="100vh" p="md">
-      <Paper withBorder shadow="sm" p="xl" w="100%" maw={400}>
-        <form onSubmit={submit} noValidate>
-          <Stack>
-            <Title order={3}>{t('auth.signInTitle')}</Title>
-            {error && (
-              <Alert color="red" role="alert">
-                {error}
-              </Alert>
-            )}
-            <TextInput label={t('auth.username')} autoComplete="username" {...form.getInputProps('username')} />
-            <PasswordInput label={t('auth.password')} autoComplete="current-password" {...form.getInputProps('password')} />
-            <Button type="submit" loading={busy}>
-              {t('auth.signIn')}
-            </Button>
-          </Stack>
-        </form>
-      </Paper>
-    </Center>
+    <AuthShell>
+      <form onSubmit={submit} noValidate>
+        <Stack gap="md">
+          <div>
+            <Title order={2}>{t('auth.welcomeBack')}</Title>
+            <Text size="sm" c="dimmed" mt={4}>{t('auth.signInSubtitle')}</Text>
+          </div>
+          {error && (
+            <Alert color="red" variant="light" role="alert" icon={<IconAlertCircle size={18} />}>
+              {error}
+            </Alert>
+          )}
+          <TextInput
+            label={t('auth.username')}
+            autoComplete="username"
+            autoFocus
+            size="md"
+            leftSection={<IconUser size={16} />}
+            {...form.getInputProps('username')}
+          />
+          <PasswordInput
+            label={t('auth.password')}
+            autoComplete="current-password"
+            size="md"
+            leftSection={<IconLock size={16} />}
+            description={capsLock ? t('auth.capsLock') : undefined}
+            onKeyUp={(e) => setCapsLock(e.getModifierState?.('CapsLock') ?? false)}
+            {...form.getInputProps('password')}
+          />
+          <Button type="submit" loading={busy} size="md" fullWidth mt="xs">
+            {t('auth.signIn')}
+          </Button>
+        </Stack>
+      </form>
+    </AuthShell>
   );
 }

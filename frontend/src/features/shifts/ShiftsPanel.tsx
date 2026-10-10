@@ -1,15 +1,24 @@
-import { ActionIcon, Badge, ColorSwatch, Group, Tooltip } from '@mantine/core';
-import { IconPlayerPause, IconPlayerPlay } from '@tabler/icons-react';
+import { ActionIcon, Badge, ColorSwatch, Group, Text, Tooltip } from '@mantine/core';
+import { IconCoffee, IconMoon, IconPlayerPause, IconPlayerPlay } from '@tabler/icons-react';
 import { useQueryClient } from '@tanstack/react-query';
 import { api } from '../../api/client';
 import { useAuth } from '../../auth/AuthContext';
 import { CrudPanel } from '../../components/CrudPanel';
 import type { FieldSpec, FormValues } from '../../components/EntityForm';
-import { showError } from '../../components/notify';
+import { StatusBadge } from '../../components/StatusBadge';
+import { humanize } from '../../components/format';
+import { showError, showSuccess } from '../../components/notify';
 import { hhmm, type Shift } from './types';
 import { useOtPolicies } from './useShifts';
 
-const TYPES = ['FIXED', 'FLEXIBLE', 'NIGHT', 'SPLIT', 'CUSTOM'].map((v) => ({ value: v, label: v }));
+const TYPES = ['FIXED', 'FLEXIBLE', 'NIGHT', 'SPLIT', 'CUSTOM'].map((v) => ({ value: v, label: humanize(v) }));
+const TYPE_COLOR: Record<string, string> = { FIXED: 'brand', FLEXIBLE: 'cyan', NIGHT: 'violet', SPLIT: 'orange', CUSTOM: 'gray' };
+
+function hoursLabel(minutes: number) {
+  const h = Math.floor(minutes / 60);
+  const m = minutes % 60;
+  return m ? `${h}h ${m}m` : `${h}h`;
+}
 const isFlex = (v: FormValues) => v.type === 'FLEXIBLE';
 
 function describe(s: Shift) {
@@ -27,7 +36,7 @@ export function ShiftsPanel({ companyId }: { companyId: string }) {
     { name: 'code', label: 'Code', required: true },
     { name: 'name', label: 'Name', required: true },
     { name: 'type', label: 'Type', type: 'select', options: TYPES, required: true },
-    { name: 'color', label: 'Colour (#RRGGBB)' },
+    { name: 'color', label: 'Colour (#RRGGBB)', placeholder: '#4C6EF5', description: 'Used to colour the shift in roster grids' },
     { name: 's1Start', label: 'Start', type: 'time', visible: (v) => !isFlex(v) },
     { name: 's1End', label: 'End', type: 'time', visible: (v) => !isFlex(v), description: 'An end at or before the start runs into the next day' },
     { name: 's2Start', label: 'Second session start', type: 'time', visible: (v) => v.type === 'SPLIT' },
@@ -48,6 +57,7 @@ export function ShiftsPanel({ companyId }: { companyId: string }) {
   const toggle = async (s: Shift) => {
     try {
       await api(`/shifts/${s.id}/${s.active ? 'deactivate' : 'activate'}`, { method: 'POST' });
+      showSuccess(s.active ? `${s.code} deactivated` : `${s.code} activated`);
       await client.invalidateQueries({ queryKey: ['shifts'] });
     } catch (e) {
       showError(e);
@@ -60,12 +70,44 @@ export function ShiftsPanel({ companyId }: { companyId: string }) {
       load={() => api<Shift[]>(`/companies/${companyId}/shifts`)}
       rowKey={(r) => r.id}
       columns={[
-        { key: 'code', header: 'Code', render: (r) => <Group gap={6}>{r.color && <ColorSwatch color={r.color} size={12} />}{r.code}</Group> },
+        {
+          key: 'code', header: 'Code',
+          render: (r) => (
+            <Group gap={8} wrap="nowrap">
+              <ColorSwatch color={r.color ?? 'var(--mantine-color-gray-4)'} size={12} />
+              <Text size="sm" fw={600}>{r.code}</Text>
+            </Group>
+          ),
+        },
         { key: 'name', header: 'Name', render: (r) => r.name },
-        { key: 'type', header: 'Type', render: (r) => r.type },
-        { key: 'time', header: 'Hours', render: (r) => describe(r) + (r.crossesMidnight ? ' (+1)' : '') },
-        { key: 'mins', header: 'Scheduled', render: (r) => `${(r.scheduledMinutes / 60).toFixed(2)} h` },
-        { key: 'active', header: 'Status', render: (r) => <Badge color={r.active ? 'green' : 'gray'}>{r.active ? 'Active' : 'Inactive'}</Badge> },
+        { key: 'type', header: 'Type', render: (r) => <Badge variant="light" color={TYPE_COLOR[r.type] ?? 'gray'}>{humanize(r.type)}</Badge> },
+        {
+          key: 'time', header: 'Hours',
+          render: (r) => (
+            <Text size="sm" className="tabular" style={{ whiteSpace: 'nowrap' }}>
+              {describe(r)}
+              {r.crossesMidnight && (
+                <Tooltip label="Ends the next day">
+                  <Badge ml={6} size="xs" variant="light" color="violet" leftSection={<IconMoon size={10} />}>+1</Badge>
+                </Tooltip>
+              )}
+            </Text>
+          ),
+        },
+        {
+          key: 'mins', header: 'Duration',
+          render: (r) => (
+            <Group gap={4} wrap="nowrap">
+              <Badge variant="light" color="gray" className="tabular">{hoursLabel(r.scheduledMinutes)}</Badge>
+              {r.breakMinutes > 0 && (
+                <Tooltip label={r.breakMode === 'PUNCHED' ? 'Punched breaks' : 'Fixed break deduction'}>
+                  <Badge variant="outline" color="gray" leftSection={<IconCoffee size={12} />}>{r.breakMinutes}m</Badge>
+                </Tooltip>
+              )}
+            </Group>
+          ),
+        },
+        { key: 'active', header: 'Status', render: (r) => <StatusBadge status={r.active ? 'ACTIVE' : 'INACTIVE'} /> },
       ]}
       fields={fields}
       emptyValues={{ code: '', name: '', type: 'FIXED', breakMode: 'FIXED', lateGraceMinutes: 0, earlyGraceMinutes: 0, breakMinutes: 0, breakThresholdMinutes: 0 }}

@@ -8,13 +8,14 @@ import { createMemoryRouter, RouterProvider, type RouteObject } from 'react-rout
 import { CompanyProvider } from '../app/CompanyContext';
 import { AuthProvider } from '../auth/AuthContext';
 import '../i18n';
+import { theme } from '../theme';
 
 /** Renders routes inside all app providers with a fresh query client. */
 export function renderRoutes(routes: RouteObject[], initialPath = '/') {
   const router = createMemoryRouter(routes, { initialEntries: [initialPath] });
   const client = new QueryClient({ defaultOptions: { queries: { retry: false } } });
   const utils = render(
-    <MantineProvider env="test">
+    <MantineProvider env="test" theme={theme}>
       <Notifications />
       <ModalsProvider>
         <QueryClientProvider client={client}>

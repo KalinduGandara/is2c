@@ -36,8 +36,10 @@ describe('Self-service portal', () => {
     renderPage(<MyPortalPage />);
     await userEvent.click(await screen.findByRole('tab', { name: 'Leave' }));
     expect(await screen.findByText('11')).toBeInTheDocument();
-    const row = (await screen.findByText('2026-04-02')).closest('tr')!;
+    const row = (await screen.findByText('2 Apr 2026')).closest('tr')!;
+    expect(within(row).getByText('Pending')).toBeInTheDocument();
     await userEvent.click(within(row).getByRole('button', { name: 'Cancel' }));
+    await userEvent.click(await screen.findByRole('button', { name: 'Cancel request' }));
     await waitFor(() => expect(calls.some((c) => c.method === 'POST' && c.url.endsWith('/me/leave/requests/l1/cancel'))).toBe(true));
   });
 

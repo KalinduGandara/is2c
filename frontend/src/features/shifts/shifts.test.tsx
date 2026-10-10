@@ -71,7 +71,7 @@ describe('RosterGrid', () => {
       'GET /companies': () => json([]),
     });
     renderPage(<RosterGrid rosterId="r1" otherRosters={[]} onClose={() => {}} />);
-    expect(await screen.findByText('LOCKED')).toBeInTheDocument();
+    expect(await screen.findByText('Locked')).toBeInTheDocument();
     expect(screen.queryByLabelText('E001 2026-03-16')).not.toBeInTheDocument();
     expect(await screen.findByText('DAY')).toBeInTheDocument();
   });

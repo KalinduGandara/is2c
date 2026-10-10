@@ -110,3 +110,24 @@ export function weekdayShort(iso: string): string {
 }
 
 export const hhmm = (t: string | null) => (t ? t.slice(0, 5) : '');
+
+const PALETTE = ['blue', 'teal', 'grape', 'orange', 'cyan', 'pink', 'lime', 'violet', 'indigo', 'yellow'];
+
+/** Background/foreground for a shift chip or cell: the shift's own colour when set, otherwise a stable palette colour. */
+export function shiftTint(shifts: Pick<Shift, 'id' | 'color'>[], shiftId: string | null | undefined): { background: string; color: string } | undefined {
+  if (!shiftId) return undefined;
+  const index = shifts.findIndex((s) => s.id === shiftId);
+  if (index < 0) return undefined;
+  const hex = shifts[index].color;
+  if (hex && /^#[0-9a-fA-F]{6}$/.test(hex)) return { background: `color-mix(in srgb, ${hex} 22%, transparent)`, color: 'inherit' };
+  const c = PALETTE[index % PALETTE.length];
+  return { background: `var(--mantine-color-${c}-light)`, color: `var(--mantine-color-${c}-light-color)` };
+}
+
+export const isWeekend = (iso: string) => {
+  const day = new Date(`${iso}T00:00:00Z`).getUTCDay();
+  return day === 0 || day === 6;
+};
+
+/** `2026-03-16` → `16 Mar`. */
+export const dayMonth = (iso: string) => new Date(`${iso}T00:00:00Z`).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', timeZone: 'UTC' });

@@ -8,20 +8,25 @@ export interface NavItem {
   anyOf: string[];
   /** Requires the user to be linked to an employee record. */
   requiresEmployee?: boolean;
+  /** Sidebar section the item is listed under. */
+  group: NavGroup;
 }
 
+export type NavGroup = 'overview' | 'people' | 'time' | 'pay' | 'insights';
+export const NAV_GROUPS: NavGroup[] = ['overview', 'people', 'time', 'pay', 'insights'];
+
 export const NAV_ITEMS: NavItem[] = [
-  { key: 'dashboard', labelKey: 'nav.dashboard', path: '/', anyOf: [] },
-  { key: 'self', labelKey: 'nav.selfService', path: '/me', anyOf: [], requiresEmployee: true },
-  { key: 'employees', labelKey: 'nav.employees', path: '/employees', anyOf: ['EMPLOYEE:VIEW'] },
-  { key: 'organization', labelKey: 'nav.organization', path: '/organization', anyOf: ['ORG:VIEW'] },
-  { key: 'attendance', labelKey: 'nav.attendance', path: '/attendance', anyOf: ['ATTENDANCE:VIEW'] },
-  { key: 'shifts', labelKey: 'nav.shifts', path: '/shifts', anyOf: ['SHIFT:VIEW', 'ROSTER:VIEW'] },
-  { key: 'leave', labelKey: 'nav.leave', path: '/leave', anyOf: ['LEAVE:VIEW'] },
-  { key: 'payroll', labelKey: 'nav.payroll', path: '/payroll', anyOf: ['PAYROLL:VIEW'] },
-  { key: 'approvals', labelKey: 'nav.approvals', path: '/approvals', anyOf: [] },
-  { key: 'reports', labelKey: 'nav.reports', path: '/reports', anyOf: ['REPORT:VIEW', 'AUDIT:VIEW'] },
-  { key: 'administration', labelKey: 'nav.administration', path: '/admin', anyOf: ['ADMIN:VIEW', 'AUDIT:VIEW'] },
+  { key: 'dashboard', labelKey: 'nav.dashboard', path: '/', anyOf: [], group: 'overview' },
+  { key: 'self', labelKey: 'nav.selfService', path: '/me', anyOf: [], requiresEmployee: true, group: 'overview' },
+  { key: 'approvals', labelKey: 'nav.approvals', path: '/approvals', anyOf: [], group: 'overview' },
+  { key: 'employees', labelKey: 'nav.employees', path: '/employees', anyOf: ['EMPLOYEE:VIEW'], group: 'people' },
+  { key: 'organization', labelKey: 'nav.organization', path: '/organization', anyOf: ['ORG:VIEW'], group: 'people' },
+  { key: 'attendance', labelKey: 'nav.attendance', path: '/attendance', anyOf: ['ATTENDANCE:VIEW'], group: 'time' },
+  { key: 'shifts', labelKey: 'nav.shifts', path: '/shifts', anyOf: ['SHIFT:VIEW', 'ROSTER:VIEW'], group: 'time' },
+  { key: 'leave', labelKey: 'nav.leave', path: '/leave', anyOf: ['LEAVE:VIEW'], group: 'time' },
+  { key: 'payroll', labelKey: 'nav.payroll', path: '/payroll', anyOf: ['PAYROLL:VIEW'], group: 'pay' },
+  { key: 'reports', labelKey: 'nav.reports', path: '/reports', anyOf: ['REPORT:VIEW', 'AUDIT:VIEW'], group: 'insights' },
+  { key: 'administration', labelKey: 'nav.administration', path: '/admin', anyOf: ['ADMIN:VIEW', 'AUDIT:VIEW'], group: 'insights' },
 ];
 
 export function visibleNav(user: Me | null): NavItem[] {

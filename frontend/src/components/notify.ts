@@ -1,4 +1,6 @@
 import { notifications } from '@mantine/notifications';
+import { IconCheck, IconX } from '@tabler/icons-react';
+import { createElement } from 'react';
 import { ApiError } from '../api/client';
 import i18n from '../i18n';
 
@@ -7,11 +9,23 @@ export function showError(error: unknown) {
     error instanceof ApiError
       ? [error.message, ...error.errors.map((e) => `${e.field}: ${e.message}`)].join('\n')
       : i18n.t('app.error');
-  notifications.show({ color: 'red', title: i18n.t('app.error'), message, autoClose: 8000 });
+  notifications.show({
+    color: 'red',
+    title: i18n.t('app.error'),
+    message,
+    autoClose: 8000,
+    icon: createElement(IconX, { size: 18 }),
+    withBorder: true,
+  });
 }
 
 export function showSuccess(message?: string) {
-  notifications.show({ color: 'green', message: message ?? i18n.t('app.saved') });
+  notifications.show({
+    color: 'teal',
+    message: message ?? i18n.t('app.saved'),
+    icon: createElement(IconCheck, { size: 18 }),
+    withBorder: true,
+  });
 }
 
 /** Maps server field errors onto a Mantine form; returns true when any were applied. */

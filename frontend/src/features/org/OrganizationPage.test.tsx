@@ -17,7 +17,7 @@ describe('OrganizationPage', () => {
       'GET /companies': () => json([company]),
     });
     renderRoutes(routes, '/organization');
-    expect(await screen.findByText('Acme (Pvt) Ltd')).toBeInTheDocument();
+    expect(await screen.findByRole('cell', { name: 'Acme (Pvt) Ltd' })).toBeInTheDocument();
     await userEvent.click(screen.getByRole('tab', { name: 'Branches' }));
     expect(await screen.findByText('Colombo')).toBeInTheDocument();
   });
@@ -28,7 +28,7 @@ describe('OrganizationPage', () => {
       'GET /companies': () => json([company]),
     });
     renderRoutes(routes, '/organization');
-    expect(await screen.findByText('Acme (Pvt) Ltd')).toBeInTheDocument();
+    expect(await screen.findByRole('cell', { name: 'Acme (Pvt) Ltd' })).toBeInTheDocument();
     expect(screen.queryByRole('button', { name: /Create company/ })).not.toBeInTheDocument();
   });
 });

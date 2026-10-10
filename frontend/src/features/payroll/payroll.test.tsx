@@ -45,6 +45,16 @@ describe('Payroll UI', () => {
     expect(screen.getByRole('button', { name: 'Reprocess' })).toBeEnabled();
   });
 
+  it('FR-087 shows the period heading, status and current workflow step', async () => {
+    periodRoutes(period());
+    renderPeriod();
+    expect(await screen.findByRole('heading', { name: 'Payroll — March 2026' })).toBeInTheDocument();
+    expect(screen.getByText('Draft')).toBeInTheDocument();
+    const progress = screen.getByRole('list', { name: 'Payroll progress' });
+    expect(within(progress).getByText('Process').closest('li')).toHaveAttribute('aria-current', 'step');
+    expect(screen.getByRole('cell', { name: '92,000.00' })).toBeInTheDocument();
+  });
+
   it('FR-087 submits a processed draft for review', async () => {
     const { calls } = periodRoutes(period(), { 'POST /payroll/periods/p1/submit': () => json(period({ status: 'IN_REVIEW' })) });
     renderPeriod();
@@ -81,7 +91,7 @@ describe('Payroll UI', () => {
     await userEvent.click(await screen.findByRole('tab', { name: 'Payslips & exports' }));
     expect(screen.getByRole('button', { name: 'Payroll register (Excel)' })).toBeInTheDocument();
     await userEvent.click(screen.getByRole('button', { name: 'Email payslips' }));
-    expect(await screen.findByText('NO_EMAIL')).toBeInTheDocument();
+    expect(await screen.findByText('No email')).toBeInTheDocument();
     expect(screen.getByText('Kamal Silva')).toBeInTheDocument();
   });
 

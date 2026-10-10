@@ -1,8 +1,11 @@
-import { Tabs, Text } from '@mantine/core';
+import { Paper, Tabs } from '@mantine/core';
+import { IconBuildingSkyscraper, IconCalendarTime, IconCalendarWeek, IconClock, IconClockPlus, IconLayoutGrid, IconRepeat } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 import { useCompany } from '../../app/CompanyContext';
 import { useAuth } from '../../auth/AuthContext';
+import { EmptyState } from '../../components/EmptyState';
 import { PageHeader } from '../../components/PageHeader';
+import { useUrlTab } from '../../components/useUrlTab';
 import { OtPoliciesPanel } from './OtPoliciesPanel';
 import { RostersPanel } from './RostersPanel';
 import { RotationsPanel } from './RotationsPanel';
@@ -13,18 +16,29 @@ export function ShiftsPage() {
   const { t } = useTranslation();
   const { companyId } = useCompany();
   const { can } = useAuth();
-  if (!companyId) return <Text>Select a company first.</Text>;
-  const first = can('ROSTER:VIEW') ? 'rosters' : 'shifts';
+  const rosters = can('ROSTER:VIEW');
+  const tabs = [...(rosters ? ['rosters', 'schedule'] : []), 'shifts', 'rotations', 'ot'];
+  const [tab, setTab] = useUrlTab(tabs[0], tabs);
+  const header = <PageHeader title={t('nav.shifts')} description={t('navHint.shifts')} icon={<IconCalendarTime size={22} />} />;
+  if (!companyId)
+    return (
+      <>
+        {header}
+        <Paper withBorder>
+          <EmptyState icon={<IconBuildingSkyscraper size={28} stroke={1.5} />} title={t('app.selectCompanyFirst')} description={t('app.selectCompanyHint')} />
+        </Paper>
+      </>
+    );
   return (
     <>
-      <PageHeader title={t('nav.shifts')} />
-      <Tabs defaultValue={first} keepMounted={false}>
-        <Tabs.List mb="md">
-          {can('ROSTER:VIEW') && <Tabs.Tab value="rosters">Rosters</Tabs.Tab>}
-          {can('ROSTER:VIEW') && <Tabs.Tab value="schedule">Schedule</Tabs.Tab>}
-          <Tabs.Tab value="shifts">Shifts</Tabs.Tab>
-          <Tabs.Tab value="rotations">Rotations</Tabs.Tab>
-          <Tabs.Tab value="ot">OT policies</Tabs.Tab>
+      {header}
+      <Tabs value={tab} onChange={setTab} keepMounted={false}>
+        <Tabs.List className="app-tabs-list" mb="lg">
+          {rosters && <Tabs.Tab value="rosters" leftSection={<IconLayoutGrid size={16} />}>Rosters</Tabs.Tab>}
+          {rosters && <Tabs.Tab value="schedule" leftSection={<IconCalendarWeek size={16} />}>Schedule</Tabs.Tab>}
+          <Tabs.Tab value="shifts" leftSection={<IconClock size={16} />}>Shifts</Tabs.Tab>
+          <Tabs.Tab value="rotations" leftSection={<IconRepeat size={16} />}>Rotations</Tabs.Tab>
+          <Tabs.Tab value="ot" leftSection={<IconClockPlus size={16} />}>OT policies</Tabs.Tab>
         </Tabs.List>
         <Tabs.Panel value="rosters"><RostersPanel companyId={companyId} /></Tabs.Panel>
         <Tabs.Panel value="schedule"><SchedulePanel companyId={companyId} /></Tabs.Panel>
