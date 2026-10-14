@@ -1,0 +1,2706 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Premium HRM User Guide</title>
+<meta name="description" content="Premium HRM user guide: installation, setup, employees, attendance, rosters, leave, approvals, payroll, reports and self-service.">
+<style>
+:root {
+  --bg: #f6f7fb; --surface: #ffffff; --text: #1d2130; --muted: #5b6275; --border: #e3e6ef;
+  --brand: #4c4fe0; --brand-soft: #eef0ff; --code-bg: #f1f3f8; --shadow: 0 1px 2px rgba(16,24,40,.06), 0 4px 16px rgba(16,24,40,.06);
+  --note: #3b82f6; --note-bg: #eef5ff; --tip: #0f9f6e; --tip-bg: #e9f8f1; --important: #8b5cf6; --important-bg: #f4efff;
+  --warning: #d97706; --warning-bg: #fff6e8;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #11131a; --surface: #191c25; --text: #e7e9f0; --muted: #a2a8b8; --border: #2b3040;
+    --brand: #8c8ffb; --brand-soft: #23264a; --code-bg: #20242f; --shadow: none;
+    --note-bg: #16233a; --tip-bg: #12291f; --important-bg: #241d38; --warning-bg: #2d2313;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #11131a; --surface: #191c25; --text: #e7e9f0; --muted: #a2a8b8; --border: #2b3040;
+  --brand: #8c8ffb; --brand-soft: #23264a; --code-bg: #20242f; --shadow: none;
+  --note-bg: #16233a; --tip-bg: #12291f; --important-bg: #241d38; --warning-bg: #2d2313;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 76px; }
+body { margin: 0; background: var(--bg); color: var(--text); font: 16px/1.65 Inter, "Segoe UI", system-ui, -apple-system, Roboto, sans-serif; }
+a { color: var(--brand); text-decoration: none; }
+a:hover { text-decoration: underline; }
+header.top { position: sticky; top: 0; z-index: 10; display: flex; align-items: center; gap: 12px; height: 60px; padding: 0 20px;
+  background: color-mix(in srgb, var(--surface) 88%, transparent); backdrop-filter: blur(8px); border-bottom: 1px solid var(--border); }
+header.top .logo { width: 32px; height: 32px; border-radius: 9px; background: linear-gradient(135deg, #6366f1, #8b5cf6); display: grid; place-items: center; color: #fff; font-weight: 800; }
+header.top .name { font-weight: 700; }
+header.top .ver { color: var(--muted); font-size: 14px; }
+header.top .spacer { flex: 1; }
+header.top button { border: 1px solid var(--border); background: var(--surface); color: var(--text); border-radius: 8px; height: 34px; padding: 0 12px; cursor: pointer; font: inherit; font-size: 14px; }
+#menu-btn { display: none; }
+.layout { display: grid; grid-template-columns: 300px minmax(0, 1fr); max-width: 1480px; margin: 0 auto; }
+nav.toc { position: sticky; top: 60px; height: calc(100vh - 60px); overflow-y: auto; padding: 24px 16px 40px 20px; border-right: 1px solid var(--border); font-size: 14px; }
+nav.toc ul { list-style: none; margin: 0; padding: 0; }
+nav.toc > ul > li { margin: 2px 0; }
+nav.toc > ul > li > a { display: block; padding: 5px 10px; border-radius: 7px; color: var(--text); font-weight: 600; }
+nav.toc ul ul { margin: 2px 0 8px 10px; padding-left: 8px; border-left: 1px solid var(--border); display: none; }
+nav.toc li.open > ul { display: block; }
+nav.toc ul ul a { display: block; padding: 3px 8px; color: var(--muted); border-radius: 6px; }
+nav.toc a.active { background: var(--brand-soft); color: var(--brand); }
+nav.toc a:hover { text-decoration: none; background: var(--brand-soft); }
+main { padding: 32px clamp(16px, 4vw, 64px) 80px; min-width: 0; }
+article { max-width: 980px; }
+h1 { font-size: clamp(30px, 4vw, 42px); line-height: 1.15; margin: 8px 0 6px; letter-spacing: -.02em; }
+h1 + p { color: var(--muted); font-size: 18px; margin-top: 0; }
+h2 { font-size: 28px; line-height: 1.25; margin: 64px 0 12px; padding-top: 12px; letter-spacing: -.01em; border-top: 1px solid var(--border); }
+h3 { font-size: 20px; margin: 36px 0 8px; }
+h2 + h3 { margin-top: 20px; }
+p, ul, ol { margin: 10px 0; }
+li { margin: 4px 0; }
+hr { border: 0; border-top: 1px solid var(--border); margin: 32px 0; }
+code { font: 13.5px/1.5 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; background: var(--code-bg); padding: 1px 6px; border-radius: 5px; }
+pre { background: var(--code-bg); border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; overflow-x: auto; }
+pre code { background: none; padding: 0; }
+.table-wrap { overflow-x: auto; margin: 14px 0; border: 1px solid var(--border); border-radius: 10px; background: var(--surface); }
+table { border-collapse: collapse; width: 100%; font-size: 14.5px; }
+th, td { text-align: left; vertical-align: top; padding: 9px 12px; border-bottom: 1px solid var(--border); }
+th { background: var(--code-bg); font-weight: 600; white-space: nowrap; }
+tr:last-child td { border-bottom: 0; }
+figure { margin: 18px 0 26px; }
+figure img { display: block; width: 100%; height: auto; border: 1px solid var(--border); border-radius: 10px; box-shadow: var(--shadow); background: #fff; }
+figcaption { margin-top: 8px; font-size: 13.5px; color: var(--muted); }
+figcaption span { font-weight: 600; color: var(--text); }
+.pair { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; align-items: start; }
+.pair figure { margin: 10px 0; }
+.callout { border: 1px solid var(--border); border-left: 4px solid var(--note); background: var(--note-bg); border-radius: 10px; padding: 10px 16px; margin: 18px 0; }
+.callout > :last-child { margin-bottom: 4px; }
+.callout-title { font-weight: 700; margin: 2px 0 2px; font-size: 14px; text-transform: uppercase; letter-spacing: .04em; color: var(--note); }
+.callout.tip { border-left-color: var(--tip); background: var(--tip-bg); } .callout.tip .callout-title { color: var(--tip); }
+.callout.important { border-left-color: var(--important); background: var(--important-bg); } .callout.important .callout-title { color: var(--important); }
+.callout.warning { border-left-color: var(--warning); background: var(--warning-bg); } .callout.warning .callout-title { color: var(--warning); }
+.callout figure { max-width: 520px; }
+.diagram { border: 1px solid var(--border); border-radius: 12px; background: var(--surface); padding: 18px; }
+.flow { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.stack { display: flex; flex-direction: column; gap: 6px; }
+.chip { display: inline-block; padding: 6px 12px; border-radius: 8px; border: 1px solid var(--border); background: var(--code-bg); font-size: 14px; font-weight: 500; }
+.chip.strong { background: var(--brand-soft); border-color: var(--brand); color: var(--brand); font-weight: 700; }
+.chip.done { background: var(--tip-bg); border-color: var(--tip); color: var(--tip); font-weight: 700; }
+.arrow { color: var(--muted); font-size: 14px; white-space: nowrap; }
+.flow-note { font-size: 14px; color: var(--muted); margin: 12px 0 0; }
+.diagram figcaption { margin-top: 12px; }
+@media (max-width: 960px) {
+  .layout { grid-template-columns: 1fr; }
+  #menu-btn { display: inline-block; }
+  nav.toc { position: fixed; top: 60px; left: 0; width: min(320px, 88vw); z-index: 9; background: var(--surface); transform: translateX(-100%); transition: transform .2s; box-shadow: var(--shadow); }
+  body.menu-open nav.toc { transform: none; }
+  .pair { grid-template-columns: 1fr; }
+  header.top .ver { display: none; }
+}
+@media (max-width: 560px) {
+  header.top { gap: 8px; padding: 0 12px; }
+  header.top .lbl, #print-btn { display: none; }
+}
+@media print {
+  @page { size: A4; margin: 16mm 14mm; }
+  header.top, nav.toc { display: none; }
+  .layout { display: block; }
+  main { padding: 0; }
+  body { background: #fff; color: #000; font-size: 11pt; }
+  h2 { break-before: page; border: 0; margin-top: 0; }
+  figure, .callout, .table-wrap, pre { break-inside: avoid; }
+  figure img { box-shadow: none; }
+  a { color: inherit; }
+}
+</style>
+</head>
+<body>
+<header class="top">
+  <button id="menu-btn" type="button" aria-label="Contents" aria-controls="toc">☰</button>
+  <div class="logo" aria-hidden="true">H</div>
+  <span class="name">Premium HRM</span><span class="ver">User Guide · Version 1.0</span>
+  <span class="spacer"></span>
+  <button id="theme-btn" type="button" aria-label="Toggle dark mode">◐<span class="lbl"> Theme</span></button>
+  <button id="print-btn" type="button" onclick="window.print()">Print / PDF</button>
+</header>
+<div class="layout">
+  <nav class="toc" id="toc" aria-label="Contents"><ul><li><a href="#how-to-use-this-guide">How to use this guide</a></li><li><a href="#1-introduction">1. Introduction</a><ul><li><a href="#11-what-premium-hrm-does">1.1 What Premium HRM does</a></li><li><a href="#12-key-concepts">1.2 Key concepts</a></li><li><a href="#13-supported-browsers-and-devices">1.3 Supported browsers and devices</a></li></ul></li><li><a href="#2-installation">2. Installation</a><ul><li><a href="#21-requirements">2.1 Requirements</a></li><li><a href="#22-configure">2.2 Configure</a></li><li><a href="#23-start-the-system">2.3 Start the system</a></li><li><a href="#24-trust-the-certificate-on-premises-only">2.4 Trust the certificate (on-premises only)</a></li><li><a href="#25-backups">2.5 Backups</a></li></ul></li><li><a href="#3-getting-started">3. Getting started</a><ul><li><a href="#31-sign-in">3.1 Sign in</a></li><li><a href="#32-change-the-temporary-password">3.2 Change the temporary password</a></li><li><a href="#33-a-tour-of-the-workspace">3.3 A tour of the workspace</a></li><li><a href="#34-common-screen-patterns">3.4 Common screen patterns</a></li></ul></li><li><a href="#4-setup-checklist">4. Setup checklist</a></li><li><a href="#5-organization-setup">5. Organization setup</a><ul><li><a href="#51-create-the-company">5.1 Create the company</a></li><li><a href="#52-company-settings">5.2 Company settings</a></li><li><a href="#53-branches">5.3 Branches</a></li><li><a href="#54-departments">5.4 Departments</a></li><li><a href="#55-designations-grades-and-employment-categories">5.5 Designations, grades and employment categories</a></li><li><a href="#56-holidays">5.6 Holidays</a></li><li><a href="#57-custom-employee-fields">5.7 Custom employee fields</a></li></ul></li><li><a href="#6-shifts-and-overtime-policies">6. Shifts and overtime policies</a><ul><li><a href="#61-overtime-policies">6.1 Overtime policies</a></li><li><a href="#62-create-a-shift">6.2 Create a shift</a></li></ul></li><li><a href="#7-employees">7. Employees</a><ul><li><a href="#71-find-an-employee">7.1 Find an employee</a></li><li><a href="#72-add-an-employee">7.2 Add an employee</a></li><li><a href="#73-edit-an-employee-transfers-and-promotions">7.3 Edit an employee, transfers and promotions</a></li><li><a href="#74-change-status-resignation-termination-deactivation">7.4 Change status: resignation, termination, deactivation</a></li><li><a href="#75-documents">7.5 Documents</a></li><li><a href="#76-salary-structure">7.6 Salary structure</a></li></ul></li><li><a href="#8-users-roles-and-permissions">8. Users, roles and permissions</a><ul><li><a href="#81-create-a-user">8.1 Create a user</a></li><li><a href="#82-roles-and-the-permission-matrix">8.2 Roles and the permission matrix</a></li></ul></li><li><a href="#9-attendance">9. Attendance</a><ul><li><a href="#91-connect-attendance-devices">9.1 Connect attendance devices</a></li><li><a href="#92-import-punches-from-a-csv-file">9.2 Import punches from a CSV file</a></li><li><a href="#93-daily-attendance">9.3 Daily attendance</a></li><li><a href="#94-look-at-a-day-and-correct-missing-punches">9.4 Look at a day and correct missing punches</a></li><li><a href="#95-exceptions">9.5 Exceptions</a></li><li><a href="#96-approve-overtime">9.6 Approve overtime</a></li><li><a href="#97-payroll-lock">9.7 Payroll lock</a></li></ul></li><li><a href="#10-rosters-and-schedules">10. Rosters and schedules</a><ul><li><a href="#101-rotation-patterns">10.1 Rotation patterns</a></li><li><a href="#102-create-a-roster">10.2 Create a roster</a></li><li><a href="#103-fill-the-roster">10.3 Fill the roster</a></li><li><a href="#104-publish-change-and-lock">10.4 Publish, change and lock</a></li><li><a href="#105-schedule-view">10.5 Schedule view</a></li><li><a href="#106-how-the-days-schedule-is-decided">10.6 How the day's schedule is decided</a></li></ul></li><li><a href="#11-leave-management">11. Leave management</a><ul><li><a href="#111-leave-types-and-policies">11.1 Leave types and policies</a></li><li><a href="#112-apply-for-leave-employee">11.2 Apply for leave (employee)</a></li><li><a href="#113-apply-on-behalf-of-an-employee-hr">11.3 Apply on behalf of an employee (HR)</a></li><li><a href="#114-approve-leave-manager">11.4 Approve leave (manager)</a></li><li><a href="#115-track-requests">11.5 Track requests</a></li><li><a href="#116-leave-calendar">11.6 Leave calendar</a></li><li><a href="#117-balances-opening-balances-and-adjustments">11.7 Balances, opening balances and adjustments</a></li><li><a href="#118-year-end-jobs">11.8 Year-end jobs</a></li></ul></li><li><a href="#12-approvals">12. Approvals</a><ul><li><a href="#121-your-inbox">12.1 Your inbox</a></li><li><a href="#122-review-and-decide">12.2 Review and decide</a></li><li><a href="#123-my-requests">12.3 My requests</a></li><li><a href="#124-delegate-your-approvals">12.4 Delegate your approvals</a></li><li><a href="#125-approval-workflows">12.5 Approval workflows</a></li></ul></li><li><a href="#13-payroll">13. Payroll</a><ul><li><a href="#131-payroll-components">13.1 Payroll components</a></li><li><a href="#132-statutory-settings-and-tax-tables">13.2 Statutory settings and tax tables</a></li><li><a href="#133-before-you-run-payroll">13.3 Before you run payroll</a></li><li><a href="#134-the-monthly-payroll-run">13.4 The monthly payroll run</a></li><li><a href="#135-payslips-exports-and-email">13.5 Payslips, exports and email</a></li></ul></li><li><a href="#14-reports-and-dashboard">14. Reports and dashboard</a><ul><li><a href="#141-dashboard">14.1 Dashboard</a></li><li><a href="#142-standard-reports">14.2 Standard reports</a></li></ul></li><li><a href="#15-my-portal--employee-self-service">15. My Portal — employee self-service</a><ul><li><a href="#151-profile">15.1 Profile</a></li><li><a href="#152-attendance">15.2 Attendance</a></li><li><a href="#153-schedule">15.3 Schedule</a></li><li><a href="#154-leave">15.4 Leave</a></li><li><a href="#155-payslips">15.5 Payslips</a></li><li><a href="#156-your-requests-and-approvals">15.6 Your requests and approvals</a></li></ul></li><li><a href="#16-administration-audit-log-and-security">16. Administration: audit log and security</a><ul><li><a href="#161-audit-log">16.1 Audit log</a></li><li><a href="#162-security-features">16.2 Security features</a></li></ul></li><li><a href="#17-monthly-routine">17. Monthly routine</a></li><li><a href="#18-troubleshooting-and-faq">18. Troubleshooting and FAQ</a></li><li><a href="#appendix-a--glossary">Appendix A — Glossary</a></li><li><a href="#appendix-b--default-roles">Appendix B — Default roles</a></li><li><a href="#appendix-c--status-reference">Appendix C — Status reference</a></li><li><a href="#appendix-d--attendance-integration-reference">Appendix D — Attendance integration reference</a></li><li><a href="#appendix-e--keyboard-shortcuts">Appendix E — Keyboard shortcuts</a></li><li><a href="#appendix-f--backup-and-restore-quick-reference">Appendix F — Backup and restore quick reference</a></li></ul></nav>
+  <main><article>
+<h1>Premium HRM — User Guide</h1>
+<p><strong>Attendance · Rosters · Leave · Approvals · Payroll · Self-service</strong></p>
+<div class="table-wrap"><table>
+
+<tbody>
+<tr>
+<td><strong>Product version</strong></td>
+<td>1.0</td>
+</tr>
+<tr>
+<td><strong>Guide revision</strong></td>
+<td>October 2026</td>
+</tr>
+<tr>
+<td><strong>Audience</strong></td>
+<td>System administrators, HR and payroll teams, managers and employees</td>
+</tr>
+<tr>
+<td><strong>Editions</strong></td>
+<td>On-premises and Cloud (identical features)</td>
+</tr>
+</tbody>
+</table></div>
+<figure><a href="images/login.png" target="_blank" rel="noopener"><img src="images/login.png" alt="Premium HRM sign-in page" loading="lazy"></a><figcaption><span>Figure 1.</span> Premium HRM sign-in page</figcaption></figure>
+<hr />
+<h2 id="how-to-use-this-guide">How to use this guide</h2>
+<p>This guide takes you from a brand-new installation to running a full monthly payroll. Read it in order the
+first time — each chapter builds on the data created in the previous one — and use it as a reference later.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>If you are…</th>
+<th>Start with</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>The IT administrator installing the system</td>
+<td><a href="#2-installation">2. Installation</a></td>
+</tr>
+<tr>
+<td>The person setting the system up for your organisation</td>
+<td><a href="#3-getting-started">3. Getting started</a> and <a href="#4-setup-checklist">4. Setup checklist</a></td>
+</tr>
+<tr>
+<td>An HR officer</td>
+<td><a href="#7-employees">7. Employees</a>, <a href="#11-leave-management">11. Leave management</a></td>
+</tr>
+<tr>
+<td>A payroll officer</td>
+<td><a href="#13-payroll">13. Payroll</a></td>
+</tr>
+<tr>
+<td>A manager or supervisor</td>
+<td><a href="#12-approvals">12. Approvals</a>, <a href="#9-attendance">9. Attendance</a></td>
+</tr>
+<tr>
+<td>An employee</td>
+<td><a href="#15-my-portal--employee-self-service">15. My Portal — employee self-service</a></td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Conventions</strong></p>
+<ul>
+<li><strong>Bold text</strong> is something you click or type, for example <strong>Organization Setup → Branches → Create branch</strong>.
+  The arrow (→) separates the menu item, the tab and the button.</li>
+<li>Numbered red markers on the screenshots match the numbered steps in the text next to them.</li>
+<li>Notes, tips and warnings are shown like this:</li>
+</ul>
+<div class="callout note">
+<p><p class="callout-title">Note</p></p>
+<p>Extra information that helps you understand a feature.</p>
+</div>
+<div class="callout tip">
+<p><p class="callout-title">Tip</p></p>
+<p>A shortcut or a good practice.</p>
+</div>
+<div class="callout warning">
+<p><p class="callout-title">Warning</p></p>
+<p>Something that cannot be undone or that affects pay. Read it before you continue.</p>
+</div>
+<p><strong>About the screenshots.</strong> The screenshots show a fictional company, <em>ACME Holdings (Pvt) Ltd</em>, with twelve
+employees in Colombo and Kandy. Names, numbers and amounts are sample data. Your screens show your own data,
+and you see only the menus that your role allows.</p>
+<hr />
+<h2 id="1-introduction">1. Introduction</h2>
+<h3 id="11-what-premium-hrm-does">1.1 What Premium HRM does</h3>
+<p>Premium HRM is a web-based human-resource system for organisations with one or more companies, branches
+and departments. It covers the full cycle from hiring to payslip:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Module</th>
+<th>What you can do</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Organization Setup</strong></td>
+<td>Companies, branches, department hierarchy, designations, grades, employment categories, holidays, custom employee fields and company-wide rules</td>
+</tr>
+<tr>
+<td><strong>Employee Hub</strong></td>
+<td>Employee master records, documents, employment history (transfers, promotions, exits) and salary structures</td>
+</tr>
+<tr>
+<td><strong>Attendance</strong></td>
+<td>Collect punches from fingerprint/card devices or CSV files, calculate daily attendance (late, early, short, overtime), correct mistakes with an audit trail, approve overtime</td>
+</tr>
+<tr>
+<td><strong>Shift &amp; Roster</strong></td>
+<td>Fixed, flexible, night and split shifts; overtime policies; rotating shift patterns; weekly and monthly rosters with publish, lock and revision history</td>
+</tr>
+<tr>
+<td><strong>Leave Management</strong></td>
+<td>Leave types and policies, balances, accrual, carry-forward, applications, a team calendar</td>
+</tr>
+<tr>
+<td><strong>Approvals</strong></td>
+<td>Multi-level approval workflows for leave, attendance corrections and payroll, with delegation</td>
+</tr>
+<tr>
+<td><strong>Payroll</strong></td>
+<td>Earnings, deductions and employer contributions; Sri Lankan EPF / ETF / APIT out of the box; monthly payroll runs with review, approval and finalization; payslips and exports</td>
+</tr>
+<tr>
+<td><strong>Reports</strong></td>
+<td>Ten standard reports on screen and as PDF, Excel or CSV, plus a live dashboard</td>
+</tr>
+<tr>
+<td><strong>My Portal</strong></td>
+<td>Employee self-service: profile, attendance, schedule, leave, payslips</td>
+</tr>
+<tr>
+<td><strong>Administration</strong></td>
+<td>Users, roles and permissions, data scope, and a tamper-proof audit log</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="12-key-concepts">1.2 Key concepts</h3>
+<p>Understanding these ideas makes the rest of the guide easy.</p>
+<p><strong>Installation, companies and the working company.</strong> One installation can hold several companies (legal
+entities). Most screens work on one company at a time — the <em>working company</em>, shown in the header. If you
+have access to more than one company, pick the working company from the header switcher.</p>
+<p><strong>Roles and permissions.</strong> What a user may <em>do</em> is controlled by their roles. Each role is a set of
+permissions such as <code>EMPLOYEE:EDIT</code> or <code>PAYROLL:APPROVE</code>. Nine roles are supplied (see
+<a href="#appendix-b--default-roles">Appendix B</a>), and you can create your own.</p>
+<p><strong>Data scope.</strong> <em>Whose records</em> a user may see is controlled separately by their data scope: all data,
+selected companies, selected branches, selected departments (including sub-departments) or only their own
+record. A department manager with a department scope sees only their team, even on reports.</p>
+<p><strong>Approval workflows.</strong> Leave requests, attendance corrections and payroll runs can require approval by one
+to five levels of approvers — the reporting manager, anyone with a given role, or a named user. Approvers
+can delegate their approvals while they are away.</p>
+<p><strong>From punch to payslip.</strong> The modules feed each other in this order:</p>
+<figure class="diagram" aria-label="From punch to payslip"><div class="flow"><div class="stack"><span class="chip ">Device punches / CSV</span><span class="chip ">Shifts, rosters, rotations</span><span class="chip ">Holidays</span><span class="chip ">Approved leave</span></div><span class="arrow" aria-hidden="true">→</span><span class="chip strong">Daily attendance</span><span class="arrow" aria-hidden="true">→</span><span class="chip ">Overtime approval &amp; corrections</span><span class="arrow" aria-hidden="true">→</span><div class="stack"><span class="chip ">Salary structures</span><span class="chip strong">Payroll run</span></div><span class="arrow" aria-hidden="true">→</span><span class="chip ">Review → Approve → Finalize</span><span class="arrow" aria-hidden="true">→</span><span class="chip strong">Payslips, exports, reports</span></div><figcaption>From punch to payslip</figcaption></figure>
+
+<p>Every critical change on the way — a corrected punch, an approved leave, a changed salary, a finalized
+payroll — is written to the audit log with the user, the time and the before/after values.</p>
+<h3 id="13-supported-browsers-and-devices">1.3 Supported browsers and devices</h3>
+<p>Premium HRM runs in any current version of Chrome, Edge, Firefox or Safari on Windows, macOS, Linux, Android
+and iOS. Nothing has to be installed on users' computers. Every screen also works on a phone (from 360 px
+wide), so employees can apply for leave or download payslips from their mobile.</p>
+<hr />
+<h2 id="2-installation">2. Installation</h2>
+<p><em>This chapter is for the IT administrator. If the system is already running, skip to
+<a href="#3-getting-started">3. Getting started</a>.</em></p>
+<p>Premium HRM is delivered as Docker containers. The same image is used for both editions:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th></th>
+<th>On-premises</th>
+<th>Cloud</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Where it runs</td>
+<td>A server in your own network</td>
+<td>A virtual machine you or your provider manage</td>
+</tr>
+<tr>
+<td>HTTPS certificate</td>
+<td>Issued by the bundled internal certificate authority (or your own)</td>
+<td>Public Let's Encrypt certificate, issued automatically</td>
+</tr>
+<tr>
+<td>Compose file</td>
+<td><code>deploy/compose.onprem.yml</code></td>
+<td><code>deploy/compose.cloud.yml</code></td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="21-requirements">2.1 Requirements</h3>
+<ul>
+<li>A Linux server (x86-64 or arm64) with <strong>4 vCPU, 8 GB RAM and 50 GB disk</strong> — enough to process payroll for
+  1,000 employees in well under a minute.</li>
+<li><strong>Docker Engine 24 or later</strong> with the Compose plugin (check with <code>docker compose version</code>).</li>
+<li>A host name your users can reach, for example <code>hrm.local</code> (on-premises) or <code>hr.yourcompany.com</code> (cloud).</li>
+<li>Ports <strong>80 and 443</strong> free on the server.</li>
+<li>Optional: an SMTP mail server, used to email payslips and approval notifications.</li>
+</ul>
+<h3 id="22-configure">2.2 Configure</h3>
+<ol>
+<li>Copy the release bundle to the server, for example to <code>/opt/hrm</code>, and open that folder.</li>
+<li>Create the configuration file from the template and protect it:</li>
+</ol>
+<p><code>bash
+   cd /opt/hrm
+   cp deploy/.env.example deploy/.env
+   chmod 600 deploy/.env</code></p>
+<ol start="3">
+<li>Edit <code>deploy/.env</code> and set at least these values:</li>
+</ol>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Setting</th>
+<th>What to enter</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>HRM_DB_PASSWORD</code></td>
+<td>A long random password, e.g. from <code>openssl rand -base64 24</code></td>
+</tr>
+<tr>
+<td><code>HRM_JWT_SECRET</code></td>
+<td>At least 32 random bytes, e.g. from <code>openssl rand -base64 48</code>. The system does not start without it.</td>
+</tr>
+<tr>
+<td><code>HRM_ADMIN_USERNAME</code> / <code>HRM_ADMIN_PASSWORD</code></td>
+<td>The first administrator account. It is created only on an empty database and must change its password at first sign-in.</td>
+</tr>
+<tr>
+<td><code>HRM_HOSTNAME</code> (on-premises) or <code>HRM_DOMAIN</code> + <code>HRM_ACME_EMAIL</code> (cloud)</td>
+<td>The address users type in the browser</td>
+</tr>
+<tr>
+<td><code>HRM_MAIL_ENABLED=true</code> and <code>HRM_SMTP_*</code></td>
+<td>Only if payslips and notifications should be emailed</td>
+</tr>
+<tr>
+<td><code>TZ</code>, <code>HRM_BACKUP_AT</code>, <code>HRM_BACKUP_RETENTION_DAYS</code></td>
+<td>Time zone (used by the app and the backup schedule), backup time of day (default 02:00) and how many days to keep (default 14)</td>
+</tr>
+</tbody>
+</table></div>
+<div class="callout warning">
+<p><p class="callout-title">Warning</p></p>
+<p>Keep <code>deploy/.env</code> secret and keep a copy in a password manager. It is <strong>not</strong> included in backups, and you
+need it to restore the system on a new server.</p>
+</div>
+<h3 id="23-start-the-system">2.3 Start the system</h3>
+<p>On-premises:</p>
+<pre><code class="bash">docker compose -f deploy/compose.onprem.yml up -d --build
+docker compose -f deploy/compose.onprem.yml ps       # wait until &quot;app&quot; shows &quot;healthy&quot; (about a minute)
+</code></pre>
+
+<p>Cloud (prebuilt image set in <code>HRM_IMAGE</code>):</p>
+<pre><code class="bash">docker compose -f deploy/compose.cloud.yml pull
+docker compose -f deploy/compose.cloud.yml up -d
+</code></pre>
+
+<p>Four services start: <strong>app</strong> (Premium HRM), <strong>db</strong> (PostgreSQL), <strong>caddy</strong> (HTTPS) and <strong>backup</strong> (daily
+database and document backup).</p>
+<h3 id="24-trust-the-certificate-on-premises-only">2.4 Trust the certificate (on-premises only)</h3>
+<p>The on-premises bundle issues its own HTTPS certificate. Until client PCs trust it, browsers show a security
+warning. Export the root certificate and distribute it as a <em>trusted root CA</em> through Group Policy, your MDM
+tool or the macOS keychain:</p>
+<pre><code class="bash">docker compose -f deploy/compose.onprem.yml cp caddy:/data/caddy/pki/authorities/local/root.crt ./hrm-root.crt
+</code></pre>
+
+<p>If you already have a certificate from your company CA, use it instead — see <code>docs/install-onprem.md</code>.</p>
+<h3 id="25-backups">2.5 Backups</h3>
+<p>Backups run automatically every day. Each backup set is a database dump and an archive of uploaded documents
+in <code>deploy/backups/</code>. Copy that folder to another machine or to cloud storage every day, and practise a
+restore at least once a quarter. Commands for a manual backup and for restoring are in
+<a href="#appendix-f--backup-and-restore-quick-reference">Appendix F</a> and <code>docs/backup-recovery.md</code>.</p>
+<hr />
+<h2 id="3-getting-started">3. Getting started</h2>
+<h3 id="31-sign-in">3.1 Sign in</h3>
+<ol>
+<li>Open the address of your installation in the browser, for example <code>https://hrm.local</code>.</li>
+<li>Enter your <strong>Username</strong> (1) and <strong>Password</strong> (2), then click <strong>Sign in</strong> (3).</li>
+</ol>
+<figure><a href="images/login-filled.png" target="_blank" rel="noopener"><img src="images/login-filled.png" alt="Sign-in page with the username, password and Sign in button highlighted" loading="lazy"></a><figcaption><span>Figure 2.</span> Sign-in page with the username, password and Sign in button highlighted</figcaption></figure>
+<div class="callout note">
+<p><p class="callout-title">Note</p></p>
+<p>After five wrong passwords in a row, the account is locked for 15 minutes. The error message is the same
+whether the username or the password is wrong, so nobody can guess which usernames exist.</p>
+</div>
+<h3 id="32-change-the-temporary-password">3.2 Change the temporary password</h3>
+<p>The first time you sign in — and whenever an administrator resets your password — you must choose a new one
+before you can continue.</p>
+<ol>
+<li>Enter the temporary password in <strong>Current password</strong> (1).</li>
+<li>Enter a new password (2). It needs <strong>at least 10 characters</strong>, with <strong>upper- and lower-case letters, a
+   number and a symbol</strong>. The checklist under the field turns green as each rule is met.</li>
+<li>Type it again in <strong>Confirm new password</strong> (3) and click <strong>Update password</strong> (4).</li>
+</ol>
+<figure><a href="images/change-password.png" target="_blank" rel="noopener"><img src="images/change-password.png" alt="Change password screen with the password rules checklist" loading="lazy"></a><figcaption><span>Figure 3.</span> Change password screen with the password rules checklist</figcaption></figure>
+<p>You can change your password at any time from the <strong>user menu</strong> (your name, top right) → <strong>Change password</strong>.</p>
+<figure><a href="images/user-menu.png" target="_blank" rel="noopener"><img src="images/user-menu.png" alt="The user menu" loading="lazy"></a><figcaption><span>Figure 4.</span> The user menu</figcaption></figure>
+<h3 id="33-a-tour-of-the-workspace">3.3 A tour of the workspace</h3>
+<figure><a href="images/dashboard-first-run.png" target="_blank" rel="noopener"><img src="images/dashboard-first-run.png" alt="The workspace after the first sign-in, with the main menu, search, theme toggle and user menu highlighted" loading="lazy"></a><figcaption><span>Figure 5.</span> The workspace after the first sign-in, with the main menu, search, theme toggle and user menu highlighted</figcaption></figure>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>#</th>
+<th>Area</th>
+<th>What it does</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><strong>Main menu</strong></td>
+<td>The modules, grouped into <em>Overview</em>, <em>People</em>, <em>Time &amp; attendance</em>, <em>Payroll</em> and <em>Insights &amp; admin</em>. You see only the modules your role allows. The <strong>Approvals</strong> item shows a counter when requests are waiting for you.</td>
+</tr>
+<tr>
+<td>2</td>
+<td><strong>Search</strong></td>
+<td>Opens the command palette (also <strong>Ctrl + K</strong> on Windows/Linux, <strong>⌘ + K</strong> on Mac) to jump to any page, action or employee.</td>
+</tr>
+<tr>
+<td>3</td>
+<td><strong>Light / dark mode</strong></td>
+<td>Switches the colour theme. Your choice is remembered on this device.</td>
+</tr>
+<tr>
+<td>4</td>
+<td><strong>User menu</strong></td>
+<td>Your name and role, <strong>My Portal</strong> (if your account is linked to an employee record), <strong>Change password</strong> and <strong>Sign out</strong>.</td>
+</tr>
+</tbody>
+</table></div>
+<p>After the first company is created, the header also shows the <strong>working company</strong> — a selector when you
+have access to several companies, or a label when you have only one. The company's legal name, currency and
+time zone are shown at the bottom of the menu.</p>
+<p><strong>The command palette.</strong> Press <strong>Ctrl/⌘ + K</strong> anywhere and start typing. You can open pages, run actions
+such as <em>Add new employee</em> or <em>Toggle dark mode</em>, or type part of an employee's name or number to jump
+straight to their record.</p>
+<figure><a href="images/command-palette.png" target="_blank" rel="noopener"><img src="images/command-palette.png" alt="Command palette searching for &quot;nim&quot;: pages, actions and matching employees" loading="lazy"></a><figcaption><span>Figure 6.</span> Command palette searching for &quot;nim&quot;: pages, actions and matching employees</figcaption></figure>
+<p><strong>On a phone</strong>, the menu is behind the ☰ button at the top left.</p>
+<div class="pair">
+<figure><a href="images/mobile-dashboard.png" target="_blank" rel="noopener"><img src="images/mobile-dashboard.png" alt="Dashboard on a phone" loading="lazy"></a><figcaption><span>Figure 7.</span> Dashboard on a phone</figcaption></figure>
+<figure><a href="images/mobile-menu.png" target="_blank" rel="noopener"><img src="images/mobile-menu.png" alt="Main menu opened on a phone" loading="lazy"></a><figcaption><span>Figure 8.</span> Main menu opened on a phone</figcaption></figure>
+</div>
+<h3 id="34-common-screen-patterns">3.4 Common screen patterns</h3>
+<p>Once you know these patterns you can use every module:</p>
+<ul>
+<li><strong>Tabs</strong> at the top of a page divide a module into sections (for example <em>Daily attendance</em>, <em>Exceptions</em>,
+  <em>Import &amp; devices</em>). The selected tab is part of the page address, so you can bookmark it.</li>
+<li><strong>Lists</strong> show a loading placeholder while data loads and a friendly message with a next step when there is
+  nothing to show. Long lists have a search box and page through 20–50 rows at a time.</li>
+<li><strong>Click a row</strong> to open its details or edit it. Edit forms open in a panel on the right-hand side.</li>
+<li><strong>Required fields</strong> are marked with a red asterisk (*). If something is wrong, the message appears under
+  the field.</li>
+<li><strong>Deleting</strong> always asks for confirmation. Records that are in use (for example a branch with employees)
+  cannot be deleted — deactivate them instead.</li>
+<li><strong>Status badges</strong> use consistent colours: green for good/complete, yellow for pending, red for
+  rejected/absent, dark for locked, grey for inactive.</li>
+</ul>
+<hr />
+<h2 id="4-setup-checklist">4. Setup checklist</h2>
+<p>Follow these steps once, in this order, to take a new installation to its first payroll. Each step links to
+the section that explains it. Most organisations finish the setup in a day.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>#</th>
+<th>Step</th>
+<th>Where</th>
+<th>Section</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Sign in and change the administrator password</td>
+<td>Sign-in page</td>
+<td><a href="#31-sign-in">3.1</a></td>
+</tr>
+<tr>
+<td>2</td>
+<td>Create your company</td>
+<td>Organization Setup → Companies</td>
+<td><a href="#51-create-the-company">5.1</a></td>
+</tr>
+<tr>
+<td>3</td>
+<td>Review the company settings (weekly off, numbering, payroll rules)</td>
+<td>Organization Setup → Settings</td>
+<td><a href="#52-company-settings">5.2</a></td>
+</tr>
+<tr>
+<td>4</td>
+<td>Add branches, departments, designations, grades and employment categories</td>
+<td>Organization Setup</td>
+<td><a href="#53-branches">5.3</a> – <a href="#55-designations-grades-and-employment-categories">5.5</a></td>
+</tr>
+<tr>
+<td>5</td>
+<td>Load the year's holidays</td>
+<td>Organization Setup → Holidays</td>
+<td><a href="#56-holidays">5.6</a></td>
+</tr>
+<tr>
+<td>6</td>
+<td>Create overtime policies and shifts</td>
+<td>Shift &amp; Roster</td>
+<td><a href="#6-shifts-and-overtime-policies">6</a></td>
+</tr>
+<tr>
+<td>7</td>
+<td>Add employees (with badge ID and default shift)</td>
+<td>Employee Hub</td>
+<td><a href="#7-employees">7</a></td>
+</tr>
+<tr>
+<td>8</td>
+<td>Enter salary structures</td>
+<td>Employee Hub → <em>employee</em> → Salary</td>
+<td><a href="#76-salary-structure">7.6</a></td>
+</tr>
+<tr>
+<td>9</td>
+<td>Create user accounts and link employees to them</td>
+<td>Administration → Users</td>
+<td><a href="#8-users-roles-and-permissions">8</a></td>
+</tr>
+<tr>
+<td>10</td>
+<td>Connect attendance devices (or import a CSV)</td>
+<td>Attendance → Import &amp; devices</td>
+<td><a href="#91-connect-attendance-devices">9.1</a></td>
+</tr>
+<tr>
+<td>11</td>
+<td>Review leave types and approval workflows</td>
+<td>Leave Management, Approvals</td>
+<td><a href="#111-leave-types-and-policies">11.1</a>, <a href="#125-approval-workflows">12.5</a></td>
+</tr>
+<tr>
+<td>12</td>
+<td>Run the first payroll</td>
+<td>Payroll</td>
+<td><a href="#134-the-monthly-payroll-run">13.4</a></td>
+</tr>
+</tbody>
+</table></div>
+<div class="callout tip">
+<p><p class="callout-title">Tip</p></p>
+<p>Creating a company also creates sensible defaults for you: company settings, four leave types (Annual,
+Casual, Medical, No pay), three approval workflows (the one for attendance corrections starts disabled) and — with the
+statutory pack <code>LK</code> — the full Sri Lankan payroll setup (EPF, ETF, APIT, overtime, no-pay, bonus and
+allowance components). You only need to review them.</p>
+</div>
+<hr />
+<h2 id="5-organization-setup">5. Organization setup</h2>
+<p><strong>Organization Setup</strong> holds the structure that everything else hangs on. The sections are listed on the
+left: <em>Companies</em>, <em>Settings</em>, <em>Branches</em>, <em>Departments</em>, <em>Designations</em>, <em>Grades</em>, <em>Employment
+categories</em>, <em>Holidays</em> and <em>Custom fields</em>. All sections except <em>Companies</em> work on the working company
+shown in the header.</p>
+<p><em>Required permission:</em> <code>ORG:VIEW</code> to look, <code>ORG:ADD</code> / <code>ORG:EDIT</code> / <code>ORG:DELETE</code> to change, and
+<code>ORG:CONFIGURE</code> to create companies, change settings and manage holidays. Custom fields need <code>EMPLOYEE:VIEW</code>
+to see and <code>EMPLOYEE:CONFIGURE</code> to change.</p>
+<h3 id="51-create-the-company">5.1 Create the company</h3>
+<ol>
+<li>Open <strong>Organization Setup → Companies</strong> and click <strong>Create company</strong>.</li>
+<li>Fill in the form on the right:</li>
+</ol>
+<figure><a href="images/org-company-create.png" target="_blank" rel="noopener"><img src="images/org-company-create.png" alt="Create company form, top part" loading="lazy"></a><figcaption><span>Figure 9.</span> Create company form, top part</figcaption></figure>
+<figure><a href="images/org-company-create-2.png" target="_blank" rel="noopener"><img src="images/org-company-create-2.png" alt="Create company form, bottom part" loading="lazy"></a><figcaption><span>Figure 10.</span> Create company form, bottom part</figcaption></figure>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>#</th>
+<th>Field</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><strong>Code</strong></td>
+<td>A short unique code such as <code>ACME</code>. It can be used in employee numbers, so keep it short.</td>
+</tr>
+<tr>
+<td>2</td>
+<td><strong>Legal name</strong></td>
+<td>The registered name. It is printed on payslips and reports.</td>
+</tr>
+<tr>
+<td>3</td>
+<td><strong>Registration number</strong>, address, phone, email</td>
+<td>Optional company details.</td>
+</tr>
+<tr>
+<td>4</td>
+<td><strong>EPF employer number</strong>, <strong>ETF number</strong></td>
+<td>Your statutory registration numbers.</td>
+</tr>
+<tr>
+<td>5</td>
+<td><strong>Statutory pack</strong></td>
+<td>The country rules for statutory deductions. <code>LK</code> (Sri Lanka) sets up EPF 8 % / 12 %, ETF 3 % and APIT. <strong>Currency (ISO 4217)</strong> (default <code>LKR</code>) is further up and <strong>Time zone</strong> (default <code>Asia/Colombo</code>) just below.</td>
+</tr>
+<tr>
+<td>6</td>
+<td><strong>Save</strong></td>
+<td>Creates the company with all its defaults.</td>
+</tr>
+</tbody>
+</table></div>
+<ol start="3">
+<li>The company appears in the list, marked <strong>Current</strong>. Its code is now shown in the header (2), and all
+   setup sections appear on the left (1).</li>
+</ol>
+<figure><a href="images/org-companies.png" target="_blank" rel="noopener"><img src="images/org-companies.png" alt="Companies list with the setup sections and the working company in the header" loading="lazy"></a><figcaption><span>Figure 11.</span> Companies list with the setup sections and the working company in the header</figcaption></figure>
+<div class="callout note">
+<p><p class="callout-title">Note</p></p>
+<p>Only users whose data scope is <em>All data</em> can create companies. If you manage several companies, switch
+between them with the company selector in the header — every module follows the selected company.</p>
+</div>
+<h3 id="52-company-settings">5.2 Company settings</h3>
+<p><strong>Organization Setup → Settings</strong> holds the rules that apply to the whole company. Review them before you add
+employees.</p>
+<figure><a href="images/org-settings.png" target="_blank" rel="noopener"><img src="images/org-settings.png" alt="Company settings: working week and employee numbering" loading="lazy"></a><figcaption><span>Figure 12.</span> Company settings: working week and employee numbering</figcaption></figure>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>#</th>
+<th>Setting</th>
+<th>What it controls</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><strong>Default weekly-off days</strong></td>
+<td>The normal days off, for example Saturday and Sunday. Each employee can override this.</td>
+</tr>
+<tr>
+<td>2</td>
+<td><strong>Employee number format</strong></td>
+<td>How new employee numbers are generated. Combine text with the tokens <code>{COMPANY}</code> (company code), <code>{BRANCH}</code> (branch code), <code>{YYYY}</code> (year of joining) and exactly one <code>{SEQ:n}</code> (a running number with <em>n</em> digits).</td>
+</tr>
+<tr>
+<td>3</td>
+<td><strong>Preview</strong></td>
+<td>Shows what the next number looks like, for example <code>{COMPANY}-{SEQ:4}</code> → <code>ACME-0001</code>.</td>
+</tr>
+</tbody>
+</table></div>
+<p>Scroll down for the payroll and attendance rules:</p>
+<figure><a href="images/org-settings-payroll.png" target="_blank" rel="noopener"><img src="images/org-settings-payroll.png" alt="Company settings: payroll, punch window and rostering" loading="lazy"></a><figcaption><span>Figure 13.</span> Company settings: payroll, punch window and rostering</figcaption></figure>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>#</th>
+<th>Setting</th>
+<th>What it controls</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><strong>Payroll period start day (1–28)</strong></td>
+<td>The day each pay period starts. <code>1</code> means calendar months. <code>21</code> means 21st of the previous month to the 20th.</td>
+</tr>
+<tr>
+<td>2</td>
+<td><strong>No-pay divisor (days)</strong></td>
+<td>A day's no-pay deduction is <em>basic salary ÷ divisor</em> (default 30).</td>
+</tr>
+<tr>
+<td>3</td>
+<td><strong>Treat absent days as no-pay</strong></td>
+<td>When ticked, unexplained absences are deducted from pay automatically.</td>
+</tr>
+<tr>
+<td>4</td>
+<td><strong>Attendance punch window</strong></td>
+<td>How many minutes before the start and after the end of a shift a punch still counts for that shift (default 240 / 240).</td>
+</tr>
+<tr>
+<td>5</td>
+<td><strong>Roster week starts on</strong></td>
+<td>The first day of weekly rosters (default Monday).</td>
+</tr>
+</tbody>
+</table></div>
+<p>Click <strong>Save</strong> at the bottom. Changes apply to attendance and payroll calculated <em>after</em> the change; past
+results are not recalculated until you process them again.</p>
+<h3 id="53-branches">5.3 Branches</h3>
+<p>Branches are your physical locations — offices, factories, outlets.</p>
+<ol>
+<li>Open <strong>Organization Setup → Branches</strong> and click <strong>Create branch</strong>.</li>
+<li>Enter the <strong>Code</strong> (1) and <strong>Name</strong> (2), and optionally the address and phone, then click <strong>Save</strong> (3).</li>
+</ol>
+<figure><a href="images/org-branch-create.png" target="_blank" rel="noopener"><img src="images/org-branch-create.png" alt="Create branch form" loading="lazy"></a><figcaption><span>Figure 14.</span> Create branch form</figcaption></figure>
+<figure><a href="images/org-branches.png" target="_blank" rel="noopener"><img src="images/org-branches.png" alt="Branches list with two branches" loading="lazy"></a><figcaption><span>Figure 15.</span> Branches list with two branches</figcaption></figure>
+<p>Click a row to edit a branch, or use the pencil and bin icons on the right. A branch that still has active
+employees cannot be deleted.</p>
+<h3 id="54-departments">5.4 Departments</h3>
+<p>Departments form a hierarchy: a department can have a parent, so <em>Software Development</em> and <em>Quality
+Assurance</em> can sit under <em>Engineering</em>. Managers whose data scope is a department automatically see its
+sub-departments as well.</p>
+<ol>
+<li>Open <strong>Organization Setup → Departments</strong> and click <strong>Create department</strong>.</li>
+<li>Enter the code and name. To place it under another department, choose the <strong>Parent department</strong> (1).
+   Optionally restrict it to a branch and give it a <strong>Cost center code</strong> (2) for reporting.</li>
+<li>Click <strong>Save</strong>.</li>
+</ol>
+<figure><a href="images/org-department-create.png" target="_blank" rel="noopener"><img src="images/org-department-create.png" alt="Create department form with a parent department" loading="lazy"></a><figcaption><span>Figure 16.</span> Create department form with a parent department</figcaption></figure>
+<p>The list shows the hierarchy, with sub-departments indented under their parent:</p>
+<figure><a href="images/org-departments.png" target="_blank" rel="noopener"><img src="images/org-departments.png" alt="Department hierarchy" loading="lazy"></a><figcaption><span>Figure 17.</span> Department hierarchy</figcaption></figure>
+<div class="callout note">
+<p><p class="callout-title">Note</p></p>
+<p>The system prevents loops (a department cannot be its own ancestor) and does not let you delete a department
+that still has employees or sub-departments.</p>
+</div>
+<h3 id="55-designations-grades-and-employment-categories">5.5 Designations, grades and employment categories</h3>
+<p>These three lists describe each employee's job and terms. They work the same way: click <strong>Create …</strong>, enter a
+code and a name, and click <strong>Save</strong>.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>List</th>
+<th>Purpose</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Designations</strong></td>
+<td>Job titles</td>
+<td>Software Engineer, Accountant, Machine Operator</td>
+</tr>
+<tr>
+<td><strong>Grades</strong></td>
+<td>Pay or seniority levels; the <strong>Rank</strong> sets the order in which they are listed</td>
+<td>E1 Entry, S1 Staff, S2 Senior Staff, M1 Manager</td>
+</tr>
+<tr>
+<td><strong>Employment categories</strong></td>
+<td>Type of employment and whether it earns overtime</td>
+<td>Permanent, Contract, Executive</td>
+</tr>
+</tbody>
+</table></div>
+<figure><a href="images/org-designations.png" target="_blank" rel="noopener"><img src="images/org-designations.png" alt="Designations" loading="lazy"></a><figcaption><span>Figure 18.</span> Designations</figcaption></figure>
+<p>On <strong>Employment categories</strong>, the <strong>Eligible for overtime</strong> setting matters for pay. For employees in a
+category that is not eligible (1), extra time worked is recorded as <em>extra hours</em> and paid at the <em>Extra
+hours</em> rate (×1.0 by default), not at overtime rates.</p>
+<figure><a href="images/org-categories.png" target="_blank" rel="noopener"><img src="images/org-categories.png" alt="Employment categories with the overtime eligibility column" loading="lazy"></a><figcaption><span>Figure 19.</span> Employment categories with the overtime eligibility column</figcaption></figure>
+<h3 id="56-holidays">5.6 Holidays</h3>
+<p>Holidays affect attendance (nobody is marked absent), leave (holidays inside a leave are usually not
+counted) and payroll (work on a holiday is paid at the holiday overtime rate).</p>
+<ol>
+<li>Open <strong>Organization Setup → Holidays</strong>. Use the arrows or the <strong>Year</strong> box to pick the year.</li>
+<li>Click <strong>Create holiday</strong> (2). Enter the <strong>Date</strong>, <strong>Name</strong> and <strong>Type</strong> (<em>Public</em>, <em>Mercantile</em>,
+   <em>Company</em> or <em>Other</em>). Leave <strong>All branches</strong> ticked, or untick it and choose the branches it applies to.</li>
+<li>Click <strong>Save</strong>.</li>
+</ol>
+<figure><a href="images/org-holidays.png" target="_blank" rel="noopener"><img src="images/org-holidays.png" alt="Holiday calendar for the year" loading="lazy"></a><figcaption><span>Figure 20.</span> Holiday calendar for the year</figcaption></figure>
+<p>The next upcoming holiday is marked <strong>Next</strong>. To prepare next year quickly, click <strong>Copy year…</strong> (1), enter
+the target year and click <strong>Copy</strong>. Dates are kept by day and month, and dates that already exist are skipped.
+Then adjust the moving holidays (such as Poya days) by hand.</p>
+<h3 id="57-custom-employee-fields">5.7 Custom employee fields</h3>
+<p>If you need to record something about every employee that the standard form does not have — a blood group, a
+uniform size, a union membership — add a custom field.</p>
+<ol>
+<li>Open <strong>Organization Setup → Custom fields</strong> and click <strong>Create custom field</strong>.</li>
+<li>Enter a <strong>Key</strong> (1) — an internal name with lower-case letters, digits and underscores, such as
+   <code>blood_group</code>. It cannot be changed later.</li>
+<li>Enter the <strong>Label</strong> that users see, and choose the <strong>Type</strong> (2): <em>Text</em>, <em>Number</em>, <em>Date</em>, <em>Yes / no</em> or
+   <em>Dropdown list</em>. For a dropdown, enter the <strong>Options</strong> (3), one per line.</li>
+<li>Tick <strong>Required</strong> if every employee must have a value, set the <strong>Display order</strong>, and click <strong>Save</strong>.</li>
+</ol>
+<figure><a href="images/org-custom-field.png" target="_blank" rel="noopener"><img src="images/org-custom-field.png" alt="Creating a dropdown custom field" loading="lazy"></a><figcaption><span>Figure 21.</span> Creating a dropdown custom field</figcaption></figure>
+<p>The field appears in an <em>Additional information</em> section on every employee form. Untick <strong>Active</strong> to hide a
+field from forms later; values already entered are kept.</p>
+<hr />
+<h2 id="6-shifts-and-overtime-policies">6. Shifts and overtime policies</h2>
+<p>Shifts tell the system when people are expected to work, so it can work out lateness, early departure,
+short hours and overtime. Open <strong>Shift &amp; Roster</strong>. This chapter covers the <strong>Shifts</strong> and <strong>OT policies</strong>
+tabs. Rosters and rotations are covered in <a href="#10-rosters-and-schedules">10. Rosters and schedules</a>.</p>
+<h3 id="61-overtime-policies">6.1 Overtime policies</h3>
+<p>Create the overtime policy first, because shifts refer to it.</p>
+<ol>
+<li>Open <strong>Shift &amp; Roster → OT policies</strong> and click <strong>Create OT policy</strong>.</li>
+<li>Fill in the rules:</li>
+</ol>
+<figure><a href="images/shift-ot-policy.png" target="_blank" rel="noopener"><img src="images/shift-ot-policy.png" alt="Create OT policy form" loading="lazy"></a><figcaption><span>Figure 22.</span> Create OT policy form</figcaption></figure>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>#</th>
+<th>Field</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><strong>Minimum OT minutes</strong></td>
+<td>Overtime shorter than this is ignored (default 30).</td>
+</tr>
+<tr>
+<td>2</td>
+<td><strong>Round down to (minutes)</strong></td>
+<td>Overtime is rounded down to this unit (default 15). 52 minutes with a 15-minute unit counts as 45.</td>
+</tr>
+<tr>
+<td>3</td>
+<td><strong>Maximum OT minutes per day</strong></td>
+<td>A daily cap. Leave it empty for no cap.</td>
+</tr>
+<tr>
+<td>4</td>
+<td><strong>Overtime requires approval</strong></td>
+<td>When ticked, overtime is paid only after a manager approves it on the <em>Exceptions</em> tab (<a href="#96-approve-overtime">9.6</a>).</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Count overtime before shift start</strong> decides whether arriving early counts as overtime (off by default).</p>
+<div class="callout note">
+<p><p class="callout-title">Note</p></p>
+<p>Overtime <strong>rates</strong> (×1.5, ×2 …) are not set here. They are part of the payroll components
+<em>OT workday</em>, <em>OT weekly-off</em> and <em>OT holiday</em> (<a href="#131-payroll-components">13.1</a>).</p>
+</div>
+<h3 id="62-create-a-shift">6.2 Create a shift</h3>
+<ol>
+<li>Open <strong>Shift &amp; Roster → Shifts</strong> and click <strong>Create shift</strong>.</li>
+<li>Fill in the form (it is long — scroll down for the second half):</li>
+</ol>
+<figure><a href="images/shift-create.png" target="_blank" rel="noopener"><img src="images/shift-create.png" alt="Create shift form, first part" loading="lazy"></a><figcaption><span>Figure 23.</span> Create shift form, first part</figcaption></figure>
+<figure><a href="images/shift-create-2.png" target="_blank" rel="noopener"><img src="images/shift-create-2.png" alt="Create shift form, second part" loading="lazy"></a><figcaption><span>Figure 24.</span> Create shift form, second part</figcaption></figure>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>#</th>
+<th>Field</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><strong>Code</strong></td>
+<td>For example <code>DAY</code>, with the <strong>Name</strong> <em>Day shift</em> below it. The code is what you see in roster grids.</td>
+</tr>
+<tr>
+<td>2</td>
+<td><strong>Type</strong></td>
+<td><em>Fixed</em> (same hours every day), <em>Flexible</em> (any start between an earliest and latest time, with a required number of hours), <em>Night</em> (crosses midnight), <em>Split</em> (two sessions in one day) or <em>Custom</em>.</td>
+</tr>
+<tr>
+<td>3</td>
+<td><strong>Colour</strong></td>
+<td>Colour used in roster grids, e.g. <code>#4C6EF5</code>.</td>
+</tr>
+<tr>
+<td>4–5</td>
+<td><strong>Start</strong>, <strong>End</strong></td>
+<td>Shift times (24-hour). If the end is at or before the start, the shift ends the next day — allowed only for <em>Night</em> (which must cross midnight) and <em>Custom</em> shifts.</td>
+</tr>
+<tr>
+<td>6</td>
+<td><strong>Late grace (minutes)</strong></td>
+<td>Arrivals within this many minutes after the start are not counted as late.</td>
+</tr>
+<tr>
+<td>7</td>
+<td><strong>Early-departure grace</strong></td>
+<td>The same, for leaving early.</td>
+</tr>
+<tr>
+<td>8</td>
+<td><strong>Break mode</strong></td>
+<td><em>Fixed deduction</em> deducts the break minutes automatically; <em>Punched breaks</em> uses the gaps between punches instead.</td>
+</tr>
+<tr>
+<td>9–10</td>
+<td><strong>Break minutes</strong>, <strong>Deduct break when worked ≥</strong></td>
+<td>For example deduct 60 minutes, but only when the employee worked at least 300 minutes.</td>
+</tr>
+<tr>
+<td>11</td>
+<td><strong>Half day when worked &lt;</strong></td>
+<td>A day with fewer worked minutes than this is a half day.</td>
+</tr>
+<tr>
+<td>12</td>
+<td><strong>OT policy</strong></td>
+<td>The overtime rules for this shift. Without one, the policy of the employee's default shift is used; if neither has one, no overtime is earned.</td>
+</tr>
+<tr>
+<td>13</td>
+<td><strong>Save</strong></td>
+<td>Saves the shift.</td>
+</tr>
+</tbody>
+</table></div>
+<p>The <strong>Punch window</strong> fields at the bottom override the company's punch window for this shift only.</p>
+<figure><a href="images/shift-list.png" target="_blank" rel="noopener"><img src="images/shift-list.png" alt="Shifts list" loading="lazy"></a><figcaption><span>Figure 25.</span> Shifts list</figcaption></figure>
+<p>Night shifts are marked <strong>+1</strong> because they end the next day. All punches of a night shift are counted on the
+day the shift <em>starts</em>. Shifts cannot be deleted. Use the pause icon to <strong>deactivate</strong>
+them instead, and they disappear from the pick-lists.</p>
+<p><strong>Flexible shifts</strong> have no fixed start: instead of <em>Start</em> and <em>End</em> you enter the <strong>Earliest start</strong>, the
+<strong>Latest end</strong> and the <strong>Required minutes</strong> per day. Flexible shifts have no late or early-departure
+minutes. Only short hours and overtime are counted, both measured against the required minutes.</p>
+<hr />
+<h2 id="7-employees">7. Employees</h2>
+<p><strong>Employee Hub</strong> is the master list of everyone in the company. Each employee has a profile, an employment
+history, documents and (for payroll users) a salary structure.</p>
+<h3 id="71-find-an-employee">7.1 Find an employee</h3>
+<figure><a href="images/employee-list.png" target="_blank" rel="noopener"><img src="images/employee-list.png" alt="Employee list with search and filters" loading="lazy"></a><figcaption><span>Figure 26.</span> Employee list with search and filters</figcaption></figure>
+<ol>
+<li><strong>Search and filters</strong> (1) — type part of a number, name, NIC or badge ID. Narrow the list by department
+   and status. The list shows <strong>Active</strong> employees by default; clear the status filter to see everyone.
+   Once you change a filter, <strong>Clear filters</strong> appears and returns to the default view (active employees, no
+   search or department).</li>
+<li><strong>New employee</strong> (2) adds a person (<a href="#72-add-an-employee">7.2</a>).</li>
+<li>Click any row (3) to open the employee's record.</li>
+</ol>
+<p>The count next to the title is the number of matching employees. Long lists are split into pages of 25.</p>
+<div class="callout tip">
+<p><p class="callout-title">Tip</p></p>
+<p>From anywhere in the system, press <strong>Ctrl/⌘ + K</strong> and type part of a name to jump straight to an employee.</p>
+</div>
+<h3 id="72-add-an-employee">7.2 Add an employee</h3>
+<p>Click <strong>New employee</strong>. The form has four sections. Fields with a red asterisk are required.</p>
+<p><strong>Personal</strong></p>
+<figure><a href="images/employee-new-personal.png" target="_blank" rel="noopener"><img src="images/employee-new-personal.png" alt="New employee — personal details" loading="lazy"></a><figcaption><span>Figure 27.</span> New employee — personal details</figcaption></figure>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>#</th>
+<th>Field</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><strong>First name</strong>, <strong>Last name</strong> (required)</td>
+<td>Title and preferred name are optional.</td>
+</tr>
+<tr>
+<td>2</td>
+<td><strong>NIC / passport</strong></td>
+<td>Must be unique within the company.</td>
+</tr>
+<tr>
+<td>3</td>
+<td><strong>Personal email</strong>, <strong>Mobile</strong></td>
+<td>The email is used for payslip emails.</td>
+</tr>
+</tbody>
+</table></div>
+<p>Date of birth, gender, marital status, nationality and address are optional.</p>
+<p><strong>Employment</strong></p>
+<figure><a href="images/employee-new-employment.png" target="_blank" rel="noopener"><img src="images/employee-new-employment.png" alt="New employee — employment details" loading="lazy"></a><figcaption><span>Figure 28.</span> New employee — employment details</figcaption></figure>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>#</th>
+<th>Field</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>4</td>
+<td><strong>Employee number</strong></td>
+<td>Leave it blank and the system generates the next number using the company format. Only users with <code>EMPLOYEE:CONFIGURE</code> can type their own.</td>
+</tr>
+<tr>
+<td>—</td>
+<td><strong>Branch, Department, Designation, Employment category</strong> (required), <strong>Grade</strong></td>
+<td>The placement. These must exist first (<a href="#5-organization-setup">5</a>).</td>
+</tr>
+<tr>
+<td>5</td>
+<td><strong>Join date</strong> (required)</td>
+<td>Also used for leave pro-rating and payroll proration. Probation end, confirmation date and contract end are optional.</td>
+</tr>
+<tr>
+<td>6</td>
+<td><strong>Reporting manager</strong></td>
+<td>The person who approves this employee's leave (with the default workflow).</td>
+</tr>
+<tr>
+<td>7</td>
+<td><strong>Attendance badge / device ID</strong></td>
+<td>The ID the fingerprint or card device sends. Punches are matched to the employee by this ID or by employee number.</td>
+</tr>
+<tr>
+<td>8</td>
+<td><strong>Default shift</strong></td>
+<td>Used on days when no roster or rotation applies.</td>
+</tr>
+<tr>
+<td>9</td>
+<td><strong>Weekly-off days</strong></td>
+<td>Leave empty to use the company default.</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Emergency contacts and additional information</strong></p>
+<figure><a href="images/employee-new-contacts.png" target="_blank" rel="noopener"><img src="images/employee-new-contacts.png" alt="New employee — emergency contacts, custom fields and Save" loading="lazy"></a><figcaption><span>Figure 29.</span> New employee — emergency contacts, custom fields and Save</figcaption></figure>
+<ul>
+<li>Click <strong>Add contact</strong> (10) for each emergency contact (name, relationship and phone are required). Use the
+  bin icon to remove one.</li>
+<li><strong>Additional information</strong> (11) contains your company's custom fields (<a href="#57-custom-employee-fields">5.7</a>).</li>
+<li>Click <strong>Save</strong> (12). The bar at the bottom always tells you whether you have unsaved changes.</li>
+</ul>
+<p>The new record opens, showing the generated number (1):</p>
+<figure><a href="images/employee-profile.png" target="_blank" rel="noopener"><img src="images/employee-profile.png" alt="Employee profile" loading="lazy"></a><figcaption><span>Figure 30.</span> Employee profile</figcaption></figure>
+<p>The header shows the status, number, designation, department, branch and join date. The tabs (2) are
+<strong>Profile</strong> (the form you just filled in), <strong>History</strong>, <strong>Documents</strong> and — for payroll users — <strong>Salary</strong>.</p>
+<h3 id="73-edit-an-employee-transfers-and-promotions">7.3 Edit an employee, transfers and promotions</h3>
+<p>Open the employee, change the fields on the <strong>Profile</strong> tab and click <strong>Save</strong>. At the bottom, the <strong>Change details</strong> section lets you
+enter the <strong>Change effective date</strong> (default today) and a <strong>Reason for change</strong>, for example <em>Annual
+promotion 2025</em>. Changes to the branch, department, designation, grade, employment category, reporting
+manager or status are recorded in the employment history:</p>
+<figure><a href="images/employee-history.png" target="_blank" rel="noopener"><img src="images/employee-history.png" alt="Employment history with the joining event and a promotion" loading="lazy"></a><figcaption><span>Figure 31.</span> Employment history with the joining event and a promotion</figcaption></figure>
+<div class="callout note">
+<p><p class="callout-title">Note</p></p>
+<p>If someone else saved the same employee while you were editing, you are asked to reload instead of
+overwriting their changes.</p>
+</div>
+<h3 id="74-change-status-resignation-termination-deactivation">7.4 Change status: resignation, termination, deactivation</h3>
+<p>Employees are never deleted, so their history, attendance and payslips are kept. To end employment (needs
+<code>EMPLOYEE:EDIT</code>):</p>
+<ol>
+<li>Open the employee and click <strong>Change status</strong> (3 in the profile screenshot).</li>
+<li>Choose <strong>Resigned</strong>, <strong>Terminated</strong>, <strong>Inactive</strong> or (to reverse) <strong>Active</strong>. Each option explains what it
+   means.</li>
+<li>For <em>Resigned</em> or <em>Terminated</em>, enter the <strong>Exit date</strong> (the last day of employment). Enter a <strong>Reason</strong> —
+   it is required for every status except <em>Active</em>.</li>
+<li>Click <strong>Save</strong>.</li>
+</ol>
+<p>After the exit date the employee is excluded from attendance, leave and payroll. Their last salary is
+prorated to the exit date in the final payroll, using the salary structure in effect on that date.</p>
+<h3 id="75-documents">7.5 Documents</h3>
+<p>Store contracts, IDs and certificates with the employee record.</p>
+<p><em>Required permission:</em> <code>EMPLOYEE:EDIT</code> to upload, <code>EMPLOYEE:DELETE</code> to delete.</p>
+<ol>
+<li>Open the employee → <strong>Documents</strong>.</li>
+<li>Choose the <strong>Type</strong> (1) (NIC, Birth Certificate, Contract, Certificate, Other), enter a <strong>Title</strong> (2), an
+   optional <strong>Expiry</strong> date (3) and choose the <strong>File</strong> (4) — PDF, JPG, PNG or DOCX up to 10 MB.</li>
+<li>Click <strong>Upload</strong> (5).</li>
+</ol>
+<figure><a href="images/employee-documents-upload.png" target="_blank" rel="noopener"><img src="images/employee-documents-upload.png" alt="Uploading a document" loading="lazy"></a><figcaption><span>Figure 32.</span> Uploading a document</figcaption></figure>
+<figure><a href="images/employee-documents.png" target="_blank" rel="noopener"><img src="images/employee-documents.png" alt="Employee documents list" loading="lazy"></a><figcaption><span>Figure 33.</span> Employee documents list</figcaption></figure>
+<p>Documents that expire within 30 days are flagged <strong>Expires in … d</strong>, and expired ones <strong>Expired</strong>. Use the
+download icon to open a document. Employees can download their own documents from My Portal.</p>
+<h3 id="76-salary-structure">7.6 Salary structure</h3>
+<p><em>Required permission:</em> <code>PAYROLL:VIEW</code> to see the <strong>Salary</strong> tab, <code>PAYROLL:EDIT</code> to change it. Salary is
+never shown on the profile itself.</p>
+<ol>
+<li>Open the employee → <strong>Salary</strong> → <strong>New structure</strong>.</li>
+<li>Enter the <strong>Effective from</strong> date (1) — the first day the new pay applies — and the monthly <strong>Basic
+   salary</strong> (2).</li>
+<li>To add allowances or fixed deductions, click <strong>Add component</strong> (5), choose the <strong>Component</strong> (3) and enter
+   the <strong>Amount</strong> (4). For percentage or overtime components you can override the rate or multiplier for this
+   employee, and for automatic components you can tick <strong>Exclude</strong>.</li>
+<li>Click <strong>Save</strong>.</li>
+</ol>
+<figure><a href="images/employee-salary-new.png" target="_blank" rel="noopener"><img src="images/employee-salary-new.png" alt="New salary structure" loading="lazy"></a><figcaption><span>Figure 34.</span> New salary structure</figcaption></figure>
+<figure><a href="images/employee-salary.png" target="_blank" rel="noopener"><img src="images/employee-salary.png" alt="Current salary structure" loading="lazy"></a><figcaption><span>Figure 35.</span> Current salary structure</figcaption></figure>
+<p>A new structure replaces the previous one from its effective date. The old one is kept as history and
+labelled <strong>Past</strong>. Payroll uses the structure that is in effect on the last day of the pay period (for a leaver, on the exit date).</p>
+<div class="callout important">
+<p><p class="callout-title">Important</p></p>
+<p>Employees without a salary structure are <strong>skipped</strong> by payroll and listed as an exception. Enter
+salary structures before your first payroll run.</p>
+</div>
+<hr />
+<h2 id="8-users-roles-and-permissions">8. Users, roles and permissions</h2>
+<p>Employees and users are different things. An <strong>employee</strong> is a person on the payroll. A <strong>user</strong> is a login.
+A user can be linked to one employee, which gives them <strong>My Portal</strong>. Administrators, HR staff and managers
+are users. Most of them are also linked to their own employee record.</p>
+<p><em>Required permission:</em> <code>ADMIN:VIEW</code> to open <strong>Administration</strong>, <code>ADMIN:ADD/EDIT</code> to manage users,
+<code>ADMIN:CONFIGURE</code> and the <em>All data</em> scope to manage roles.</p>
+<h3 id="81-create-a-user">8.1 Create a user</h3>
+<ol>
+<li>Open <strong>Administration → Users</strong> and click <strong>Create user</strong>.</li>
+<li>Fill in the form:</li>
+</ol>
+<figure><a href="images/admin-user-create.png" target="_blank" rel="noopener"><img src="images/admin-user-create.png" alt="Create user form" loading="lazy"></a><figcaption><span>Figure 36.</span> Create user form</figcaption></figure>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>#</th>
+<th>Field</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><strong>Username</strong></td>
+<td>The sign-in name, unique and not case-sensitive. <strong>Display name</strong> (required) is shown in the app; email is optional.</td>
+</tr>
+<tr>
+<td>2</td>
+<td><strong>Initial password</strong></td>
+<td>A temporary password that follows the password rules. Give it to the user securely. They must change it at first sign-in.</td>
+</tr>
+<tr>
+<td>3</td>
+<td><strong>Roles</strong></td>
+<td>One or more roles. They decide what the user can <em>do</em> (see the table below).</td>
+</tr>
+<tr>
+<td>4</td>
+<td><strong>Data scope</strong></td>
+<td>Whose records the user can <em>see</em>: <strong>All data</strong>, <strong>Selected companies</strong>, <strong>Selected branches</strong>, <strong>Selected departments</strong> (including sub-departments) or <strong>Own records only</strong>.</td>
+</tr>
+<tr>
+<td>5</td>
+<td><strong>Linked employee</strong></td>
+<td>Links the login to an employee record. This gives the user My Portal and lets them approve as that employee's manager.</td>
+</tr>
+</tbody>
+</table></div>
+<ol start="3">
+<li>Click <strong>Save</strong>.</li>
+</ol>
+<p><strong>Typical set-ups</strong></p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Person</th>
+<th>Roles</th>
+<th>Data scope</th>
+<th>Linked employee</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>HR manager</td>
+<td>HR Manager</td>
+<td>All data</td>
+<td>Their own record</td>
+</tr>
+<tr>
+<td>Payroll officer</td>
+<td>Payroll Officer</td>
+<td>Selected companies</td>
+<td>Their own record</td>
+</tr>
+<tr>
+<td>Department head</td>
+<td>Department Manager</td>
+<td>Selected departments → their department</td>
+<td>Their own record</td>
+</tr>
+<tr>
+<td>Branch manager</td>
+<td>Branch Manager</td>
+<td>Selected branches → their branch</td>
+<td>Their own record</td>
+</tr>
+<tr>
+<td>Employee</td>
+<td>Employee</td>
+<td>Own records only</td>
+<td>Their own record</td>
+</tr>
+<tr>
+<td>External auditor</td>
+<td>Auditor</td>
+<td>All data</td>
+<td>—</td>
+</tr>
+</tbody>
+</table></div>
+<figure><a href="images/admin-users.png" target="_blank" rel="noopener"><img src="images/admin-users.png" alt="Users list" loading="lazy"></a><figcaption><span>Figure 37.</span> Users list</figcaption></figure>
+<p>The <strong>…</strong> menu on each row (1) lets you <strong>Edit</strong>, <strong>Reset password</strong> or <strong>Deactivate</strong> a user. For a reset you
+enter a new temporary password (it must follow the password rules). The user is signed out everywhere and
+must change it at the next sign-in. A deactivated user cannot sign in, and the
+last active Super Administrator cannot be deactivated. A <strong>Locked</strong> badge means the account is temporarily
+locked after failed sign-ins. It unlocks by itself after 15 minutes.</p>
+<h3 id="82-roles-and-the-permission-matrix">8.2 Roles and the permission matrix</h3>
+<p><strong>Administration → Roles &amp; permissions</strong> lists the nine built-in roles with their number of permissions:</p>
+<figure><a href="images/admin-roles.png" target="_blank" rel="noopener"><img src="images/admin-roles.png" alt="Roles list" loading="lazy"></a><figcaption><span>Figure 38.</span> Roles list</figcaption></figure>
+<p>Click a role to see or change its permissions. Permissions are arranged as a matrix: one row per module and
+one column per action (<strong>View, Add, Edit, Delete, Approve, Export, Configure</strong>). Tick the module checkbox (1)
+to grant every action of a module, or tick single actions (2).</p>
+<figure><a href="images/admin-role-permissions.png" target="_blank" rel="noopener"><img src="images/admin-role-permissions.png" alt="Permission matrix of the HR Manager role" loading="lazy"></a><figcaption><span>Figure 39.</span> Permission matrix of the HR Manager role</figcaption></figure>
+<ul>
+<li><strong>Built-in roles</strong> cannot be renamed or deleted, but you can change their permissions (except Super
+  Administrator, which always has everything).</li>
+<li><strong>Custom roles:</strong> click <strong>Create role</strong>, enter an upper-case <strong>Code</strong> (e.g. <code>PAYROLL_CLERK</code>), a name and a
+  description, tick the permissions and click <strong>Save</strong>.</li>
+</ul>
+<p>The default permissions of each built-in role are listed in <a href="#appendix-b--default-roles">Appendix B</a>.</p>
+<div class="callout warning">
+<p><p class="callout-title">Warning</p></p>
+<p>Changes to a role apply immediately to every user who has it. Review the users of a role before you remove
+permissions.</p>
+</div>
+<hr />
+<h2 id="9-attendance">9. Attendance</h2>
+<p>Premium HRM turns raw clock-in/clock-out <strong>punches</strong> into one <strong>daily attendance record</strong> per employee per
+day. Each record has a status, worked hours, late and early minutes, short hours and overtime. The record
+is calculated from:</p>
+<ul>
+<li>the punches (from devices, the integration API or a CSV file),</li>
+<li>the employee's schedule for the day (roster → rotation → default shift; see
+  <a href="#106-how-the-days-schedule-is-decided">10.6</a>),</li>
+<li>holidays, approved leave and manual corrections.</li>
+</ul>
+<p>Records are recalculated automatically every night for the previous day, as soon as new punches arrive, and
+whenever leave, rosters or corrections change. You can also recalculate on demand.</p>
+<p>Open <strong>Attendance</strong>. It has three tabs: <strong>Daily attendance</strong>, <strong>Exceptions</strong> and <strong>Import &amp; devices</strong>.</p>
+<h3 id="91-connect-attendance-devices">9.1 Connect attendance devices</h3>
+<p>Each fingerprint/card terminal, or the middleware that collects their data, is registered as an
+<strong>attendance source</strong> with its own API key.</p>
+<p><em>Required permission:</em> <code>ATTENDANCE:CONFIGURE</code>.</p>
+<ol>
+<li>Open <strong>Attendance → Import &amp; devices</strong>.</li>
+<li>Under <em>Attendance sources</em>, enter a <strong>Source name</strong> (1), for example <em>Main gate terminal</em>, keep the format
+   <strong>Generic JSON</strong> and click <strong>Add source</strong> (2).</li>
+</ol>
+<figure><a href="images/attendance-source-add.png" target="_blank" rel="noopener"><img src="images/attendance-source-add.png" alt="Adding an attendance source" loading="lazy"></a><figcaption><span>Figure 40.</span> Adding an attendance source</figcaption></figure>
+<ol start="3">
+<li>The new <strong>API key</strong> is shown. <strong>Copy it now</strong> (2) — it is shown only once (1). Give the key and the
+   address shown under <em>How to use it</em> (3) to your device vendor or integrator, then click <strong>I have saved
+   the key</strong>.</li>
+</ol>
+<figure><a href="images/attendance-api-key.png" target="_blank" rel="noopener"><img src="images/attendance-api-key.png" alt="The new API key, shown only once" loading="lazy"></a><figcaption><span>Figure 41.</span> The new API key, shown only once</figcaption></figure>
+<p>Devices send punches to <code>https://&lt;your-server&gt;/api/v1/integrations/attendance/events</code> with the header
+<code>X-Api-Key: &lt;key&gt;</code>. The request format is in <a href="#appendix-d--attendance-integration-reference">Appendix D</a>.
+Sending the same punch twice is harmless, because duplicates are recognised and skipped.</p>
+<figure><a href="images/attendance-sources.png" target="_blank" rel="noopener"><img src="images/attendance-sources.png" alt="Attendance sources and unmatched punches" loading="lazy"></a><figcaption><span>Figure 42.</span> Attendance sources and unmatched punches</figcaption></figure>
+<ul>
+<li><strong>New key</strong> (1) replaces a lost or leaked key. The old key stops working immediately.</li>
+<li><strong>Deactivate</strong> stops a source from sending punches, and <strong>Activate</strong> allows it again.</li>
+<li><strong>Unmatched punches</strong> (2) lists punches whose badge ID matched no employee — typically a new employee whose
+  badge ID was not entered yet. Enter the badge ID on the employee's profile, then click <strong>Rematch</strong> (needs
+  <code>ATTENDANCE:EDIT</code>) to attach the stored punches to them.</li>
+</ul>
+<h3 id="92-import-punches-from-a-csv-file">9.2 Import punches from a CSV file</h3>
+<p>If a device cannot connect directly, export its punches to a CSV file and import them.</p>
+<p><em>Required permission:</em> <code>ATTENDANCE:ADD</code>.</p>
+<ol>
+<li>Prepare a CSV with the columns <em>employee badge or number</em>, <em>timestamp</em> (for example
+   <code>2026-10-13T08:12:00</code>), <em>direction</em> (<code>IN</code> / <code>OUT</code>, optional) and <em>device</em> (optional). A header row is
+   allowed.</li>
+<li>Open <strong>Attendance → Import &amp; devices</strong>, choose the file under <strong>Import punches from CSV</strong> and click
+   <strong>Import</strong>.</li>
+<li>The result (1) shows how many rows were <strong>accepted</strong> (stored, including any unmatched ones), <strong>duplicates</strong> (already imported), <strong>unmatched</strong> (no
+   employee with that badge) and <strong>rejected</strong> (invalid rows; the first ten are listed with the row number and reason).</li>
+</ol>
+<figure><a href="images/attendance-import.png" target="_blank" rel="noopener"><img src="images/attendance-import.png" alt="CSV import result" loading="lazy"></a><figcaption><span>Figure 43.</span> CSV import result</figcaption></figure>
+<p>Timestamps without a time-zone offset are read in the company's time zone. Importing the same file again
+does not create duplicates.</p>
+<h3 id="93-daily-attendance">9.3 Daily attendance</h3>
+<p><strong>Attendance → Daily attendance</strong> shows one row per employee per day.</p>
+<figure><a href="images/attendance-daily.png" target="_blank" rel="noopener"><img src="images/attendance-daily.png" alt="Daily attendance" loading="lazy"></a><figcaption><span>Figure 44.</span> Daily attendance</figcaption></figure>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>#</th>
+<th>Area</th>
+<th>What it shows</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><strong>Summary cards</strong></td>
+<td>Present, absent, late arrivals, on leave and total overtime for the rows shown</td>
+</tr>
+<tr>
+<td>2</td>
+<td><strong>Filters</strong></td>
+<td>Date range (<strong>From</strong>, <strong>To</strong>; the past week up to today by default), <strong>Department</strong> and <strong>Status</strong></td>
+</tr>
+<tr>
+<td>3</td>
+<td><strong>Process range</strong></td>
+<td>Recalculates the selected dates from the punches (needs <code>ATTENDANCE:EDIT</code>)</td>
+</tr>
+<tr>
+<td>4</td>
+<td><strong>Rows</strong></td>
+<td>Status, first IN – last OUT, worked time, late/early minutes, overtime (with its approval state) and exceptions. Click a row to open the day.</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Attendance statuses</strong></p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Status</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Present</strong></td>
+<td>Worked the day</td>
+</tr>
+<tr>
+<td><strong>Half day</strong></td>
+<td>Worked less than the shift's half-day threshold</td>
+</tr>
+<tr>
+<td><strong>Absent</strong></td>
+<td>Scheduled to work, no punches, no leave</td>
+</tr>
+<tr>
+<td><strong>On leave</strong> / <strong>Half day leave</strong></td>
+<td>Approved leave covers the day (or half of it)</td>
+</tr>
+<tr>
+<td><strong>Weekly off</strong></td>
+<td>A scheduled day off</td>
+</tr>
+<tr>
+<td><strong>Holiday</strong></td>
+<td>A holiday that applies to the employee's branch</td>
+</tr>
+<tr>
+<td><strong>Incomplete</strong></td>
+<td>A punch is missing (for example IN without OUT)</td>
+</tr>
+<tr>
+<td><strong>Unscheduled</strong></td>
+<td>A working day but no shift could be determined</td>
+</tr>
+</tbody>
+</table></div>
+<p>Calculation rules in brief:</p>
+<ul>
+<li><strong>Late</strong> = first IN after shift start + late grace (counted from the shift start). <strong>Early</strong> works the same
+  way at the end of the shift.</li>
+<li><strong>Worked</strong> = time between punches, minus the break (fixed deduction) when the threshold is reached.</li>
+<li><strong>Short</strong> = scheduled hours minus worked hours.</li>
+<li><strong>Overtime</strong> = time after the shift end (and before the start, if the OT policy allows), after applying the
+  policy's minimum, rounding and daily cap. On a weekly-off day or a holiday, all time worked counts as
+  off-day or holiday overtime (subject to the same policy rules). Employees in a category that is not overtime-eligible get <em>extra hours</em>
+  instead.</li>
+<li>Several IN/OUT pairs in a day are supported. Night-shift punches count on the day the shift started.</li>
+</ul>
+<h3 id="94-look-at-a-day-and-correct-missing-punches">9.4 Look at a day and correct missing punches</h3>
+<p>Use the <strong>Status</strong> filter to find problem days, for example <strong>Incomplete</strong>:</p>
+<figure><a href="images/attendance-incomplete.png" target="_blank" rel="noopener"><img src="images/attendance-incomplete.png" alt="An incomplete day: the employee forgot to punch out" loading="lazy"></a><figcaption><span>Figure 45.</span> An incomplete day: the employee forgot to punch out</figcaption></figure>
+<p>Click the row (1) to open the day. The panel shows the calculated figures, the <strong>raw punches</strong> exactly as the
+device sent them (1) — punches just before or after the day are listed too, with their date — any earlier corrections and a correction form.</p>
+<figure><a href="images/attendance-correction.png" target="_blank" rel="noopener"><img src="images/attendance-correction.png" alt="Correcting a missing clock-out" loading="lazy"></a><figcaption><span>Figure 46.</span> Correcting a missing clock-out</figcaption></figure>
+<p>To correct the day:</p>
+<ol>
+<li>Enter the corrected <strong>IN</strong> and/or <strong>OUT</strong> time in 24-hour format (2). If the shift ends after midnight,
+   tick <strong>OUT is on the next day</strong>.</li>
+<li>Enter the <strong>Reason</strong> (3). It is mandatory and is kept in the audit log.</li>
+<li>Click <strong>Submit correction</strong>.</li>
+</ol>
+<p>The day is recalculated immediately and the correction is listed under <strong>Corrections</strong>, with the before and
+after times, the reason and the time it was made (1). The original punches are never changed.</p>
+<figure><a href="images/attendance-corrected.png" target="_blank" rel="noopener"><img src="images/attendance-corrected.png" alt="The corrected day with the correction history" loading="lazy"></a><figcaption><span>Figure 47.</span> The corrected day with the correction history</figcaption></figure>
+<div class="callout note">
+<p><p class="callout-title">Note</p></p>
+<p>If your company has enabled the <strong>Attendance correction</strong> approval workflow
+(<a href="#125-approval-workflows">12.5</a>), the correction is created as <em>Pending</em> and the day changes only after
+it is approved. By default this workflow is disabled and corrections apply immediately.</p>
+</div>
+<p>The same form creates a <strong>manual attendance record</strong> for a day without any punches (for example an employee
+who worked at a client site); enter both IN and OUT. Creating a record needs <code>ATTENDANCE:ADD</code>, correcting an
+existing day <code>ATTENDANCE:EDIT</code>.</p>
+<h3 id="95-exceptions">9.5 Exceptions</h3>
+<p><strong>Attendance → Exceptions</strong> lists only the days that need attention: <strong>Incomplete</strong>, <strong>Absent</strong>, <strong>Late</strong>,
+<strong>Early</strong> (departure), <strong>Unscheduled</strong> and <strong>Ot pending</strong> (overtime waiting for approval). Filter by date,
+department and exception type.</p>
+<figure><a href="images/attendance-exceptions.png" target="_blank" rel="noopener"><img src="images/attendance-exceptions.png" alt="Late arrivals in the exceptions list" loading="lazy"></a><figcaption><span>Figure 48.</span> Late arrivals in the exceptions list</figcaption></figure>
+<p>Work through this list before each payroll run. The payroll period also shows how many attendance
+exceptions are still open.</p>
+<h3 id="96-approve-overtime">9.6 Approve overtime</h3>
+<p>When a shift's OT policy requires approval, overtime counts for pay only after it is approved.</p>
+<p><em>Required permission:</em> <code>ATTENDANCE:APPROVE</code> (for example department and branch managers).</p>
+<ol>
+<li>Open <strong>Attendance → Exceptions</strong> and set the <strong>Exception</strong> filter to <strong>Ot pending</strong> (1).</li>
+<li>Tick the days you want to decide (2).</li>
+<li>Click <strong>Approve OT</strong> or <strong>Reject OT</strong> (3). <strong>Approve OT</strong> shows how many days are selected.</li>
+</ol>
+<figure><a href="images/attendance-ot-approval.png" target="_blank" rel="noopener"><img src="images/attendance-ot-approval.png" alt="Selecting overtime to approve" loading="lazy"></a><figcaption><span>Figure 49.</span> Selecting overtime to approve</figcaption></figure>
+<p>Rejected overtime is not paid. Both decisions are audited, and they are kept when attendance is recalculated
+later.</p>
+<h3 id="97-payroll-lock">9.7 Payroll lock</h3>
+<p>When a payroll period is submitted for review, approved or finalized, the attendance of its dates is
+<strong>locked</strong>. Corrections, overtime decisions and leave changes for those dates are refused with the message
+<em>"Attendance on … is locked by payroll"</em>, and <strong>Process range</strong> skips those dates (it reports how many were
+locked), so the figures cannot change under the payroll. A user with
+<code>ATTENDANCE:CONFIGURE</code> can tick <strong>Override payroll lock (audited)</strong> for a single correction. The override is
+recorded, and finalized payslips are never changed.</p>
+<hr />
+<h2 id="10-rosters-and-schedules">10. Rosters and schedules</h2>
+<p>A <strong>roster</strong> assigns a shift (or a day off) to each employee for each day of a week or a month. Use rosters
+when working hours change from week to week. If an employee always works the same shift, their <strong>default
+shift</strong> is enough. If they follow a regular repeating cycle, use a <strong>rotation</strong>.</p>
+<p>Open <strong>Shift &amp; Roster</strong>. The tabs are <strong>Rosters</strong>, <strong>Schedule</strong>, <strong>Shifts</strong>, <strong>Rotations</strong> and
+<strong>OT policies</strong>.</p>
+<h3 id="101-rotation-patterns">10.1 Rotation patterns</h3>
+<p>A rotation is a repeating cycle such as <em>two days, two nights, two days off</em>.</p>
+<ol>
+<li>Open <strong>Shift &amp; Roster → Rotations</strong> and click <strong>Create pattern</strong>.</li>
+<li>Enter a <strong>Name</strong>. Under <strong>Cycle days</strong> (1) choose the shift — or <strong>OFF</strong> — for <em>Day 1</em>. Click <strong>Add day</strong>
+   (2) for each further day of the cycle (up to 62 days).</li>
+<li>Click <strong>Save</strong>.</li>
+</ol>
+<figure><a href="images/roster-rotation.png" target="_blank" rel="noopener"><img src="images/roster-rotation.png" alt="Creating a rotation pattern" loading="lazy"></a><figcaption><span>Figure 50.</span> Creating a rotation pattern</figcaption></figure>
+<p>To use the pattern, click <strong>Assign employees</strong> (1) on its row. Choose the employees, the <strong>Start date (cycle day 1)</strong>
+and, optionally, the <strong>End date (optional)</strong>, then click <strong>Assign</strong>.</p>
+<figure><a href="images/roster-rotations.png" target="_blank" rel="noopener"><img src="images/roster-rotations.png" alt="Rotation patterns" loading="lazy"></a><figcaption><span>Figure 51.</span> Rotation patterns</figcaption></figure>
+<h3 id="102-create-a-roster">10.2 Create a roster</h3>
+<p><em>Required permission:</em> <code>ROSTER:ADD</code>.</p>
+<ol>
+<li>Open <strong>Shift &amp; Roster → Rosters</strong>. Use the <strong>Month</strong> box to see rosters of another month.</li>
+<li>Click <strong>Create roster</strong> and fill in:</li>
+</ol>
+<figure><a href="images/roster-create.png" target="_blank" rel="noopener"><img src="images/roster-create.png" alt="Create roster dialog" loading="lazy"></a><figcaption><span>Figure 52.</span> Create roster dialog</figcaption></figure>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>#</th>
+<th>Field</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><strong>Name</strong></td>
+<td>For example <em>Operations — week of 19 Oct</em>.</td>
+</tr>
+<tr>
+<td>2</td>
+<td><strong>Period</strong></td>
+<td><strong>Weekly</strong> (7 days) or <strong>Monthly</strong> (a calendar month).</td>
+</tr>
+<tr>
+<td>3</td>
+<td><strong>Start date</strong></td>
+<td>For weekly rosters, the company's week-start day (Monday by default). For monthly rosters, the 1st.</td>
+</tr>
+<tr>
+<td>4</td>
+<td><strong>Department (optional)</strong></td>
+<td>Limit the roster to one department and its sub-departments. Leave empty for the whole company.</td>
+</tr>
+</tbody>
+</table></div>
+<ol start="3">
+<li>Click <strong>Create</strong>. The roster opens as a <strong>Draft</strong> grid of employees × days.</li>
+</ol>
+<h3 id="103-fill-the-roster">10.3 Fill the roster</h3>
+<p><em>Required permission:</em> <code>ROSTER:EDIT</code>.</p>
+<p><strong>Bulk assign</strong> is the fastest way to fill a roster:</p>
+<ol>
+<li>Click <strong>Bulk assign</strong>.</li>
+<li>Choose the <strong>Employees</strong> (1) — or click <strong>Select all</strong> — and the <strong>From</strong> / <strong>To</strong> dates (2).</li>
+<li>Optionally limit it to certain weekdays (3). For example, choose Monday to Friday and leave the weekend
+   for a second bulk assignment of <strong>OFF</strong>.</li>
+<li>Choose the <strong>Shift</strong> (4) — or <strong>OFF (day off)</strong> — and click <strong>Assign</strong> (5).</li>
+</ol>
+<figure><a href="images/roster-bulk-assign.png" target="_blank" rel="noopener"><img src="images/roster-bulk-assign.png" alt="Bulk assign" loading="lazy"></a><figcaption><span>Figure 53.</span> Bulk assign</figcaption></figure>
+<p>Then fine-tune individual days directly in the grid:</p>
+<figure><a href="images/roster-grid.png" target="_blank" rel="noopener"><img src="images/roster-grid.png" alt="Editing the roster grid" loading="lazy"></a><figcaption><span>Figure 54.</span> Editing the roster grid</figcaption></figure>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>#</th>
+<th>Control</th>
+<th>Use</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><strong>Bulk assign</strong></td>
+<td>Assign a shift to many employees and days at once.</td>
+</tr>
+<tr>
+<td>2</td>
+<td><strong>Any cell</strong></td>
+<td>Pick a shift code, <strong>OFF</strong>, or blank. Changed cells are outlined in yellow until saved. Weekends are shaded and holidays highlighted; hover over a holiday's column heading to see its name.</td>
+</tr>
+<tr>
+<td>3</td>
+<td><strong>Save (n)</strong></td>
+<td>Saves all pending changes in one go. <strong>Discard</strong> throws them away.</td>
+</tr>
+<tr>
+<td>4</td>
+<td><strong>Validate</strong></td>
+<td>Checks for clashes without saving, for example the same employee in two published rosters, overlapping consecutive shifts (a night shift followed by an early morning shift) or an inactive shift.</td>
+</tr>
+<tr>
+<td>5</td>
+<td><strong>Publish</strong></td>
+<td>Makes the roster official. It is available once all changes are saved.</td>
+</tr>
+</tbody>
+</table></div>
+<p>For a new roster, you can also start from a copy: choose <strong>Copy from another roster…</strong> and click <strong>Copy</strong>.
+Day 1 of the source is copied to day 1 of the new roster, and so on.</p>
+<h3 id="104-publish-change-and-lock">10.4 Publish, change and lock</h3>
+<p><em>Required permission:</em> <code>ROSTER:APPROVE</code> to publish and lock, <code>ROSTER:CONFIGURE</code> to unlock.</p>
+<p>After you click <strong>Publish</strong>, the roster is <strong>Published</strong> (1). Employees see it in My Portal, and it drives
+their attendance from now on.</p>
+<figure><a href="images/roster-published.png" target="_blank" rel="noopener"><img src="images/roster-published.png" alt="A published roster" loading="lazy"></a><figcaption><span>Figure 55.</span> A published roster</figcaption></figure>
+<ul>
+<li><strong>Changing a published roster</strong> is still possible. When you save, you are asked for a <strong>reason</strong>. Each
+  saved change increases the <strong>revision</strong> number, and <strong>Revisions</strong> shows what changed, when and why (each
+  save is also recorded, with the user, in the audit log).
+  Attendance of the affected days is recalculated.</li>
+<li><strong>Lock</strong> (2) freezes the roster completely, for example after the period is paid. <strong>Unlock</strong> needs a reason
+  and is recorded in the audit log.</li>
+</ul>
+<h3 id="105-schedule-view">10.5 Schedule view</h3>
+<p><strong>Shift &amp; Roster → Schedule</strong> shows what everyone actually works in a week, whichever way it was planned.
+Use <strong>Previous week</strong>, <strong>This week</strong> and <strong>Next week</strong>, or pick the <strong>Week starting</strong> date and a department.
+Hover over a cell to see where the shift came from (<em>Roster</em>, <em>Rotation</em> or <em>Default</em>).</p>
+<figure><a href="images/roster-schedule.png" target="_blank" rel="noopener"><img src="images/roster-schedule.png" alt="Weekly schedule" loading="lazy"></a><figcaption><span>Figure 56.</span> Weekly schedule</figcaption></figure>
+<h3 id="106-how-the-days-schedule-is-decided">10.6 How the day's schedule is decided</h3>
+<p>For each employee and day, the system uses the first of these that applies:</p>
+<ol>
+<li>an entry in a <strong>published or locked roster</strong>;</li>
+<li>an active <strong>rotation</strong> assignment;</li>
+<li>the employee's <strong>default shift</strong> and weekly-off days (or the company's weekly-off days).</li>
+</ol>
+<p>Then, if a holiday applies to the employee's branch, the day becomes a <strong>holiday</strong>. If the result is a working
+day without any shift, the day is <strong>unscheduled</strong> and appears in the exceptions.</p>
+<hr />
+<h2 id="11-leave-management">11. Leave management</h2>
+<p>Open <strong>Leave Management</strong>. The tabs are <strong>Requests</strong>, <strong>Calendar</strong>, <strong>Balances</strong>, <strong>Leave types</strong> and (for
+administrators) <strong>Jobs</strong>.</p>
+<h3 id="111-leave-types-and-policies">11.1 Leave types and policies</h3>
+<p>Each company starts with four leave types, which you can edit:</p>
+<figure><a href="images/leave-types.png" target="_blank" rel="noopener"><img src="images/leave-types.png" alt="Leave types" loading="lazy"></a><figcaption><span>Figure 57.</span> Leave types</figcaption></figure>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Leave type</th>
+<th>Days / year</th>
+<th>Paid</th>
+<th>Accrual</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Annual leave</td>
+<td>14</td>
+<td>Yes</td>
+<td>Annual (upfront), pro-rated for joiners</td>
+</tr>
+<tr>
+<td>Casual leave</td>
+<td>7</td>
+<td>Yes</td>
+<td>Annual (upfront), pro-rated for joiners</td>
+</tr>
+<tr>
+<td>Medical leave</td>
+<td>7</td>
+<td>Yes</td>
+<td>Annual (upfront)</td>
+</tr>
+<tr>
+<td>No pay leave</td>
+<td>Unlimited</td>
+<td>No</td>
+<td>— (no balance)</td>
+</tr>
+</tbody>
+</table></div>
+<p>Click a leave type to change its policy, or <strong>Create leave type</strong> to add one (for example <em>Maternity</em> or
+<em>Lieu leave</em>).</p>
+<figure><a href="images/leave-type-edit.png" target="_blank" rel="noopener"><img src="images/leave-type-edit.png" alt="Editing the Annual leave policy" loading="lazy"></a><figcaption><span>Figure 58.</span> Editing the Annual leave policy</figcaption></figure>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>#</th>
+<th>Setting</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><strong>Days per year</strong></td>
+<td>The yearly entitlement (in steps of 0.5).</td>
+</tr>
+<tr>
+<td>2</td>
+<td><strong>Accrual</strong></td>
+<td><strong>Annual (upfront)</strong> credits the full entitlement on 1 January. <strong>Monthly</strong> credits 1/12 at the start of each month.</td>
+</tr>
+<tr>
+<td>3</td>
+<td><strong>Pro-rate for joiners</strong></td>
+<td>Someone joining during the year gets only the remaining months' share (rounded down to half days).</td>
+</tr>
+<tr>
+<td>4</td>
+<td><strong>Max carry-forward days</strong></td>
+<td>How many unused days move into the next year (0 = none).</td>
+</tr>
+<tr>
+<td>5</td>
+<td><strong>Carry-forward expires after month</strong></td>
+<td>Carried days not used by the end of this month of the new year lapse (0 = never).</td>
+</tr>
+</tbody>
+</table></div>
+<p>Further options:</p>
+<ul>
+<li><strong>Paid leave</strong> — unpaid leave days are deducted as no-pay in payroll.</li>
+<li><strong>Unlimited (no balance)</strong> — no balance is tracked (e.g. <em>No pay leave</em>).</li>
+<li><strong>Allow half days</strong> — the employee can apply for a morning or an afternoon.</li>
+<li><strong>Allow negative balance</strong> — lets employees go below zero.</li>
+<li><strong>Count weekly-off days</strong>, <strong>Count holidays</strong> — when unticked (the normal case), weekends and holidays inside
+  a leave period are not deducted.</li>
+<li><strong>Require attachment above (days)</strong> — for example, a medical certificate for more than 2 days.</li>
+<li><strong>Eligible categories</strong> — limit the type to certain employment categories (empty = everyone).</li>
+<li><strong>Colour (#RRGGBB)</strong> — used on the leave calendar.</li>
+</ul>
+<h3 id="112-apply-for-leave-employee">11.2 Apply for leave (employee)</h3>
+<p>Employees apply in <strong>My Portal → Leave → Apply for leave</strong>:</p>
+<figure><a href="images/portal-apply-leave.png" target="_blank" rel="noopener"><img src="images/portal-apply-leave.png" alt="Applying for leave in My Portal" loading="lazy"></a><figcaption><span>Figure 59.</span> Applying for leave in My Portal</figcaption></figure>
+<ol>
+<li>Choose the <strong>Leave type</strong> (1). The available balance for the year is shown immediately (2).</li>
+<li>Pick the <strong>Dates</strong> (3): click the first and the last day in the calendar. For a single day, click the same
+   day twice. If you pick a single day and the type allows half days, a <strong>Duration</strong> choice (<em>Full day</em>,
+   <em>Morning</em>, <em>Afternoon</em>) appears.</li>
+<li>Check the number of days (4). Weekly-off days and holidays are excluded according to the policy. A warning
+   appears if the request exceeds the balance.</li>
+<li>Add a <strong>Reason</strong> for your approver and, if needed, <strong>Supporting documents</strong> (PDF, image or DOCX).</li>
+<li>Click <strong>Apply</strong> (5).</li>
+</ol>
+<figure><a href="images/portal-leave.png" target="_blank" rel="noopener"><img src="images/portal-leave.png" alt="Leave balances and requests in My Portal" loading="lazy"></a><figcaption><span>Figure 60.</span> Leave balances and requests in My Portal</figcaption></figure>
+<p>Your balances for the year are shown at the top (1). The request appears under <em>My requests</em> as <strong>Pending</strong>
+(2), and the days are reserved in the balance as <em>pending</em> until a decision is made. The employee can
+<strong>Cancel</strong> a pending request.</p>
+<p>The system refuses a request that overlaps another pending or approved leave, crosses into the next year,
+exceeds the balance (unless negative balances are allowed), falls in a locked payroll period or is for a type
+the employee is not eligible for. The reason is shown on screen.</p>
+<h3 id="113-apply-on-behalf-of-an-employee-hr">11.3 Apply on behalf of an employee (HR)</h3>
+<p><em>Required permission:</em> <code>LEAVE:ADD</code>.</p>
+<p>On <strong>Leave Management → Requests</strong>, click <strong>Apply on behalf</strong>, choose the <strong>Employee</strong>, and fill in the same
+form. The request goes through the same approval workflow.</p>
+<h3 id="114-approve-leave-manager">11.4 Approve leave (manager)</h3>
+<p>With the default workflow, a leave request goes to the employee's <strong>reporting manager</strong>. The manager sees a
+counter on <strong>Approvals</strong> in the menu and the request in their <strong>Inbox</strong> (see <a href="#121-your-inbox">12.1</a>). Approving is covered in
+<a href="#122-review-and-decide">12.2</a>.</p>
+<p>When the leave is approved, the days move from <em>pending</em> to <em>taken</em>, and attendance for those days becomes
+<strong>On leave</strong>. When it is rejected, the days are released.</p>
+<h3 id="115-track-requests">11.5 Track requests</h3>
+<p><strong>Leave Management → Requests</strong> lists all requests you are allowed to see.</p>
+<figure><a href="images/leave-requests.png" target="_blank" rel="noopener"><img src="images/leave-requests.png" alt="Approved leave requests" loading="lazy"></a><figcaption><span>Figure 61.</span> Approved leave requests</figcaption></figure>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>#</th>
+<th>Control</th>
+<th>Use</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><strong>Search employee</strong></td>
+<td>Find an employee's requests by name or number.</td>
+</tr>
+<tr>
+<td>2</td>
+<td><strong>Status</strong></td>
+<td><strong>Pending</strong> by default. Switch to <em>Approved</em>, <em>Rejected</em>, <em>Cancelled</em> or clear it for all.</td>
+</tr>
+<tr>
+<td>3</td>
+<td><strong>Leave type</strong></td>
+<td>Show one type only.</td>
+</tr>
+<tr>
+<td>4</td>
+<td><strong>Apply on behalf</strong></td>
+<td>Apply for an employee (<a href="#113-apply-on-behalf-of-an-employee-hr">11.3</a>).</td>
+</tr>
+</tbody>
+</table></div>
+<p>Click a request to see its details and attachments. Users with <code>LEAVE:EDIT</code> can <strong>cancel</strong> a pending or
+approved request there, with a cancellation reason. Cancelled days are returned to the balance and
+attendance is recalculated.</p>
+<h3 id="116-leave-calendar">11.6 Leave calendar</h3>
+<p><strong>Leave Management → Calendar</strong> shows a month at a time: approved leave, pending leave (outlined, switch
+<strong>Include pending</strong> off to hide it) and holidays. Hover over an entry for details.</p>
+<figure><a href="images/leave-calendar.png" target="_blank" rel="noopener"><img src="images/leave-calendar.png" alt="Leave calendar" loading="lazy"></a><figcaption><span>Figure 62.</span> Leave calendar</figcaption></figure>
+<p>Managers see their team, HR sees everyone in their scope, and employees see their own leave and the holidays.</p>
+<h3 id="117-balances-opening-balances-and-adjustments">11.7 Balances, opening balances and adjustments</h3>
+<p><em>Required permission:</em> <code>LEAVE:VIEW</code> to view, <code>LEAVE:EDIT</code> for opening balances and adjustments.</p>
+<p><strong>Leave Management → Balances</strong> shows one employee's balances for a year. Choose the <strong>Employee</strong> and the
+<strong>Year</strong>.</p>
+<figure><a href="images/leave-balances.png" target="_blank" rel="noopener"><img src="images/leave-balances.png" alt="Leave balances of one employee" loading="lazy"></a><figcaption><span>Figure 63.</span> Leave balances of one employee</figcaption></figure>
+<p>For each type you see <em>Opening</em>, <em>Entitled</em>, <em>Carried</em> (forward), <em>Adjust</em> (manual adjustments), <em>Taken</em>,
+<em>Pending</em>, <em>Expired</em> and <strong>Available</strong> (1):</p>
+<blockquote>
+<p>Available = Opening + Entitled + Carried + Adjustments − Taken − Pending − Expired</p>
+</blockquote>
+<ul>
+<li><strong>Opening</strong> (2) sets the opening balance, for example the days left from your previous system when you go
+  live.</li>
+<li><strong>Adjust</strong> (3) adds or deducts days (use a negative number to deduct), for example compensation for work
+  on a holiday.</li>
+</ul>
+<p>Both require a <strong>reason</strong> and are recorded in the audit log.</p>
+<h3 id="118-year-end-jobs">11.8 Year-end jobs</h3>
+<p>Accrual, carry-forward and expiry run <strong>automatically every night</strong> and are safe to repeat. Administrators can
+also run them on demand on <strong>Leave Management → Jobs</strong>:</p>
+<figure><a href="images/leave-jobs.png" target="_blank" rel="noopener"><img src="images/leave-jobs.png" alt="Leave balance jobs" loading="lazy"></a><figcaption><span>Figure 64.</span> Leave balance jobs</figcaption></figure>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Job</th>
+<th>What it does</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Run accrual</strong></td>
+<td>Credits monthly-accruing leave up to the <em>As of</em> date.</td>
+</tr>
+<tr>
+<td><strong>Carry forward last year</strong></td>
+<td>Moves unused days of the previous year into this year, within each type's limit.</td>
+</tr>
+<tr>
+<td><strong>Expire carried-forward</strong></td>
+<td>Lapses carried-forward days whose expiry month has passed.</td>
+</tr>
+</tbody>
+</table></div>
+<hr />
+<h2 id="12-approvals">12. Approvals</h2>
+<p>Every request that needs a decision — leave, attendance corrections and payroll runs — goes through the
+approval engine. <strong>Approvals</strong> is available to every user and has the tabs <strong>Inbox</strong>, <strong>My requests</strong>,
+<strong>Delegations</strong> and — for users allowed to view approval configuration — <strong>Workflows</strong>.</p>
+<h3 id="121-your-inbox">12.1 Your inbox</h3>
+<p>The <strong>Inbox</strong> lists the requests waiting for <em>your</em> decision. The menu shows how many there are (1).</p>
+<figure><a href="images/approvals-inbox.png" target="_blank" rel="noopener"><img src="images/approvals-inbox.png" alt="Approval inbox of a department manager" loading="lazy"></a><figcaption><span>Figure 65.</span> Approval inbox of a department manager</figcaption></figure>
+<p>Each row shows the type, a summary (employee, dates, days), who requested it and when. Click a request (3)
+to open it. Use the search box when the list is long
+(a type filter appears when the list holds more than one kind of request).</p>
+<h3 id="122-review-and-decide">12.2 Review and decide</h3>
+<p>Opening a request shows:</p>
+<figure><a href="images/approvals-decide.png" target="_blank" rel="noopener"><img src="images/approvals-decide.png" alt="Reviewing a leave request" loading="lazy"></a><figcaption><span>Figure 66.</span> Reviewing a leave request</figcaption></figure>
+<ol>
+<li><strong>Approval progress</strong> (1) shows the levels of the workflow, who approved each level and who is waiting.
+   The <strong>History</strong> below lists every action with its time and comment.</li>
+<li>Optionally add a <strong>Comment</strong> (2). A comment is <strong>required to reject</strong>.</li>
+<li>Click <strong>Reject</strong> (3) or <strong>Approve</strong> (4).</li>
+</ol>
+<p>If the workflow has more levels, approving moves the request to the next approver. Otherwise the request is
+complete and the employee is notified. You cannot approve your own requests.</p>
+<h3 id="123-my-requests">12.3 My requests</h3>
+<p><strong>My requests</strong> lists everything you have submitted and its current status. You can open a pending request
+and <strong>Cancel request</strong>.</p>
+<figure><a href="images/approvals-my-requests.png" target="_blank" rel="noopener"><img src="images/approvals-my-requests.png" alt="My requests" loading="lazy"></a><figcaption><span>Figure 67.</span> My requests</figcaption></figure>
+<h3 id="124-delegate-your-approvals">12.4 Delegate your approvals</h3>
+<p>When you are on leave, someone else can approve on your behalf.</p>
+<ol>
+<li>Open <strong>Approvals → Delegations</strong> and click <strong>Delegate my approvals</strong>.</li>
+<li>Choose the <strong>Delegate</strong> (1) and the <strong>From</strong> / <strong>To</strong> dates (2), then click <strong>Save</strong>.</li>
+</ol>
+<figure><a href="images/approvals-delegate.png" target="_blank" rel="noopener"><img src="images/approvals-delegate.png" alt="Delegating approvals" loading="lazy"></a><figcaption><span>Figure 68.</span> Delegating approvals</figcaption></figure>
+<p>During those dates the delegate sees your requests in their inbox, and their decisions are recorded as made
+<em>on behalf of</em> you. Delegations are listed with their status (<em>Scheduled</em>, <em>Active</em>, <em>Ended</em>) and can be
+revoked.</p>
+<div class="callout note">
+<p><p class="callout-title">Note</p></p>
+<p>Choosing a delegate requires access to the user list. Users without administration rights see the
+message <em>"Ask an administrator to set up a delegation to a specific user"</em> — contact your system
+administrator to arrange it.</p>
+<figure><a href="images/approvals-delegate-manager.png" target="_blank" rel="noopener"><img src="images/approvals-delegate-manager.png" alt="The delegation dialog for a user without administration rights" loading="lazy"></a><figcaption><span>Figure 69.</span> The delegation dialog for a user without administration rights</figcaption></figure>
+</div>
+<h3 id="125-approval-workflows">12.5 Approval workflows</h3>
+<p><em>Required permission:</em> <code>APPROVAL:CONFIGURE</code>.</p>
+<p><strong>Approvals → Workflows</strong> lists one workflow per transaction type. Each company starts with:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Workflow</th>
+<th>Default</th>
+<th>Approver</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Leave</strong></td>
+<td>Enabled</td>
+<td>Level 1: the employee's reporting manager</td>
+</tr>
+<tr>
+<td><strong>Attendance correction</strong></td>
+<td>Disabled (corrections apply immediately)</td>
+<td>Level 1: HR Manager role</td>
+</tr>
+<tr>
+<td><strong>Payroll</strong></td>
+<td>Enabled</td>
+<td>Level 1: HR Manager role</td>
+</tr>
+</tbody>
+</table></div>
+<figure><a href="images/approvals-workflows.png" target="_blank" rel="noopener"><img src="images/approvals-workflows.png" alt="Workflows" loading="lazy"></a><figcaption><span>Figure 70.</span> Workflows</figcaption></figure>
+<p>Click a workflow to edit it, or <strong>Add workflow</strong> to create a more specific one:</p>
+<figure><a href="images/approvals-workflow-edit.png" target="_blank" rel="noopener"><img src="images/approvals-workflow-edit.png" alt="Editing the leave workflow" loading="lazy"></a><figcaption><span>Figure 71.</span> Editing the leave workflow</figcaption></figure>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>#</th>
+<th>Setting</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><strong>Branch / Department (optional)</strong></td>
+<td>Make the workflow apply only to one branch or department. The most specific workflow wins: department, then branch, then company.</td>
+</tr>
+<tr>
+<td>2</td>
+<td><strong>Enabled</strong></td>
+<td>A disabled workflow is skipped. If no enabled workflow applies to the employee, requests of that type are approved automatically.</td>
+</tr>
+<tr>
+<td>3</td>
+<td><strong>Level approver</strong></td>
+<td>For each level: <strong>Reporting manager</strong>, or a <strong>Role</strong> (anyone with that role whose data scope covers the employee).</td>
+</tr>
+<tr>
+<td>4</td>
+<td><strong>Add level</strong></td>
+<td>Up to five levels, approved in order.</td>
+</tr>
+</tbody>
+</table></div>
+<div class="callout note">
+<p><p class="callout-title">Note</p></p>
+<p>If nobody is eligible at a level — for example the employee has no reporting manager with a user account —
+the request falls back to the users with the <strong>HR Manager</strong> role, so nothing gets stuck.</p>
+</div>
+<hr />
+<h2 id="13-payroll">13. Payroll</h2>
+<p>Payroll calculates each employee's monthly pay from their salary structure, their attendance (overtime,
+no-pay days) and any one-time items, using the components and statutory rules of the company. A payroll run
+moves through five stages, which are always shown at the top of the period:</p>
+<figure class="diagram" aria-label="Payroll period lifecycle"><div class="flow"><span class="chip ">Open</span><span class="arrow">Process →</span><span class="chip strong">Draft</span><span class="arrow">Submit for review →</span><span class="chip ">In review</span><span class="arrow">Approve →</span><span class="chip ">Approved</span><span class="arrow">Finalize →</span><span class="chip done">Finalized</span></div><p class="flow-note">Reprocess keeps the period in <b>Draft</b>. <b>Send back</b> or a rejection returns an in-review period to <b>Draft</b>.</p><figcaption>Payroll period lifecycle</figcaption></figure>
+
+<p>Open <strong>Payroll</strong>. The tabs are <strong>Periods</strong>, <strong>Components</strong>, <strong>Slab tables</strong> and <strong>Statutory</strong>.</p>
+<p><em>Required permissions:</em> <code>PAYROLL:VIEW</code> to see payroll, <code>PAYROLL:ADD</code> to open periods, <code>PAYROLL:EDIT</code> to
+process and submit, <code>PAYROLL:APPROVE</code> to finalize, <code>PAYROLL:EXPORT</code> for exports and payslip emails,
+<code>PAYROLL:CONFIGURE</code> for components and statutory settings. Salary information is visible only to these
+users.</p>
+<h3 id="131-payroll-components">13.1 Payroll components</h3>
+<p><strong>Payroll → Components</strong> lists every earning, deduction and employer contribution, in the order they are
+calculated (<strong>sequence</strong>).</p>
+<figure><a href="images/payroll-components.png" target="_blank" rel="noopener"><img src="images/payroll-components.png" alt="Payroll components" loading="lazy"></a><figcaption><span>Figure 72.</span> Payroll components</figcaption></figure>
+<p>The Sri Lankan pack creates these components for every new company:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Component</th>
+<th>Type</th>
+<th>Calculation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Basic salary</td>
+<td>Earning</td>
+<td>Fixed amount from the salary structure (system component: it cannot be deactivated; only its name, bases, proration and payslip display can be changed)</td>
+</tr>
+<tr>
+<td>Allowance</td>
+<td>Earning</td>
+<td>Fixed, recurring, from the salary structure</td>
+</tr>
+<tr>
+<td>Bonus, Incentive, Commission</td>
+<td>Earning</td>
+<td>Fixed, one-time items</td>
+</tr>
+<tr>
+<td>Overtime (workday) / Overtime (weekly-off) / Overtime (holiday)</td>
+<td>Earning</td>
+<td>Overtime hours × (Basic ÷ 240) × 1.5 / 1.5 / 2.0</td>
+</tr>
+<tr>
+<td>Extra hours</td>
+<td>Earning</td>
+<td>Extra hours × (Basic ÷ 240) × 1.0</td>
+</tr>
+<tr>
+<td>No-pay deduction</td>
+<td>Deduction</td>
+<td>No-pay days × (Basic ÷ no-pay divisor)</td>
+</tr>
+<tr>
+<td>EPF (employee 8 %)</td>
+<td>Deduction</td>
+<td>8 % of the <em>statutory</em> base</td>
+</tr>
+<tr>
+<td>APIT (PAYE tax)</td>
+<td>Deduction</td>
+<td>Tax table <code>APIT_MONTHLY</code> applied to the <em>taxable</em> base</td>
+</tr>
+<tr>
+<td>EPF (employer 12 %), ETF (employer 3 %)</td>
+<td>Employer contribution</td>
+<td>12 % / 3 % of the statutory base</td>
+</tr>
+<tr>
+<td>Loan deduction, Salary advance</td>
+<td>Deduction</td>
+<td>Fixed amounts</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Creating or editing a component</strong> (click a row, or <strong>Create component</strong>):</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Setting</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Kind</strong></td>
+<td>Earning, Deduction or Employer contribution (not deducted from the employee).</td>
+</tr>
+<tr>
+<td><strong>Frequency</strong></td>
+<td><em>Recurring</em> (every month) or <em>One-time</em> (entered per period as a one-time item).</td>
+</tr>
+<tr>
+<td><strong>Assignment</strong></td>
+<td><em>Per employee</em> — only for employees whose salary structure includes it. <em>Automatic</em> — applies to everyone unless excluded in their salary structure.</td>
+</tr>
+<tr>
+<td><strong>Calculation</strong></td>
+<td><strong>Fixed amount</strong>; <strong>Percentage of</strong> a basis (another component, a base such as <code>BASE:STATUTORY</code>, or <code>GROSS</code>); <strong>Per unit</strong> — an attendance metric (OT hours by day type, extra hours, no-pay days, late hours, short hours, absent days, worked days) × a rate; <strong>Slab table</strong> — a progressive table.</td>
+</tr>
+<tr>
+<td><strong>Sequence (calculation order)</strong></td>
+<td>Calculation order. A component can only use components with a lower sequence.</td>
+</tr>
+<tr>
+<td><strong>Adds to bases</strong></td>
+<td>Whether the amount counts towards the <strong>Statutory</strong> base (EPF/ETF) and/or the <strong>Taxable</strong> base (APIT).</td>
+</tr>
+<tr>
+<td><strong>Prorate for joiners/leavers</strong></td>
+<td>Fixed recurring amounts are reduced for partial months.</td>
+</tr>
+<tr>
+<td><strong>Show on payslip</strong>, <strong>Statutory</strong>, <strong>Active</strong></td>
+<td>Display and status flags. Components cannot be deleted — untick <strong>Active</strong> to stop using one.</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="132-statutory-settings-and-tax-tables">13.2 Statutory settings and tax tables</h3>
+<p><strong>Payroll → Statutory</strong> summarises the statutory components and tables of the company's pack (<code>LK</code>):</p>
+<figure><a href="images/payroll-statutory.png" target="_blank" rel="noopener"><img src="images/payroll-statutory.png" alt="Statutory settings" loading="lazy"></a><figcaption><span>Figure 73.</span> Statutory settings</figcaption></figure>
+<p><strong>Payroll → Slab tables</strong> holds progressive tables such as the monthly APIT table. Click a table to edit its
+bands (from, to and rate %). Bands must start at 0 and follow on from each other without gaps.</p>
+<figure><a href="images/payroll-slabs.png" target="_blank" rel="noopener"><img src="images/payroll-slabs.png" alt="Slab tables" loading="lazy"></a><figcaption><span>Figure 74.</span> Slab tables</figcaption></figure>
+<div class="callout important">
+<p><p class="callout-title">Important</p></p>
+<p>Statutory rates and tax bands are <strong>data, not code</strong>. The values supplied are the ones that applied when
+this release was prepared. When the government changes EPF, ETF or APIT rates, update the components or the
+slab table <em>before</em> you process the next payroll. Changes apply to payrolls processed afterwards. Finalized
+payrolls are never recalculated.</p>
+</div>
+<h3 id="133-before-you-run-payroll">13.3 Before you run payroll</h3>
+<ul>
+<li>Every employee to be paid has a <strong>salary structure</strong> (<a href="#76-salary-structure">7.6</a>).</li>
+<li>Attendance for the month is complete: punches imported, <strong>exceptions</strong> cleared and <strong>overtime approved</strong>
+  (<a href="#95-exceptions">9.5</a>, <a href="#96-approve-overtime">9.6</a>).</li>
+<li>Leave for the month is approved or rejected — pending leave is not paid as leave.</li>
+<li>Joiners and leavers have the right join and exit dates.</li>
+</ul>
+<h3 id="134-the-monthly-payroll-run">13.4 The monthly payroll run</h3>
+<p><strong>Step 1 — Open the period.</strong> On <strong>Payroll → Periods</strong>, click <strong>Open period</strong>. Enter the <strong>Year</strong> (1) and
+<strong>Month</strong> (2), and click <strong>Open</strong> (3). The dates follow the company's payroll start day.</p>
+<figure><a href="images/payroll-open-period.png" target="_blank" rel="noopener"><img src="images/payroll-open-period.png" alt="Opening a payroll period" loading="lazy"></a><figcaption><span>Figure 75.</span> Opening a payroll period</figcaption></figure>
+<p>The period opens with the status <strong>Open</strong>. The progress bar (1) shows the five stages.</p>
+<figure><a href="images/payroll-period-open.png" target="_blank" rel="noopener"><img src="images/payroll-period-open.png" alt="A newly opened period" loading="lazy"></a><figcaption><span>Figure 76.</span> A newly opened period</figcaption></figure>
+<p><strong>Step 2 — Process.</strong> Click <strong>Process</strong> (2). The system first recalculates attendance for every day of the
+period, then calculates every employee who was employed during the period and has a salary structure.
+Processing 1,000 employees takes under a minute on the recommended server (4 vCPU, 8 GB RAM).</p>
+<figure><a href="images/payroll-results.png" target="_blank" rel="noopener"><img src="images/payroll-results.png" alt="Payroll results after processing" loading="lazy"></a><figcaption><span>Figure 77.</span> Payroll results after processing</figcaption></figure>
+<ul>
+<li>The summary cards (1) show the number of employees, <strong>Gross pay</strong>, <strong>Deductions</strong>, <strong>Net pay</strong>, <strong>Employer
+  contributions</strong> and <strong>Total cost</strong> (gross + employer contributions).</li>
+<li>The <strong>Results</strong> tab lists every employee with gross, deductions, net, no-pay days and OT hours. Click a row
+  (2) for the full breakdown:</li>
+</ul>
+<figure><a href="images/payroll-result-detail.png" target="_blank" rel="noopener"><img src="images/payroll-result-detail.png" alt="Breakdown of one employee&#x27;s pay" loading="lazy"></a><figcaption><span>Figure 78.</span> Breakdown of one employee&#x27;s pay</figcaption></figure>
+<p>The breakdown shows every earning, deduction and employer contribution with its units and rate — for example
+<em>Overtime (workday) 13.75 units × 906.25</em> — plus worked days, no-pay days and overtime hours.</p>
+<ul>
+<li>The <strong>Exceptions</strong> tab lists problems: employees without a salary structure (skipped), <strong>negative net pay</strong>
+  (blocking — must be fixed before submitting) and unresolved attendance exceptions (warnings).</li>
+</ul>
+<p><strong>Step 3 — One-time items.</strong> Bonuses, incentives, commissions, advances and other amounts for this month only
+are entered on the <strong>One-time items</strong> tab. Click <strong>Add item</strong>, choose the <strong>Employee</strong>, the <strong>Component</strong> (1)
+and the <strong>Amount</strong> (2), add a note and click <strong>Save</strong>.</p>
+<figure><a href="images/payroll-one-time-item.png" target="_blank" rel="noopener"><img src="images/payroll-one-time-item.png" alt="Adding a one-time bonus" loading="lazy"></a><figcaption><span>Figure 79.</span> Adding a one-time bonus</figcaption></figure>
+<p><strong>Step 4 — Reprocess when something changes.</strong> Whenever attendance, leave, salary structures or one-time items
+change after processing, the period is flagged <strong>Needs reprocessing</strong> and the results are marked out of date
+(1). Click <strong>Reprocess</strong> (2). You cannot submit out-of-date results.</p>
+<figure><a href="images/payroll-stale.png" target="_blank" rel="noopener"><img src="images/payroll-stale.png" alt="Results out of date after adding a bonus" loading="lazy"></a><figcaption><span>Figure 80.</span> Results out of date after adding a bonus</figcaption></figure>
+<p><strong>Step 5 — Submit for review.</strong> When the results are correct, click <strong>Submit for review</strong>. The period moves to
+<strong>In review</strong> and an approval request goes to the approvers of the <em>Payroll</em> workflow (by default, users
+with the HR Manager role). The attendance of the period is now locked (<a href="#97-payroll-lock">9.7</a>).</p>
+<figure><a href="images/payroll-in-review.png" target="_blank" rel="noopener"><img src="images/payroll-in-review.png" alt="A period in review" loading="lazy"></a><figcaption><span>Figure 81.</span> A period in review</figcaption></figure>
+<p>If something is wrong, a payroll or HR user clicks <strong>Send back</strong> and explains why in a comment. The period
+returns to <em>Draft</em>.</p>
+<p><strong>Step 6 — Approve.</strong> The approver opens the request from their <strong>Approvals</strong> inbox, checks the totals and
+clicks <strong>Approve</strong>. Rejecting also returns the period to <em>Draft</em>.</p>
+<figure><a href="images/payroll-approve.png" target="_blank" rel="noopener"><img src="images/payroll-approve.png" alt="The payroll approval request in the HR manager&#x27;s inbox" loading="lazy"></a><figcaption><span>Figure 82.</span> The payroll approval request in the HR manager&#x27;s inbox</figcaption></figure>
+<p><strong>Step 7 — Finalize.</strong> On the approved period, a user with <code>PAYROLL:APPROVE</code> clicks <strong>Finalize</strong> and confirms.</p>
+<figure><a href="images/payroll-finalize-confirm.png" target="_blank" rel="noopener"><img src="images/payroll-finalize-confirm.png" alt="Finalize confirmation" loading="lazy"></a><figcaption><span>Figure 83.</span> Finalize confirmation</figcaption></figure>
+<div class="callout warning">
+<p><p class="callout-title">Warning</p></p>
+<p>Finalizing <strong>locks the results permanently</strong> and assigns payslip numbers. It cannot be undone. Corrections
+after finalization go into the next month's payroll, for example as a one-time item.</p>
+</div>
+<p>The period is now <strong>Finalized</strong>, and every stage of the progress bar is complete (1):</p>
+<figure><a href="images/payroll-finalized.png" target="_blank" rel="noopener"><img src="images/payroll-finalized.png" alt="A finalized payroll period" loading="lazy"></a><figcaption><span>Figure 84.</span> A finalized payroll period</figcaption></figure>
+<h3 id="135-payslips-exports-and-email">13.5 Payslips, exports and email</h3>
+<p>On a finalized period, open the <strong>Payslips &amp; exports</strong> tab.</p>
+<figure><a href="images/payroll-exports.png" target="_blank" rel="noopener"><img src="images/payroll-exports.png" alt="Payroll exports" loading="lazy"></a><figcaption><span>Figure 85.</span> Payroll exports</figcaption></figure>
+<ul>
+<li><strong>Exports</strong> (1): the <strong>Payroll register</strong> (one row per employee, one column per component, with totals) as
+  Excel, CSV or PDF, and the <strong>Department summary</strong> as Excel or PDF. Exports are available once the period
+  has been processed; after finalization they come from the locked results and always match the payslips.</li>
+</ul>
+<figure><a href="images/payroll-payslips.png" target="_blank" rel="noopener"><img src="images/payroll-payslips.png" alt="Payslip downloads and email" loading="lazy"></a><figcaption><span>Figure 86.</span> Payslip downloads and email</figcaption></figure>
+<ul>
+<li><strong>All payslips (PDF)</strong> (1) produces one PDF with a payslip per page. To download one employee's payslip,
+  click the employee on the <strong>Results</strong> tab and use the <strong>Payslip …</strong> button in the breakdown.</li>
+<li><strong>Email payslips</strong> (2) sends each employee their own payslip by email (it needs outgoing email to be
+  configured and an email address on the employee). A report shows who received it and any failures.</li>
+<li>Employees can always download their own payslips from <strong>My Portal</strong> (<a href="#155-payslips">15.5</a>).</li>
+</ul>
+<p>A payslip shows the company, period, payslip number, employee details, earnings, deductions, net pay,
+employer contributions and an attendance summary:</p>
+<figure><a href="images/payslip-pdf.png" target="_blank" rel="noopener"><img src="images/payslip-pdf.png" alt="Example payslip (PDF)" loading="lazy"></a><figcaption><span>Figure 87.</span> Example payslip (PDF)</figcaption></figure>
+<hr />
+<h2 id="14-reports-and-dashboard">14. Reports and dashboard</h2>
+<h3 id="141-dashboard">14.1 Dashboard</h3>
+<p>The <strong>Dashboard</strong> is the first page after signing in. It shows today's situation for the employees in your
+scope:</p>
+<figure><a href="images/dashboard.png" target="_blank" rel="noopener"><img src="images/dashboard.png" alt="Dashboard" loading="lazy"></a><figcaption><span>Figure 88.</span> Dashboard</figcaption></figure>
+<ul>
+<li><strong>Today's KPIs</strong> (1): active employees, present today (with the attendance rate), absent today, late
+  arrivals, on leave today and your pending approvals. Some cards link to the related page.</li>
+<li><strong>Attendance today</strong>: a chart of present, on leave, absent and not yet marked.</li>
+<li><strong>Headcount by department</strong>.</li>
+<li><strong>Payroll</strong> (payroll users only): the current period with its status, and the overtime cost of the last
+  processed period.</li>
+<li><strong>Quick actions</strong>: shortcuts to the tasks your role allows.</li>
+</ul>
+<figure><a href="images/dashboard-dark.png" target="_blank" rel="noopener"><img src="images/dashboard-dark.png" alt="The dashboard in dark mode" loading="lazy"></a><figcaption><span>Figure 89.</span> The dashboard in dark mode</figcaption></figure>
+<h3 id="142-standard-reports">14.2 Standard reports</h3>
+<p><em>Required permission:</em> <code>REPORT:VIEW</code> to view, <code>REPORT:EXPORT</code> to download. Payroll reports also need
+<code>PAYROLL:VIEW</code>, and the audit report needs <code>AUDIT:VIEW</code>.</p>
+<ol>
+<li>Open <strong>Reports</strong>.</li>
+<li>Pick a report from the catalogue on the left (1).</li>
+<li>Set its options — dates, department, leave type and so on — and click <strong>Run</strong> (2). The results appear on
+   screen.</li>
+<li>Download them as <strong>PDF</strong>, <strong>Excel</strong> or <strong>CSV</strong> (3). PDFs are print-ready A4 (landscape for wide reports)
+   with a header showing the company, the options used, who generated them and when.</li>
+</ol>
+<figure><a href="images/reports-run.png" target="_blank" rel="noopener"><img src="images/reports-run.png" alt="Attendance summary report" loading="lazy"></a><figcaption><span>Figure 90.</span> Attendance summary report</figcaption></figure>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Group</th>
+<th>Report</th>
+<th>Options</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>People</td>
+<td><strong>Employee list</strong></td>
+<td>Search, branch, department, designation, category, status</td>
+</tr>
+<tr>
+<td>Attendance</td>
+<td><strong>Daily attendance</strong></td>
+<td>Date, department</td>
+</tr>
+<tr>
+<td></td>
+<td><strong>Attendance summary</strong> — per employee: present, absent, half, leave days, late count and minutes, early departures, overtime by type</td>
+<td>From, to, department</td>
+</tr>
+<tr>
+<td></td>
+<td><strong>Attendance edits</strong> — every correction with before/after values, reason and user</td>
+<td>From, to</td>
+</tr>
+<tr>
+<td>Scheduling</td>
+<td><strong>Roster</strong> — employee × date shift codes</td>
+<td>Roster</td>
+</tr>
+<tr>
+<td>Leave</td>
+<td><strong>Leave balances</strong></td>
+<td>Year, leave type</td>
+</tr>
+<tr>
+<td></td>
+<td><strong>Leave usage</strong> — approved leave</td>
+<td>From, to, leave type</td>
+</tr>
+<tr>
+<td>Payroll</td>
+<td><strong>Payroll register</strong>, <strong>Department summary</strong></td>
+<td>Payroll period</td>
+</tr>
+<tr>
+<td>Compliance</td>
+<td><strong>Audit log</strong> (users with <code>AUDIT:VIEW</code> also get a separate <strong>Audit log</strong> tab)</td>
+<td>From, to, company, entity type, entity ID, action</td>
+</tr>
+</tbody>
+</table></div>
+<p>All reports respect your data scope: a department manager sees only their department.</p>
+<hr />
+<h2 id="15-my-portal--employee-self-service">15. My Portal — employee self-service</h2>
+<p>Every user linked to an employee record has <strong>My Portal</strong> (1) in the menu. Employees whose only role is
+<em>Employee</em> see just <strong>Dashboard</strong>, <strong>My Portal</strong> and <strong>Approvals</strong>.</p>
+<figure><a href="images/portal-dashboard.png" target="_blank" rel="noopener"><img src="images/portal-dashboard.png" alt="An employee&#x27;s dashboard" loading="lazy"></a><figcaption><span>Figure 91.</span> An employee&#x27;s dashboard</figcaption></figure>
+<p>My Portal has five tabs. It works the same on a phone.</p>
+<h3 id="151-profile">15.1 Profile</h3>
+<p>Your employment details (department, designation, branch, reporting manager, join date), your contact details
+and <strong>My documents</strong>, which you can download. <strong>Change password</strong> is also here. To correct your personal
+details, contact HR.</p>
+<figure><a href="images/portal-profile.png" target="_blank" rel="noopener"><img src="images/portal-profile.png" alt="My Portal — profile" loading="lazy"></a><figcaption><span>Figure 92.</span> My Portal — profile</figcaption></figure>
+<h3 id="152-attendance">15.2 Attendance</h3>
+<p>Your attendance month by month: totals for present, absent, on leave and late days, and one row per day with
+your in/out times, late minutes and overtime. Click a day to see the punches recorded for it.</p>
+<figure><a href="images/portal-attendance.png" target="_blank" rel="noopener"><img src="images/portal-attendance.png" alt="My Portal — attendance" loading="lazy"></a><figcaption><span>Figure 93.</span> My Portal — attendance</figcaption></figure>
+<p>If a day is wrong (for example you forgot to punch out), tell your supervisor or HR so they can correct it.</p>
+<h3 id="153-schedule">15.3 Schedule</h3>
+<p>Your shifts for the next 14 days, from the published roster, your rotation or your default shift. Days off
+and holidays are shown too.</p>
+<figure><a href="images/portal-schedule.png" target="_blank" rel="noopener"><img src="images/portal-schedule.png" alt="My Portal — schedule" loading="lazy"></a><figcaption><span>Figure 94.</span> My Portal — schedule</figcaption></figure>
+<h3 id="154-leave">15.4 Leave</h3>
+<p>Your balances for the year, <strong>Apply for leave</strong> and the list of your requests with their status. You can
+cancel a request while it is still pending. See <a href="#112-apply-for-leave-employee">11.2</a> for the step-by-step
+application.</p>
+<h3 id="155-payslips">15.5 Payslips</h3>
+<p>Every finalized payslip, with gross and net pay. Click <strong>PDF</strong> to download it.</p>
+<figure><a href="images/portal-payslips.png" target="_blank" rel="noopener"><img src="images/portal-payslips.png" alt="My Portal — payslips" loading="lazy"></a><figcaption><span>Figure 95.</span> My Portal — payslips</figcaption></figure>
+<h3 id="156-your-requests-and-approvals">15.6 Your requests and approvals</h3>
+<p><strong>Approvals → My requests</strong> shows the status of everything you have submitted, and where it is in the approval
+chain.</p>
+<hr />
+<h2 id="16-administration-audit-log-and-security">16. Administration: audit log and security</h2>
+<h3 id="161-audit-log">16.1 Audit log</h3>
+<p><em>Required permission:</em> <code>AUDIT:VIEW</code> (and <code>AUDIT:EXPORT</code> to download).</p>
+<p>Every critical change is recorded permanently: employee and salary changes, attendance corrections, leave
+decisions, roster publishing, payroll processing and finalization, approval actions, user and role changes,
+settings changes and security events (sign-ins, failed sign-ins, lockouts, permission denials, password
+changes).</p>
+<p>Open <strong>Administration → Audit log</strong> (or <strong>Reports → Audit log</strong>). Filter by entity type, action and date
+range, and download the result with <strong>Export CSV</strong>, <strong>Export XLSX</strong> or <strong>Export PDF</strong>.</p>
+<figure><a href="images/admin-audit.png" target="_blank" rel="noopener"><img src="images/admin-audit.png" alt="Audit log" loading="lazy"></a><figcaption><span>Figure 96.</span> Audit log</figcaption></figure>
+<p>Click an entry (1) to see exactly what changed — the user, the time, the action, the record, the reason
+(when one was given) and the values before and after. The stored record also keeps the client address and,
+for delegated approvals, on whose behalf the action was taken.</p>
+<figure><a href="images/admin-audit-detail.png" target="_blank" rel="noopener"><img src="images/admin-audit-detail.png" alt="Audit entry details" loading="lazy"></a><figcaption><span>Figure 97.</span> Audit entry details</figcaption></figure>
+<div class="callout note">
+<p><p class="callout-title">Note</p></p>
+<p>The audit log cannot be edited or deleted by anyone, including administrators. The database itself
+refuses such changes.</p>
+</div>
+<h3 id="162-security-features">16.2 Security features</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Feature</th>
+<th>Behaviour</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Passwords</td>
+<td>At least 10 characters with upper- and lower-case letters, a digit and a symbol. Stored only as strong one-way hashes.</td>
+</tr>
+<tr>
+<td>First sign-in</td>
+<td>Temporary passwords must be changed before anything else can be done.</td>
+</tr>
+<tr>
+<td>Lockout</td>
+<td>5 failed attempts lock the account for 15 minutes. Repeated sign-in attempts from one address are rate-limited.</td>
+</tr>
+<tr>
+<td>Sessions</td>
+<td>You stay signed in while you work. <strong>Sign out</strong> ends the session. Deactivating a user or resetting their password ends all their sessions.</td>
+</tr>
+<tr>
+<td>Data scope</td>
+<td>Records outside a user's scope are invisible to them — on screens, in reports and in exports.</td>
+</tr>
+<tr>
+<td>Salary privacy</td>
+<td>Salaries, payroll results and payslips are visible only with payroll permissions (and to the employee for their own finalized payslips).</td>
+</tr>
+<tr>
+<td>Encryption in transit</td>
+<td>All traffic uses HTTPS.</td>
+</tr>
+</tbody>
+</table></div>
+<hr />
+<h2 id="17-monthly-routine">17. Monthly routine</h2>
+<p>A suggested routine for a calendar-month payroll (payroll start day 1):</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>When</th>
+<th>Who</th>
+<th>Task</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Daily</td>
+<td>Supervisors / HR</td>
+<td>Check <strong>Attendance → Exceptions</strong> for incomplete and unscheduled days and correct them.</td>
+</tr>
+<tr>
+<td>Weekly</td>
+<td>Managers</td>
+<td>Publish next week's rosters. Approve pending leave and overtime.</td>
+</tr>
+<tr>
+<td>Before month end</td>
+<td>HR</td>
+<td>Enter joiners, leavers, transfers and salary changes, with the right effective dates.</td>
+</tr>
+<tr>
+<td>1st–2nd of the next month</td>
+<td>HR / supervisors</td>
+<td>Clear the remaining exceptions. Approve all overtime and leave for the month.</td>
+</tr>
+<tr>
+<td>2nd–3rd</td>
+<td>Payroll officer</td>
+<td>Open the period, <strong>Process</strong>, add one-time items, review the results and exceptions, <strong>Reprocess</strong>, <strong>Submit for review</strong>.</td>
+</tr>
+<tr>
+<td>3rd–4th</td>
+<td>HR manager</td>
+<td>Review and <strong>Approve</strong> the payroll in the Approvals inbox.</td>
+</tr>
+<tr>
+<td>4th–5th</td>
+<td>HR manager</td>
+<td><strong>Finalize</strong> the approved period (needs <code>PAYROLL:APPROVE</code>).</td>
+</tr>
+<tr>
+<td>After finalizing</td>
+<td>Payroll officer</td>
+<td>Export the payroll register for the bank and the accounts, email payslips.</td>
+</tr>
+<tr>
+<td>Quarterly</td>
+<td>IT</td>
+<td>Test a backup restore (<a href="#appendix-f--backup-and-restore-quick-reference">Appendix F</a>).</td>
+</tr>
+<tr>
+<td>December / January</td>
+<td>HR</td>
+<td>Copy holidays to the new year and adjust them. Check carry-forward and opening balances.</td>
+</tr>
+</tbody>
+</table></div>
+<hr />
+<h2 id="18-troubleshooting-and-faq">18. Troubleshooting and FAQ</h2>
+<p><strong>I cannot sign in.</strong>
+Check Caps Lock (the password field warns you). After 5 wrong attempts the account is locked for 15 minutes.
+If you have forgotten your password, ask an administrator to reset it. You will get a temporary password and
+must change it.</p>
+<p><strong>A menu item or a button is missing.</strong>
+You only see what your role allows. Ask your administrator to check your roles (<a href="#82-roles-and-the-permission-matrix">8.2</a>).</p>
+<p><strong>The page says "Select a company first".</strong>
+Create a company in <strong>Organization Setup</strong>, or pick one in the company selector in the header.</p>
+<p><strong>I cannot see an employee.</strong>
+The employee may be outside your data scope, or not <em>Active</em> — clear the status filter on the Employee Hub.</p>
+<p><strong>An employee is marked absent although they came to work.</strong>
+Open the day (<a href="#94-look-at-a-day-and-correct-missing-punches">9.4</a>). If there are no punches, check
+<strong>Attendance → Import &amp; devices → Unmatched punches</strong>. The badge ID on the device may not match the
+employee's <em>Attendance badge / device ID</em>. Fix the badge ID on the profile, click <strong>Rematch</strong>, then <strong>Process
+range</strong>.</p>
+<p><strong>A night-shift employee shows two incomplete days.</strong>
+Check that the employee's shift (default, rotation or roster) is a <em>Night</em> shift. Night-shift punches are
+counted on the day the shift starts.</p>
+<p><strong>Overtime is not paid.</strong>
+Check that (1) the shift has an OT policy, (2) the employee's category is <em>Eligible for overtime</em>, (3) the
+overtime was approved if the policy requires approval, and (4) the payroll was reprocessed after the approval.</p>
+<p><strong>"Attendance on … is locked by payroll" when correcting a day.</strong>
+The day belongs to a payroll period that is in review, approved or finalized. If the period is still <strong>In
+review</strong>, ask payroll to <strong>Send back</strong> the period. Otherwise ask a user with <code>ATTENDANCE:CONFIGURE</code> to apply
+the correction with <strong>Override payroll lock (audited)</strong>.</p>
+<p><strong>Leave cannot be submitted.</strong>
+The message explains why: overlapping leave, insufficient balance, a locked payroll period, dates in two
+different years (apply separately for each year), or an attachment is required.</p>
+<p><strong>A leave request is not reaching the manager.</strong>
+The reporting manager must have a user account that is linked to their employee record. Otherwise the request
+goes to users with the HR Manager role.</p>
+<p><strong>"Submit for review" is disabled.</strong>
+The results are out of date — click <strong>Reprocess</strong> first. Blocking exceptions (negative net pay) must also be
+resolved, otherwise the submission is refused with a message.</p>
+<p><strong>An employee is missing from the payroll results.</strong>
+The employee has no salary structure effective in the period, or joined after / left before the period. See
+the <strong>Exceptions</strong> tab.</p>
+<p><strong>Payslip email fails.</strong>
+Outgoing email is not configured (ask IT to set <code>HRM_MAIL_ENABLED</code> and the SMTP settings), or the employee
+has no email address.</p>
+<p><strong>Someone saved the same record at the same time.</strong>
+You see a message asking you to reload. Reload the page, re-apply your change and save again.</p>
+<hr />
+<h2 id="appendix-a--glossary">Appendix A — Glossary</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Term</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Accrual</strong></td>
+<td>Crediting leave entitlement (yearly upfront or monthly).</td>
+</tr>
+<tr>
+<td><strong>APIT</strong></td>
+<td>Advance Personal Income Tax (Sri Lankan PAYE).</td>
+</tr>
+<tr>
+<td><strong>Badge ID</strong></td>
+<td>The identifier a time-attendance device uses for an employee.</td>
+</tr>
+<tr>
+<td><strong>Base (statutory / taxable)</strong></td>
+<td>The sum of the components that EPF/ETF or APIT are calculated on.</td>
+</tr>
+<tr>
+<td><strong>Carry-forward</strong></td>
+<td>Unused leave moved into the next year.</td>
+</tr>
+<tr>
+<td><strong>Data scope</strong></td>
+<td>The set of employees whose records a user can see.</td>
+</tr>
+<tr>
+<td><strong>Delegation</strong></td>
+<td>Temporary transfer of a user's approval rights to another user.</td>
+</tr>
+<tr>
+<td><strong>EPF / ETF</strong></td>
+<td>Employees' Provident Fund / Employees' Trust Fund.</td>
+</tr>
+<tr>
+<td><strong>Exception</strong></td>
+<td>An attendance day that needs attention (missing punch, absence, lateness, unapproved overtime…).</td>
+</tr>
+<tr>
+<td><strong>Finalize</strong></td>
+<td>Permanently lock a payroll period and issue payslips.</td>
+</tr>
+<tr>
+<td><strong>No-pay</strong></td>
+<td>Unpaid days (absence or unpaid leave) deducted from salary.</td>
+</tr>
+<tr>
+<td><strong>Punch</strong></td>
+<td>A single clock-in or clock-out event.</td>
+</tr>
+<tr>
+<td><strong>Roster</strong></td>
+<td>A plan of shifts per employee per day for a week or month.</td>
+</tr>
+<tr>
+<td><strong>Rotation</strong></td>
+<td>A repeating cycle of shifts and days off.</td>
+</tr>
+<tr>
+<td><strong>Stale</strong></td>
+<td>Payroll results that are out of date because their inputs changed.</td>
+</tr>
+<tr>
+<td><strong>Working company</strong></td>
+<td>The company selected in the header, used by most screens.</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="appendix-b--default-roles">Appendix B — Default roles</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Role</th>
+<th>Typical user</th>
+<th>Main permissions</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Super Administrator</strong></td>
+<td>System owner</td>
+<td>Everything (cannot be reduced)</td>
+</tr>
+<tr>
+<td><strong>Company Administrator</strong></td>
+<td>Head of HR / IT</td>
+<td>Organisation, employees, attendance, shifts, rosters, leave, approvals (all actions); reports; audit view; user administration</td>
+</tr>
+<tr>
+<td><strong>HR Manager</strong></td>
+<td>HR team</td>
+<td>Employees, attendance and leave (all actions); shifts; rosters incl. publishing; approvals; payroll view, approve and export; reports</td>
+</tr>
+<tr>
+<td><strong>Payroll Officer</strong></td>
+<td>Payroll team</td>
+<td>View employees, attendance and leave; payroll (all actions except approve); reports</td>
+</tr>
+<tr>
+<td><strong>Branch Manager</strong></td>
+<td>Site manager</td>
+<td>View the branch; approve attendance/overtime, rosters and leave; reports</td>
+</tr>
+<tr>
+<td><strong>Department Manager</strong></td>
+<td>Head of department</td>
+<td>View the department; approve attendance/overtime and leave; create, edit and publish rosters; reports (view)</td>
+</tr>
+<tr>
+<td><strong>Supervisor</strong></td>
+<td>Team leader</td>
+<td>View employees and attendance; create and edit rosters; view leave</td>
+</tr>
+<tr>
+<td><strong>Employee</strong></td>
+<td>Everyone</td>
+<td>Dashboard, My Portal and Approvals only</td>
+</tr>
+<tr>
+<td><strong>Auditor</strong></td>
+<td>Internal / external audit</td>
+<td>View and export only, including the audit log</td>
+</tr>
+</tbody>
+</table></div>
+<p>Combine roles with a data scope (<a href="#81-create-a-user">8.1</a>). Permissions can be adjusted per role in
+<strong>Administration → Roles &amp; permissions</strong>.</p>
+<h2 id="appendix-c--status-reference">Appendix C — Status reference</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Area</th>
+<th>Statuses</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Employee</td>
+<td>Active · Resigned · Terminated · Inactive</td>
+</tr>
+<tr>
+<td>Attendance day</td>
+<td>Present · Half day · Absent · On leave · Half day leave · Weekly off · Holiday · Incomplete · Unscheduled</td>
+</tr>
+<tr>
+<td>Attendance exceptions</td>
+<td>Incomplete · Absent · Late · Early · Unscheduled · Ot pending (overtime awaiting approval)</td>
+</tr>
+<tr>
+<td>Overtime</td>
+<td>Pending · Approved · Rejected</td>
+</tr>
+<tr>
+<td>Roster</td>
+<td>Draft · Published · Locked</td>
+</tr>
+<tr>
+<td>Leave request</td>
+<td>Pending · Approved · Rejected · Cancelled</td>
+</tr>
+<tr>
+<td>Approval request</td>
+<td>Pending · Approved · Rejected · Cancelled</td>
+</tr>
+<tr>
+<td>Payroll period</td>
+<td>Open · Draft · In review · Approved · Finalized (+ <em>Needs reprocessing</em>)</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="appendix-d--attendance-integration-reference">Appendix D — Attendance integration reference</h2>
+<p>For device vendors and integrators. Each source has its own key (<a href="#91-connect-attendance-devices">9.1</a>).</p>
+<pre><code class="http">POST /api/v1/integrations/attendance/events
+X-Api-Key: hrm_xxxxxxxx_xxxxxxxxxxxxxxxxxxxxxxxx
+Content-Type: application/json
+
+{
+  &quot;events&quot;: [
+    { &quot;externalId&quot;: &quot;GATE01-000123&quot;, &quot;deviceId&quot;: &quot;GATE-01&quot;, &quot;employeeIdentifier&quot;: &quot;B112&quot;,
+      &quot;timestamp&quot;: &quot;2026-10-14T08:21:00&quot;, &quot;direction&quot;: &quot;IN&quot; },
+    { &quot;externalId&quot;: &quot;GATE01-000124&quot;, &quot;deviceId&quot;: &quot;GATE-01&quot;, &quot;employeeIdentifier&quot;: &quot;B112&quot;,
+      &quot;timestamp&quot;: &quot;2026-10-14T17:46:00+05:30&quot;, &quot;direction&quot;: &quot;OUT&quot; }
+  ]
+}
+</code></pre>
+
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>externalId</code></td>
+<td>The device's unique ID for the punch. Sending the same ID again is ignored (counted as a duplicate).</td>
+</tr>
+<tr>
+<td><code>deviceId</code></td>
+<td>Optional. Shown with each punch.</td>
+</tr>
+<tr>
+<td><code>employeeIdentifier</code></td>
+<td>The employee's badge/device ID or employee number.</td>
+</tr>
+<tr>
+<td><code>timestamp</code></td>
+<td>ISO-8601. Without an offset, it is read in the company's time zone.</td>
+</tr>
+<tr>
+<td><code>direction</code></td>
+<td>Optional: <code>IN</code>, <code>OUT</code> or <code>UNKNOWN</code> (the default). Punches without a direction are paired in time order.</td>
+</tr>
+</tbody>
+</table></div>
+<p>Up to 5,000 events per request. The response reports <code>accepted</code>, <code>duplicates</code>, <code>unmatched</code> and <code>rejected</code>
+counts, with a reason for each rejected row. The full API is documented at <code>/api/docs/ui</code> when API docs are
+enabled (<code>HRM_API_DOCS=true</code>).</p>
+<p><strong>CSV import format</strong> (Attendance → Import &amp; devices):</p>
+<pre><code class="csv">employee,timestamp,direction,device
+B112,2026-10-13T08:12:00,IN,GATE-02
+B112,2026-10-13T17:41:00,OUT,GATE-02
+</code></pre>
+
+<h2 id="appendix-e--keyboard-shortcuts">Appendix E — Keyboard shortcuts</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Keys</th>
+<th>Action</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Ctrl + K</strong> / <strong>⌘ + K</strong>, or <strong>/</strong></td>
+<td>Open the command palette (pages, actions, employees)</td>
+</tr>
+<tr>
+<td><strong>↑ / ↓</strong>, <strong>Enter</strong></td>
+<td>Move through palette results and open one</td>
+</tr>
+<tr>
+<td><strong>Esc</strong></td>
+<td>Close a dialog, side panel or the palette</td>
+</tr>
+<tr>
+<td><strong>Tab</strong> / <strong>Shift + Tab</strong></td>
+<td>Move between fields and buttons</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="appendix-f--backup-and-restore-quick-reference">Appendix F — Backup and restore quick reference</h2>
+<p><em>For the IT administrator (on-premises; cloud uses <code>compose.cloud.yml</code>).</em></p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Task</th>
+<th>Command</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Take a backup now</td>
+<td><code>docker compose -f deploy/compose.onprem.yml exec backup /scripts/backup.sh</code></td>
+</tr>
+<tr>
+<td>List backups</td>
+<td><code>ls deploy/backups/</code> (pairs of <code>hrm-db-&lt;time&gt;.dump</code> and <code>hrm-files-&lt;time&gt;.tar.gz</code>)</td>
+</tr>
+<tr>
+<td>Restore</td>
+<td><code>docker compose -f deploy/compose.onprem.yml stop app</code> → <code>docker compose -f deploy/compose.onprem.yml exec backup /scripts/restore.sh &lt;time&gt;</code> → <code>docker compose -f deploy/compose.onprem.yml start app</code></td>
+</tr>
+<tr>
+<td>Check the schedule</td>
+<td><code>docker compose -f deploy/compose.onprem.yml logs backup</code></td>
+</tr>
+<tr>
+<td>Health check</td>
+<td><code>https://&lt;host&gt;/actuator/health</code> returns <code>{"status":"UP"}</code></td>
+</tr>
+</tbody>
+</table></div>
+<p>Detailed procedures: <code>docs/install-onprem.md</code>, <code>docs/deploy-cloud.md</code>, <code>docs/backup-recovery.md</code> and
+<code>docs/release-update.md</code>.</p>
+<hr />
+<p><em>Premium HRM User Guide · Version 1.0 · October 2026</em></p>
+  </article></main>
+</div>
+<script>
+(function () {
+  var root = document.documentElement, KEY = 'hrm-guide-theme';
+  try { var saved = localStorage.getItem(KEY); if (saved) root.setAttribute('data-theme', saved); } catch (e) {}
+  document.getElementById('theme-btn').addEventListener('click', function () {
+    var dark = root.getAttribute('data-theme') ? root.getAttribute('data-theme') === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
+    var next = dark ? 'light' : 'dark';
+    root.setAttribute('data-theme', next);
+    try { localStorage.setItem(KEY, next); } catch (e) {}
+  });
+  document.getElementById('menu-btn').addEventListener('click', function () { document.body.classList.toggle('menu-open'); });
+  var links = Array.prototype.slice.call(document.querySelectorAll('nav.toc a'));
+  links.forEach(function (a) { a.addEventListener('click', function () { document.body.classList.remove('menu-open'); }); });
+  var targets = links.map(function (a) { return document.getElementById(a.getAttribute('href').slice(1)); });
+  function update() {
+    var current = 0;
+    for (var i = 0; i < targets.length; i++) if (targets[i] && targets[i].getBoundingClientRect().top < 120) current = i;
+    links.forEach(function (a) { a.classList.remove('active'); });
+    document.querySelectorAll('nav.toc li.open').forEach(function (li) { li.classList.remove('open'); });
+    var a = links[current]; if (!a) return;
+    a.classList.add('active');
+    var li = a.closest('nav.toc > ul > li'); if (li) li.classList.add('open');
+  }
+  document.addEventListener('scroll', update, { passive: true }); update();
+})();
+</script>
+</body>
+</html>

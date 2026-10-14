@@ -21,6 +21,7 @@ Spec-driven project. **Source of truth: `specs/`** — read `specs/tasks.md` and
 - Local backend (no Docker): `cd backend && ./mvnw spring-boot:test-run -Dspring-boot.run.main-class=com.is2c.hrm.DevHrmApplication` → :8080, admin / Admin#Pass123 (forced change)
 - E2E: `cd frontend && npm run e2e` (starts its own backend :8081 with a fresh DB and Vite :5174)
 - Frontend full check: `cd frontend && ./check.sh`; backend test totals: `backend/test-summary.sh`
+- User guide (`docs/user-guide/`): screenshots `cd frontend && npx playwright test -c playwright.guide.config.ts` (fresh DB on :8083, Vite :5176, clock shifted to 10:30); HTML `python3 docs/user-guide/build_html.py` (needs `pip install markdown`). Edit `USER_GUIDE.md`, never `index.html`.
 - Docker (from repo root): `cp deploy/.env.example deploy/.env` → `docker compose -f deploy/compose.onprem.yml up -d --build` (HTTPS via Caddy; cloud: `compose.cloud.yml`); backup `docker compose -f deploy/compose.onprem.yml exec backup /scripts/backup.sh`; ops docs in `docs/`
 
 ## Conventions
@@ -33,4 +34,4 @@ Spec-driven project. **Source of truth: `specs/`** — read `specs/tasks.md` and
 - Tests reference requirement IDs in `@DisplayName("FR-xxx …")`; write tests first from acceptance criteria.
 - Commit per task: `feat(<module>): T-xxx <summary> [FR-xxx, …]`.
 - UI strings go through i18n keys (`frontend/src/i18n/en.json`).
-- UI: theme in `frontend/src/theme.ts` + `src/styles/global.css`; reuse `src/components/` (`PageHeader`, `DataTable`, `CrudPanel`, `StatusBadge`, `EmptyState`, `PageLoader`, `StatCard`, `useUrlTab`, `format.ts`). Never show raw enums (use `StatusBadge`/`humanize`), confirm destructive actions, give every list a loading and empty state, keep pages usable at 360 px and in dark mode; E2E selectors use accessible names, so report label changes.
+- UI: theme in `frontend/src/theme.ts` + `src/styles/global.css`; reuse `src/components/` (`PageHeader`, `DataTable`, `CrudPanel`, `StatusBadge`, `EmptyState`, `PageLoader`, `StatCard`, `useUrlTab`, `format.ts`). Never show raw enums (use `StatusBadge`/`humanize`), confirm destructive actions, give every list a loading and empty state, keep pages usable at 360 px and in dark mode; E2E selectors use accessible names, so report label changes (the guide tour in `frontend/guide/` and the screenshots/text in `docs/user-guide/` depend on them too).

@@ -4,6 +4,10 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+import java.time.Clock;
+
+import org.springframework.beans.factory.support.BeanDefinitionBuilder;
+import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.boot.SpringApplication;
 
 import io.zonky.test.db.postgres.embedded.EmbeddedPostgres;
@@ -12,7 +16,8 @@ import io.zonky.test.db.postgres.embedded.EmbeddedPostgres;
  * Local development launcher: starts an embedded PostgreSQL (data kept in target/devdb) and the application with
  * a bootstrap admin (admin / Admin#Pass123, must change on first login). Run with:
  * {@code ./mvnw spring-boot:test-run -Dspring-boot.run.main-class=com.is2c.hrm.DevHrmApplication}
- * Options (JVM system properties): dev.datadir, dev.clean=true (fresh database), dev.pg.port, server.port.
+ * Options (JVM system properties): dev.datadir, dev.clean=true (fresh database), dev.pg.port, server.port,
+ * dev.clock.offset-ms (shift the application clock, used for user-guide screenshots).
  */
 public final class DevHrmApplication {
 
@@ -54,7 +59,21 @@ public final class DevHrmApplication {
                 "hrm.jwt.secret", "dev-only-secret-dev-only-secret-0123456789",
                 "hrm.storage.path", "target/dev-files",
                 "hrm.api-docs", "true").forEach(System::setProperty);
-        SpringApplication.run(HrmApplication.class, args);
+        SpringApplication app = new SpringApplication(HrmApplication.class);
+        long offsetMs = Long.getLong("dev.clock.offset-ms", 0L);
+        if (offsetMs != 0) {
+            // Demo/screenshot runs: shift the application clock (e.g. to office hours) without touching the OS clock.
+            System.out.println("Application clock offset by " + java.time.Duration.ofMillis(offsetMs));
+            app.addInitializers(ctx -> ctx.addBeanFactoryPostProcessor(beanFactory -> {
+                // runs after the configuration classes have been parsed, so the application's clock bean exists
+                BeanDefinitionRegistry registry = (BeanDefinitionRegistry) beanFactory;
+                registry.removeBeanDefinition("clock");
+                registry.registerBeanDefinition("clock", BeanDefinitionBuilder
+                        .genericBeanDefinition(Clock.class, () -> Clock.offset(Clock.systemUTC(), java.time.Duration.ofMillis(offsetMs)))
+                        .getBeanDefinition());
+            }));
+        }
+        app.run(args);
     }
 
     /** Terminates a postgres left running on {@code dataDir} (its pid is the first line of postmaster.pid). */

@@ -86,9 +86,11 @@ If you have a certificate from the company CA, mount it into the `caddy` contain
 3. Go to **Organization Setup** and create the company. Its settings, leave types, approval workflows and the
    Sri Lanka statutory payroll pack are created automatically.
 4. Under **Administration**, create user accounts and assign roles and data scope.
-5. Under **Attendance → Integrations**, register each attendance device or middleware as a source. The API key
+5. Under **Attendance → Import & devices**, register each attendance device or middleware as a source. The API key
    is shown only once. Devices post events to `https://<HRM_HOSTNAME>/api/v1/integrations/attendance/events`
    with the header `X-Api-Key`.
+
+For the full setup and day-to-day use, see the user guide: `docs/user-guide/index.html` (or `USER_GUIDE.md`).
 
 ## 7. Operations
 
