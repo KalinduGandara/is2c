@@ -162,7 +162,11 @@ export function DailyPanel({ companyId, exceptionsOnly }: { companyId: string; e
                   r.otRequiresApproval && !r.otApproved && !r.otRejected ? (
                     <Checkbox aria-label={`Select ${r.employeeNumber} ${r.date}`} checked={selected.includes(r.id)}
                       onClick={(e) => e.stopPropagation()}
-                      onChange={(e) => setSelected((s) => (e.currentTarget.checked ? [...s, r.id] : s.filter((x) => x !== r.id)))} />
+                      onChange={(e) => {
+                        // read before the updater runs: currentTarget is null once the event has been handled
+                        const checked = e.currentTarget.checked;
+                        setSelected((s) => (checked ? [...s, r.id] : s.filter((x) => x !== r.id)));
+                      }} />
                   ) : null,
               }]
             : []),
