@@ -18,7 +18,7 @@ Spec-driven project. **Source of truth: `specs/`** — read `specs/tasks.md` and
 - Backend single test: `cd backend && ./mvnw -q test -Dtest=ClassName`
 - Frontend: `cd frontend && npm run lint && npm run typecheck && npx vitest --run`
 - Frontend dev: `npm run dev` (proxies `/api` → `localhost:8080`)
-- Local backend (no Docker): `cd backend && ./mvnw spring-boot:test-run -Dspring-boot.run.main-class=com.is2c.hrm.DevHrmApplication` → :8080, admin / Admin#Pass123 (forced change)
+- Local backend (no Docker): `cd backend && ./mvnw spring-boot:test-run -Dspring-boot.run.main-class=com.is2c.hrm.DevHrmApplication` → :8080, admin / Admin#Pass123 (forced change); add `-Dspring-boot.run.jvmArguments="-Ddev.seed=true -Ddev.clean=true"` for sample data (2 companies, ~60 employees, 6 weeks of attendance, leave, roster, processed payroll; users like `demo.admin`, `acme.hr`, `acme.employee` / Demo#Pass2026 — `DemoDataSeeder`)
 - E2E: `cd frontend && npm run e2e` (starts its own backend :8081 with a fresh DB and Vite :5174)
 - Frontend full check: `cd frontend && ./check.sh`; backend test totals: `backend/test-summary.sh`
 - User guide (`docs/user-guide/`): screenshots `cd frontend && npx playwright test -c playwright.guide.config.ts` (fresh DB on :8083, Vite :5176, clock shifted to 10:30); HTML `python3 docs/user-guide/build_html.py` (needs `pip install markdown`). Edit `USER_GUIDE.md`, never `index.html`.

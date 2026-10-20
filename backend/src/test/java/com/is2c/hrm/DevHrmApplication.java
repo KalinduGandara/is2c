@@ -17,7 +17,8 @@ import io.zonky.test.db.postgres.embedded.EmbeddedPostgres;
  * a bootstrap admin (admin / Admin#Pass123, must change on first login). Run with:
  * {@code ./mvnw spring-boot:test-run -Dspring-boot.run.main-class=com.is2c.hrm.DevHrmApplication}
  * Options (JVM system properties): dev.datadir, dev.clean=true (fresh database), dev.pg.port, server.port,
- * dev.clock.offset-ms (shift the application clock, used for user-guide screenshots).
+ * dev.clock.offset-ms (shift the application clock, used for user-guide screenshots), dev.seed=true (sample data for
+ * manual testing, see {@link DemoDataSeeder}; combine with dev.clean=true for a fresh set).
  */
 public final class DevHrmApplication {
 
@@ -73,7 +74,15 @@ public final class DevHrmApplication {
                         .getBeanDefinition());
             }));
         }
-        app.run(args);
+        var ctx = app.run(args);
+        if (Boolean.getBoolean("dev.seed")) {
+            try {
+                DemoDataSeeder.seed(ctx);
+            } catch (RuntimeException e) {
+                // keep the server up so the partial data can be inspected
+                org.slf4j.LoggerFactory.getLogger(DevHrmApplication.class).error("Demo data seeding failed", e);
+            }
+        }
     }
 
     /** Terminates a postgres left running on {@code dataDir} (its pid is the first line of postmaster.pid). */
