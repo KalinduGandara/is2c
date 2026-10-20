@@ -11,7 +11,7 @@ Spec-driven project. **Source of truth: `specs/`** — read `specs/tasks.md` and
 - Backend: Java 21, Spring Boot 4.1 (WebMVC, Security, Data JPA, Flyway), PostgreSQL 16+ — `backend/`
 - Frontend: React 19, Vite 8, TypeScript 6.0, Mantine 9 (+ spotlight), TanStack Query, React Router 8, react-i18next — `frontend/`
 - Tests: JUnit 5 + MockMvc + embedded PostgreSQL (zonky, no Docker needed), ArchUnit; Vitest + Testing Library; Playwright E2E + axe accessibility (`e2e/a11y.spec.ts`)
-- Packaging: Docker multi-stage + Compose (`deploy/`)
+- Packaging: Docker multi-stage + Compose (`deploy/`); Windows installer, Inno Setup (`deploy/windows/`)
 
 ## Commands
 - Backend full check: `cd backend && ./mvnw -q verify` (perf tests: `./mvnw verify -Pperf`)
@@ -22,6 +22,7 @@ Spec-driven project. **Source of truth: `specs/`** — read `specs/tasks.md` and
 - E2E: `cd frontend && npm run e2e` (starts its own backend :8081 with a fresh DB and Vite :5174)
 - Frontend full check: `cd frontend && ./check.sh`; backend test totals: `backend/test-summary.sh`
 - User guide (`docs/user-guide/`): screenshots `cd frontend && npx playwright test -c playwright.guide.config.ts` (fresh DB on :8083, Vite :5176, clock shifted to 10:30); HTML `python3 docs/user-guide/build_html.py` (needs `pip install markdown`). Edit `USER_GUIDE.md`, never `index.html`.
+- Windows installer (on Windows only): `powershell -ExecutionPolicy Bypass -File deploy\windows\build.ps1` → `deploy/windows/build/out/PremiumHRM-Setup-<version>.exe`; runtime scripts in `deploy/windows/scripts/` (Windows PowerShell 5.1 compatible); docs `docs/install-windows.md`
 - Docker (from repo root): `cp deploy/.env.example deploy/.env` → `docker compose -f deploy/compose.onprem.yml up -d --build` (HTTPS via Caddy; cloud: `compose.cloud.yml`); backup `docker compose -f deploy/compose.onprem.yml exec backup /scripts/backup.sh`; ops docs in `docs/`
 
 ## Conventions

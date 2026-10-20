@@ -61,7 +61,7 @@ Request flow: Caddy → Spring Security filter chain (correlation id → rate li
 | Backend tests | JUnit 5, AssertJ, Spring Boot Test + MockMvc, zonky embedded-postgres, ArchUnit | Real Postgres without Docker (clarification assumption 8); architecture rules. |
 | Frontend | React 19, Vite 8, TypeScript 6.0, Mantine 9 (core, dates, form, notifications, modals, spotlight), Tabler icons, Inter (self-hosted via @fontsource), TanStack Query 5, React Router 8, react-i18next, dayjs | SRS §7.1; Mantine gives accessible, responsive enterprise components quickly. TS 6.0 because typescript-eslint does not support TS 7 yet. |
 | Frontend tests | Vitest + Testing Library; Playwright (E2E) + axe-core (accessibility) | NFR-020. |
-| Packaging | Docker multi-stage image; Docker Compose (app, postgres, caddy, backup) | CL-F6. |
+| Packaging | Docker multi-stage image; Docker Compose (app, postgres, caddy, backup); Windows installer (Inno Setup: bundled JRE, PostgreSQL 17, Caddy, WinSW services) | CL-F6; Windows customers without Docker (D12). |
 
 ---
 
@@ -104,7 +104,8 @@ Request flow: Caddy → Spring Security filter chain (correlation id → rate li
 └── deploy/
     ├── Dockerfile
     ├── compose.onprem.yml, compose.cloud.yml, Caddyfile*, .env.example
-    └── backup/ (backup.sh, restore.sh)
+    ├── backup/ (backup.sh, restore.sh)
+    └── windows/ (hrm.iss, build.ps1, scripts/: setup, check-port, backup, restore, uninstall)
 ```
 
 Each module package has: `domain/` (entities, repositories), `service/` (business logic), `web/` (controllers + DTOs), optional `api/` (interfaces/DTOs other modules may call). ArchUnit rules (NFR-018): other modules may only depend on a module's `api` (and `domain` entity IDs via service calls are not allowed across modules except `org`/`employee` read APIs); `web` never accessed from other modules; no `nativeQuery` / `JdbcTemplate` outside `platform` (NFR-005).
@@ -368,3 +369,4 @@ Test naming references requirement IDs (e.g. `@DisplayName("FR-063 rejects overl
 | D9 | UUID keys (app-generated, time-ordered) | DB identity/sequences | Portable across vendors, safe to expose, no round-trip. |
 | D10 | Approval engine with handler SPI + level snapshot; transaction types are open string codes registered by handlers (not a closed enum) | Per-module bespoke approval logic | One engine for leave/attendance/payroll (§4.7); snapshot prevents config drift on in-flight items. |
 | D11 | Text JSON columns for audit/snapshots | `jsonb` | Portability (NFR-005); not queried by content. |
+| D12 | Native Windows installer (Inno Setup `.exe`) running the same jar, PostgreSQL and Caddy as Windows services; config in `hrm.properties` with the same `HRM_*` keys | Docker Desktop on Windows; Electron/desktop wrapper; MSI (WiX) | Docker Desktop needs a paid licence in larger organisations plus WSL2/virtualisation; a desktop wrapper does not fit a multi-user server; MSI only needed for GPO/Intune rollout, not requested. |

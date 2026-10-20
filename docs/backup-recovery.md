@@ -80,3 +80,32 @@ Run this drill after installation and at least once per quarter. Record the date
 The drill was verified during release testing on 2026-10-07 with Docker 27 and PostgreSQL 17. A backup taken
 via `backup.sh` was restored with `restore.sh`. The application came back healthy, sign-in worked, and data
 created after the backup was gone.
+
+## Windows installation
+
+The Windows installer ([install-windows.md](install-windows.md)) produces the same backup sets with the same
+file names and formats as Docker, so a set restores on either platform.
+
+- **Schedule**: the scheduled task *Premium HRM backup* runs `scripts\backup.ps1` daily at `BackupAt` (default
+  02:00, server time zone). It keeps `BackupRetentionDays` (default 14) and writes to `BackupDir` (default
+  `<data folder>\backups`). These settings are in `<data folder>\config\install.ini`. Each run logs
+  `backup <timestamp> done …` or `backup FAILED …` to `<data folder>\logs\backup.log`.
+- **Upgrades**: the installer takes a backup before it upgrades, and asks before it continues if that backup
+  fails.
+- **Not included**: `<data folder>\config\`, which holds the secrets. Keep a copy in a password manager.
+- **Manual backup**: run this in an elevated PowerShell:
+  ```powershell
+  & "C:\Program Files\Premium HRM\scripts\backup.ps1"
+  ```
+- **Restore**: this stops `HRM-App`, restores the database in a single transaction, replaces the documents,
+  and then starts the app again. It asks you to type `RESTORE` first; pass `-Force` to skip that prompt.
+  ```powershell
+  & "C:\Program Files\Premium HRM\scripts\restore.ps1" -Timestamp 20261007-020000
+  ```
+- **Disaster recovery onto a new server**:
+  1. Install Premium HRM.
+  2. Stop the app with `Stop-Service HRM-App`.
+  3. Copy the backup set into the backups folder.
+  4. Run `restore.ps1`.
+
+  Users sign in with the accounts from the backup.

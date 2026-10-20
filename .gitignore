@@ -21,3 +21,6 @@ frontend/*.tsbuildinfo
 deploy/.env
 deploy/backups/*
 !deploy/backups/.gitkeep
+
+# Windows installer build output
+deploy/windows/build/

@@ -120,7 +120,8 @@ wide), so employees can apply for leave or download payslips from their mobile.
 *This chapter is for the IT administrator. If the system is already running, skip to
 [3. Getting started](#3-getting-started).*
 
-Premium HRM is delivered as Docker containers. The same image is used for both editions:
+Premium HRM is delivered as Docker containers. On a Windows server without Docker, use the Windows installer
+instead (see [2.6 Windows server](#26-windows-server)). The same Docker image is used for both editions:
 
 | | On-premises | Cloud |
 |---|---|---|
@@ -200,6 +201,24 @@ Backups run automatically every day. Each backup set is a database dump and an a
 in `deploy/backups/`. Copy that folder to another machine or to cloud storage every day, and practise a
 restore at least once a quarter. Commands for a manual backup and for restoring are in
 [Appendix F](#appendix-f--backup-and-restore-quick-reference) and `docs/backup-recovery.md`.
+
+### 2.6 Windows server
+
+On Windows Server 2019 or later (or Windows 10/11, 64-bit), run `PremiumHRM-Setup-<version>.exe` as
+administrator. The wizard asks for four things:
+
+- the data folder (default `C:\ProgramData\PremiumHRM`)
+- the host name users type in the browser
+- the HTTPS and HTTP ports (default 443 and 80)
+- the first administrator's user name and password
+
+Setup checks that the ports are free. If one is taken, it names the program that holds it, often IIS. It then
+installs PostgreSQL and the application as Windows services, generates the secrets, and schedules the daily
+backup. The web address opens when setup finishes.
+
+Distribute `<data folder>\hrm-root.crt` to client PCs as a trusted root certificate, as in section 2.4. The
+configuration, logs and backups are in the data folder. Details, including email settings, upgrades and
+restores, are in `docs/install-windows.md`.
 
 ---
 

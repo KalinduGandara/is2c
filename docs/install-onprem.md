@@ -1,5 +1,7 @@
 # Premium HRM — On-premises installation
 
+> For a Windows server without Docker, use the installer instead: see [install-windows.md](install-windows.md).
+
 This guide installs Premium HRM on a single server inside a customer's network. You get one installation per
 customer, with any number of companies inside it. The bundle runs four containers:
 
