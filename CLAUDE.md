@@ -23,6 +23,7 @@ Spec-driven project. **Source of truth: `specs/`** — read `specs/tasks.md` and
 - Frontend full check: `cd frontend && ./check.sh`; backend test totals: `backend/test-summary.sh`
 - User guide (`docs/user-guide/`): screenshots `cd frontend && npx playwright test -c playwright.guide.config.ts` (fresh DB on :8083, Vite :5176, clock shifted to 10:30); HTML `python3 docs/user-guide/build_html.py` (needs `pip install markdown`). Edit `USER_GUIDE.md`, never `index.html`.
 - Windows installer (on Windows only): `powershell -ExecutionPolicy Bypass -File deploy\windows\build.ps1` → `deploy/windows/build/out/PremiumHRM-Setup-<version>.exe`; runtime scripts in `deploy/windows/scripts/` (Windows PowerShell 5.1 compatible); docs `docs/install-windows.md`
+- BioStar 2 sync middleware (`integrations/biostar-sync/`, standalone, guide `docs/biostar-sync.md`): `cd integrations/biostar-sync && ./mvnw -q test`; run `./mvnw -q package -DskipTests && java -jar target/biostar-sync.jar` → UI 127.0.0.1:8095
 - Docker (from repo root): `cp deploy/.env.example deploy/.env` → `docker compose -f deploy/compose.onprem.yml up -d --build` (HTTPS via Caddy; cloud: `compose.cloud.yml`); backup `docker compose -f deploy/compose.onprem.yml exec backup /scripts/backup.sh`; ops docs in `docs/`
 
 ## Conventions

@@ -194,3 +194,8 @@ Commands: backend `cd backend && ./mvnw -q verify`; frontend `cd frontend && npm
   - Requirements: NFR-001, NFR-002, NFR-011, NFR-021
   - Done when: on a clean Windows Server 2019+/Windows 11 VM the installer serves the sign-in page over HTTPS at the chosen address; a port held by another program is reported in the wizard; 5432 held by another PostgreSQL makes setup pick 5433; backup.ps1 output restores with restore.ps1; re-running the installer upgrades without data loss; uninstall with "keep data" followed by reinstall reattaches. (Scripts parse-checked on macOS; manual Windows verification pending.)
 
+## Integrations
+
+- [x] T-043: BioStar 2 sync middleware — standalone Spring Boot app (`integrations/biostar-sync/`, one-page UI on 127.0.0.1:8095, settings/state as owner-only JSON) that creates HRM employees for BioStar users of mapped groups (employee number = badge = BioStar user id, defaults for placement/join date, never updates existing) and sends recognised-user punches through the FR-045 ingestion API (external id `device:index`, `tna_key` → IN/OUT, UTC passthrough); manual date-range sync with preview, automatic sync every N minutes continuing from the latest punch with a look-back for late device uploads; rematch after new employees; host/origin guard for the login-less UI; operator guide `docs/biostar-sync.md`. No HRM backend change.
+  - Requirements: FR-045, FR-047, NFR-021
+  - Done when: `./mvnw test` passes in `integrations/biostar-sync`; against the live BioStar 2 server and a fresh HRM database, a Dec 2024–Apr 2025 sync creates the mapped users and accepts exactly the punches counted directly from BioStar, a re-run reports them all as duplicates, and two automatic runs continue from the watermark.

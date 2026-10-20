@@ -1,0 +1,250 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta th:if="${running}" http-equiv="refresh" content="3">
+    <title>BioStar Sync</title>
+    <style>
+        :root { --bg: #f5f6f8; --card: #fff; --text: #1d2330; --muted: #5d6676; --border: #d7dbe2;
+                --accent: #2457c5; --ok-bg: #e6f4ea; --ok: #1e6b34; --err-bg: #fdeaea; --err: #a32020; }
+        @media (prefers-color-scheme: dark) {
+            :root { --bg: #14171c; --card: #1d2128; --text: #e6e8ec; --muted: #9aa3b2; --border: #343a45;
+                    --accent: #7aa2ff; --ok-bg: #173523; --ok: #8fdca6; --err-bg: #3d1a1a; --err: #ff9d9d; }
+        }
+        * { box-sizing: border-box; }
+        body { margin: 0; background: var(--bg); color: var(--text); font: 15px/1.5 system-ui, sans-serif; }
+        main { max-width: 960px; margin: 0 auto; padding: 16px; }
+        h1 { font-size: 1.4rem; margin: 8px 0 4px; }
+        h2 { font-size: 1.1rem; margin: 0 0 12px; }
+        section { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 16px; margin: 16px 0; }
+        label { display: block; font-weight: 600; margin-bottom: 4px; }
+        .hint, small { color: var(--muted); font-weight: normal; }
+        input, select { width: 100%; padding: 7px 9px; border: 1px solid var(--border); border-radius: 6px;
+                        background: var(--bg); color: var(--text); font: inherit; }
+        input[type=checkbox] { width: auto; margin-right: 6px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin-bottom: 12px; }
+        .row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+        button { padding: 8px 14px; border-radius: 6px; border: 1px solid var(--accent); background: var(--accent);
+                 color: #fff; font: inherit; cursor: pointer; }
+        button.secondary { background: transparent; color: var(--accent); }
+        button:disabled { opacity: .5; cursor: not-allowed; }
+        .msg { padding: 10px 12px; border-radius: 6px; margin: 12px 0; }
+        .ok { background: var(--ok-bg); color: var(--ok); }
+        .err { background: var(--err-bg); color: var(--err); }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--border); vertical-align: top; }
+        .scroll { overflow-x: auto; }
+        details { margin-top: 4px; }
+        code { font-size: .9em; }
+    </style>
+</head>
+<body>
+<main>
+    <h1>BioStar 2 → Premium HRM sync</h1>
+    <p class="hint">Copies BioStar users into HRM as employees, then their attendance punches. Employee number and badge
+        = BioStar user ID.</p>
+
+    <div th:if="${message}" class="msg ok" role="status" th:text="${message}"></div>
+    <div th:if="${error}" class="msg err" role="alert" th:text="${error}"></div>
+    <div th:each="e : ${lookups.errors}" class="msg err" role="alert" th:text="${e}"></div>
+    <div th:if="${running}" class="msg ok" role="status"><span th:text="${running}"></span> — this page refreshes until it finishes.</div>
+    <div th:if="${!#strings.isEmpty(missing)}" class="msg err">To sync, set up: <span th:text="${missing}"></span>
+        (see the numbered sections below; employee defaults and group mapping are in section 3 — select the company, fill
+        in the form and press Save).</div>
+
+    <section aria-labelledby="h-biostar">
+        <h2 id="h-biostar">1. BioStar 2 server</h2>
+        <form method="post" action="/biostar">
+            <div class="grid">
+                <div><label for="b-url">Server URL</label>
+                    <input id="b-url" name="url" required placeholder="https://192.168.1.10:444" th:value="${s.biostarUrl}"></div>
+                <div><label for="b-login">Login ID</label>
+                    <input id="b-login" name="loginId" required autocomplete="off" th:value="${s.biostarLoginId}"></div>
+                <div><label for="b-pass">Password</label>
+                    <input id="b-pass" name="password" type="password" autocomplete="new-password"
+                           th:placeholder="${#strings.isEmpty(s.biostarPassword)} ? '' : '(saved — leave blank to keep)'"
+                           th:required="${#strings.isEmpty(s.biostarPassword)}"></div>
+            </div>
+            <p><label><input type="checkbox" name="trustAllCerts" value="true" th:checked="${s.biostarTrustAllCerts}">
+                Trust the server's certificate without checking it <small>(needed for BioStar's self-signed certificate; only on a trusted network)</small></label></p>
+            <button type="submit">Save and test</button>
+        </form>
+    </section>
+
+    <section aria-labelledby="h-hrm">
+        <h2 id="h-hrm">2. Premium HRM</h2>
+        <form method="post" action="/hrm">
+            <div class="grid">
+                <div><label for="h-url">HRM URL</label>
+                    <input id="h-url" name="url" required placeholder="https://hrm.example.com" th:value="${s.hrmUrl}"></div>
+                <div><label for="h-user">Service account username</label>
+                    <input id="h-user" name="username" required autocomplete="off" th:value="${s.hrmUsername}"></div>
+                <div><label for="h-pass">Service account password</label>
+                    <input id="h-pass" name="password" type="password" autocomplete="new-password"
+                           th:placeholder="${#strings.isEmpty(s.hrmPassword)} ? '' : '(saved — leave blank to keep)'"
+                           th:required="${#strings.isEmpty(s.hrmPassword)}"></div>
+                <div><label for="h-key">Attendance source API key</label>
+                    <input id="h-key" name="apiKey" type="password" autocomplete="off"
+                           th:placeholder="${#strings.isEmpty(s.hrmApiKey)} ? 'hrm_…' : '(saved — leave blank to keep)'"
+                           th:required="${#strings.isEmpty(s.hrmApiKey)}"></div>
+            </div>
+            <p class="hint">The account needs EMPLOYEE:VIEW, ADD and CONFIGURE, ORG:VIEW and ATTENDANCE:EDIT. Create the API
+                key in HRM under Attendance → Sources, for the company chosen below.</p>
+            <button type="submit">Save and test</button>
+        </form>
+    </section>
+
+    <section aria-labelledby="h-map">
+        <h2 id="h-map">3. New employees</h2>
+        <p th:if="${lookups.companies.isEmpty()}" class="hint">Set up the HRM connection first.</p>
+        <form th:unless="${lookups.companies.isEmpty()}" method="post" action="/company" class="row">
+            <label for="m-company" style="flex-basis:100%">HRM company</label>
+            <select id="m-company" name="companyId" style="flex:1" required>
+                <option value="">— choose —</option>
+                <option th:each="c : ${lookups.companies}" th:value="${c.id}" th:text="${c.name}"
+                        th:selected="${c.id == s.companyId}"></option>
+            </select>
+            <button type="submit" class="secondary">Select company</button>
+        </form>
+
+        <div th:if="${!#strings.isEmpty(s.companyId) and lookups.errors.isEmpty() and (lookups.branches.isEmpty()
+                or lookups.departments.isEmpty() or lookups.designations.isEmpty() or lookups.categories.isEmpty())}"
+             class="msg err" role="alert">
+            This HRM company has no
+            <span th:if="${lookups.branches.isEmpty()}">branches, </span><span th:if="${lookups.departments.isEmpty()}">departments, </span><span th:if="${lookups.designations.isEmpty()}">designations, </span><span th:if="${lookups.categories.isEmpty()}">employment categories, </span>
+            which new employees need. Add them in HRM (Organization), then press "Reload groups and HRM lists".
+        </div>
+        <form th:if="${!#strings.isEmpty(s.companyId) and !lookups.branches.isEmpty()}" method="post" action="/mapping">
+            <p class="hint">BioStar has no placement or join date, so new employees get these defaults. HR can edit each
+                employee in HRM afterwards; the sync never changes existing employees.</p>
+            <div class="grid">
+                <div><label for="m-branch">Branch</label>
+                    <select id="m-branch" name="branchId" required>
+                        <option value="">— choose —</option>
+                        <option th:each="o : ${lookups.branches}" th:value="${o.id}" th:text="${o.name}" th:selected="${o.id == s.branchId}"></option>
+                    </select></div>
+                <div><label for="m-desig">Designation</label>
+                    <select id="m-desig" name="designationId" required>
+                        <option value="">— choose —</option>
+                        <option th:each="o : ${lookups.designations}" th:value="${o.id}" th:text="${o.name}" th:selected="${o.id == s.designationId}"></option>
+                    </select></div>
+                <div><label for="m-cat">Employment category</label>
+                    <select id="m-cat" name="categoryId" required>
+                        <option value="">— choose —</option>
+                        <option th:each="o : ${lookups.categories}" th:value="${o.id}" th:text="${o.name}" th:selected="${o.id == s.categoryId}"></option>
+                    </select></div>
+                <div><label for="m-join">Join date</label>
+                    <input id="m-join" name="joinDate" type="date" required th:value="${s.joinDate}"></div>
+            </div>
+
+            <h3 style="font-size:1rem">User groups → departments</h3>
+            <p class="hint">Only users (and their punches) in groups mapped to a department are synced. Leave leavers,
+                contractors and visitors on "Do not sync".</p>
+            <p th:if="${lookups.groups.isEmpty()}" class="hint">Set up the BioStar connection to see its user groups.</p>
+            <div class="scroll" th:unless="${lookups.groups.isEmpty()}">
+                <table>
+                    <thead><tr><th scope="col">BioStar group</th><th scope="col">Users</th><th scope="col">HRM department</th></tr></thead>
+                    <tbody>
+                    <tr th:each="g : ${lookups.groups}">
+                        <td><label th:for="'g-' + ${g.id}" th:text="${g.name}" style="font-weight:normal"></label></td>
+                        <td th:text="${g.users}"></td>
+                        <td><select th:id="'g-' + ${g.id}" th:name="'group.' + ${g.id}">
+                            <option value="">Do not sync</option>
+                            <option th:each="d : ${lookups.departments}" th:value="${d.id}" th:text="${d.name}"
+                                    th:selected="${d.id == s.groupDepartments.get(g.id)}"></option>
+                        </select></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h3 style="font-size:1rem">Punch direction</h3>
+            <p class="hint">BioStar's <code>tna_key</code> is the T&amp;A key pressed on the device. Other keys and punches
+                without a key are sent as unknown; HRM then pairs them in time order.</p>
+            <div class="grid">
+                <div><label for="m-in">tna_key for IN</label><input id="m-in" name="tnaKeyIn" th:value="${s.tnaKeyIn}"></div>
+                <div><label for="m-out">tna_key for OUT</label><input id="m-out" name="tnaKeyOut" th:value="${s.tnaKeyOut}"></div>
+            </div>
+            <div class="row">
+                <button type="submit">Save</button>
+            </div>
+        </form>
+        <form method="post" action="/reload" style="margin-top:12px">
+            <button type="submit" class="secondary">Reload groups and HRM lists</button>
+        </form>
+    </section>
+
+    <section aria-labelledby="h-sync">
+        <h2 id="h-sync">4. Sync</h2>
+        <form method="post" action="/sync">
+            <div class="grid">
+                <div><label for="s-from">From</label><input id="s-from" name="from" type="date" required></div>
+                <div><label for="s-to">To</label><input id="s-to" name="to" type="date" required></div>
+            </div>
+            <p class="hint">Dates are in the HRM company's time zone. Users are synced first, then the punches in the range.
+                Re-running a range is safe: HRM skips punches it already has.</p>
+            <div class="row">
+                <button type="submit" name="preview" value="true" class="secondary" th:disabled="${running}">Preview (no changes)</button>
+                <button type="submit" th:disabled="${running}">Sync now</button>
+            </div>
+        </form>
+
+        <h3 style="font-size:1rem">Automatic sync</h3>
+        <form method="post" action="/schedule">
+            <p><label><input type="checkbox" name="enabled" value="true" th:checked="${s.scheduleEnabled}"> Sync automatically</label></p>
+            <div class="grid">
+                <div><label for="a-int">Every (minutes)</label>
+                    <input id="a-int" name="intervalMinutes" type="number" min="1" required th:value="${s.scheduleIntervalMinutes}"></div>
+                <div><label for="a-start">First run starts from</label>
+                    <input id="a-start" name="startDate" type="date" th:value="${s.scheduleStartDate}"></div>
+                <div><label for="a-back">Re-check the last (hours)</label>
+                    <input id="a-back" name="lookbackHours" type="number" min="0" required th:value="${s.scheduleLookbackHours}"></div>
+            </div>
+            <p class="hint">Devices that were offline upload their punches later with the original time; each run
+                re-reads this many hours so those are not missed. For longer outages, sync the dates manually above.</p>
+            <p class="hint" th:if="${state.lastEventTime == null}">Not run yet: the first automatic sync imports punches from
+                the start date, later runs continue from the latest punch read.</p>
+            <p class="hint" th:unless="${state.lastEventTime == null}">Latest punch read:
+                <strong th:text="${#temporals.format(state.lastEventTime.atZone(T(java.time.ZoneId).systemDefault()), 'yyyy-MM-dd HH:mm:ss')}"></strong>.</p>
+            <button type="submit">Save</button>
+        </form>
+        <form th:unless="${state.lastEventTime == null}" method="post" action="/schedule/reset" style="margin-top:8px"
+              onsubmit="return confirm('Start the automatic sync again from its start date? Punches already in HRM are skipped.')">
+            <button type="submit" class="secondary">Reset position to start date</button>
+        </form>
+    </section>
+
+    <section aria-labelledby="h-history">
+        <h2 id="h-history">History</h2>
+        <p th:if="${state.history.isEmpty()}" class="hint">No syncs yet.</p>
+        <div class="scroll" th:unless="${state.history.isEmpty()}">
+            <table>
+                <thead><tr><th scope="col">Started</th><th scope="col">Run</th><th scope="col">Users</th><th scope="col">Punches</th><th scope="col">Result</th></tr></thead>
+                <tbody>
+                <tr th:each="r : ${state.history}">
+                    <td th:text="${#temporals.format(r.started.atZone(T(java.time.ZoneId).systemDefault()), 'yyyy-MM-dd HH:mm:ss')}"></td>
+                    <td><span th:text="${r.preview} ? 'Preview' : (${r.trigger} == 'SCHEDULED' ? 'Automatic' : 'Manual')"></span><br>
+                        <small th:text="${r.scope}"></small></td>
+                    <td><span th:text="${r.preview} ? ${r.usersCreated} + ' to create' : ${r.usersCreated} + ' created'"></span>,
+                        <span th:text="${r.usersExisting}"></span> existing<br>
+                        <small><span th:text="${r.usersSkipped}"></span> not synced<span th:if="${r.usersFailed > 0}" th:text="', ' + ${r.usersFailed} + ' failed'"></span></small></td>
+                    <td th:if="${r.preview}"><span th:text="${r.eventsSent}"></span> to send<br>
+                        <small><span th:text="${r.eventsSkipped}"></span> of <span th:text="${r.eventsRead}"></span> read not synced</small></td>
+                    <td th:unless="${r.preview}"><span th:text="${r.accepted}"></span> new, <span th:text="${r.duplicates}"></span> already in HRM<br>
+                        <small><span th:text="${r.unmatched}"></span> unmatched, <span th:text="${r.rejected}"></span> rejected,
+                            <span th:text="${r.eventsSkipped}"></span> not synced<span th:if="${r.rematched > 0}" th:text="', ' + ${r.rematched} + ' relinked'"></span></small></td>
+                    <td>
+                        <span th:if="${r.failure}" class="err" th:text="'Failed: ' + ${r.failure}"></span>
+                        <span th:unless="${r.failure}" th:text="${r.errors.isEmpty()} ? 'OK' : 'Finished with errors'"></span>
+                        <details th:unless="${r.errors.isEmpty()}"><summary>Details</summary>
+                            <ul><li th:each="e : ${r.errors}" th:text="${e}"></li></ul></details>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+</main>
+</body>
+</html>

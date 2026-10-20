@@ -1,0 +1,14 @@
+server:
+  # The UI shows and changes credentials and has no login: keep it on this machine unless you know what you do.
+  address: 127.0.0.1
+  port: 8095
+
+spring:
+  application:
+    name: biostar-sync
+
+sync:
+  # Settings (including passwords, in plain text, owner-only file permissions) and sync state live here.
+  data-dir: ${user.home}/.biostar-sync
+  # Host names the UI answers to (protects against DNS rebinding). Add the server's name if you change server.address.
+  allowed-hosts: localhost,127.0.0.1,[::1]
